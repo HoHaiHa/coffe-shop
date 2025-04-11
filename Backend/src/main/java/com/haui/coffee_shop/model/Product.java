@@ -68,7 +68,7 @@ public class Product {
     @Column(name = "articleTitle")
     private String articleTitle;
     
-    @Column(name = "article")
+    @Column(name = "article", columnDefinition = "TEXT")
     private String article;
     
     

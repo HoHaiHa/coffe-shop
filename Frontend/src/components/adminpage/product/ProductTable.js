@@ -12,13 +12,14 @@ import {
     Image
 } from 'antd';
 import { AiOutlineBars } from "react-icons/ai";
-import { RiEditLine, RiDeleteBinLine  } from "react-icons/ri";
+import { RiEditLine, RiDeleteBinLine } from "react-icons/ri";
 import { PiListStarBold } from "react-icons/pi";
 import Highlighter from 'react-highlight-words';
 import fetchWithAuth from '../../../helps/fetchWithAuth';
 import summaryApi from '../../../common';
 import ProductItemModal from './ProductItemModal';
 import ReviewModal from './ReviewManagement';
+import TextArea from 'antd/es/input/TextArea';
 
 const { Option } = Select;
 
@@ -138,6 +139,15 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
                 description: product.description,
                 category: product.category?.id,
                 brand: product.brand?.id,
+                netWeight: product.netWeight,
+                beanType: product.beanType,
+                origin: product.origin,
+                roadLevel: product.roadLevel,
+                flavoNotes: product.flavoNotes,
+                caffeineContents: product.caffeineContents,
+                cafeForm: product.cafeForm,
+                articleTitle: product.articleTitle,
+                article: product.article,
             });
         } else {
             if (!currentProduct) form.resetFields();
@@ -155,6 +165,15 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
                     Description: values.description,
                     BrandId: values.brand,
                     CategoryId: values.category,
+                    NetWeight: values.netWeight,
+                    BeanType: values.beanType,
+                    Origin: values.origin,
+                    RoadLevel: values.roadLevel,
+                    FlavoNotes: values.flavoNotes,
+                    CaffeineContents: values.caffeineContents,
+                    CafeForm: values.cafeForm,
+                    ArticleTitle: values.articleTitle,
+                    Article: values.article,
                 }),
             });
             const data = await response.json();
@@ -186,8 +205,32 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
                     Description: values.description,
                     BrandId: values.brand,
                     CategoryId: values.category,
+                    NetWeight: values.netWeight,
+                    BeanType: values.beanType,
+                    Origin: values.origin,
+                    RoadLevel: values.roadLevel,
+                    FlavoNotes: values.flavoNotes,
+                    CaffeineContents: values.caffeineContents,
+                    CafeForm: values.cafeForm,
+                    ArticleTitle: values.articleTitle,
+                    Article: values.article,
                 }),
             });
+            console.log(JSON.stringify({
+                Name: values.name,
+                Description: values.description,
+                BrandId: values.brand,
+                CategoryId: values.category,
+                NetWeight: values.netWeight,
+                BeanType: values.beanType,
+                Origin: values.origin,
+                RoadLevel: values.roadLevel,
+                FlavoNotes: values.flavoNotes,
+                CaffeineContents: values.caffeineContents,
+                CafeForm: values.cafeForm,
+                ArticleTitle: values.articleTitle,
+                Article: values.article,
+            }))
             const data = await response.json();
             if (data.respCode === '000' && data.data) {
                 setProducts([...products, data.data]);
@@ -303,6 +346,8 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
             key: 'descriptionName',
             render: (text, record) => record.description || 'N/A',
         },
+
+
         {
             title: 'Action',
             key: 'action',
@@ -344,7 +389,7 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
                             type="link"
                             className="text-red-500 hover:text-red-400 flex items-center"
                         >
-                            <RiDeleteBinLine  className="mr-1 text-xl" /> Xoá
+                            <RiDeleteBinLine className="mr-1 text-xl" /> Xoá
                         </button>
                     </Popconfirm>
                 </div>
@@ -458,6 +503,79 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
                                 </Option>
                             ))}
                         </Select>
+                    </Form.Item>
+
+                    <Form.Item
+                        name="netWeight"
+                        label="Product net weight"
+                        initialValue={currentProduct?.netWeight}
+
+                    >
+                        <Input placeholder="Enter product net weight" />
+                    </Form.Item>
+                    <Form.Item
+                        name="beanType"
+                        label="Product bean type"
+                        initialValue={currentProduct?.beanType}
+
+                    >
+                        <Input placeholder="Enter product bean type" />
+                    </Form.Item>
+                    <Form.Item
+                        name="origin"
+                        label="Product origin"
+                        initialValue={currentProduct?.origin}
+
+                    >
+                        <Input placeholder="Enter product origin" />
+                    </Form.Item>
+                    <Form.Item
+                        name="roadLevel"
+                        label="Product road level"
+                        initialValue={currentProduct?.roadLevel}
+
+                    >
+                        <Input placeholder="Enter product road level" />
+                    </Form.Item>
+                    <Form.Item
+                        name="flavoNotes"
+                        label="Product flavo notes"
+                        initialValue={currentProduct?.flavoNotes}
+
+                    >
+                        <Input placeholder="Enter product flavo notes" />
+                    </Form.Item>
+                    <Form.Item
+                        name="caffeineContents"
+                        label="Product caffeine contents"
+                        initialValue={currentProduct?.caffeineContents}
+
+                    >
+                        <Input placeholder="Enter product caffeine contents" />
+                    </Form.Item>
+                    <Form.Item
+                        name="cafeForm"
+                        label="Product cafe form"
+                        initialValue={currentProduct?.cafeForm}
+
+                    >
+                        <Input placeholder="Enter product cafe form" />
+                    </Form.Item>
+                    <Form.Item
+                        name="articleTitle"
+                        label="Product article title"
+                        initialValue={currentProduct?.articleTitle}
+
+                    >
+                        <Input placeholder="Enter product article title" />
+                    </Form.Item>
+                    <Form.Item
+                        name="article"
+                        label="Product article"
+                        initialValue={currentProduct?.article}
+
+                    >
+                        <TextArea placeholder="Enter product article" />
                     </Form.Item>
 
                     <Button type="primary" htmlType="submit" className="w-full">

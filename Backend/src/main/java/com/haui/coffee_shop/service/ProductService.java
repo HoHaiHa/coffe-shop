@@ -121,6 +121,15 @@ public class ProductService {
         product.setDescription(productRequest.getDescription());
         product.setCategory(categoryOptional.get());
         product.setBrand(brandOptional.get());
+        product.setNetWeight(productRequest.getNetWeight());
+        product.setBeanType(productRequest.getBeanType());
+        product.setOrigin(productRequest.getOrigin());
+        product.setRoadLevel(productRequest.getRoadLevel());
+        product.setFlavoNotes(productRequest.getFlavoNotes());
+        product.setCaffeineContents(productRequest.getCaffeineContents());
+        product.setCafeForm(productRequest.getCafeForm());
+        product.setArticleTitle(productRequest.getArticleTitle());
+        product.setArticle(productRequest.getArticle());
         try {
             productRepository.save(product);
         } catch (Exception e) {
@@ -181,13 +190,17 @@ public class ProductService {
         if (productOptional.isEmpty()) {
             throw new CoffeeShopException(Constant.FIELD_NOT_FOUND, new Object[]{"product"}, "Product not found");
         }
+
         Product product = productOptional.get();
+
         if (request.getName() != null && !request.getName().isEmpty()) {
             product.setName(request.getName());
         }
+
         if (request.getDescription() != null && !request.getDescription().isEmpty()) {
             product.setDescription(request.getDescription());
         }
+
         if (request.getCategoryId() > 0) {
             Optional<Category> categoryOptional = categoryRepository.findById(request.getCategoryId());
             if (categoryOptional.isEmpty()) {
@@ -195,6 +208,7 @@ public class ProductService {
             }
             product.setCategory(categoryOptional.get());
         }
+
         if (request.getBrandId() > 0) {
             Optional<Brand> brandOptional = brandRepository.findById(request.getBrandId());
             if (brandOptional.isEmpty()) {
@@ -202,9 +216,47 @@ public class ProductService {
             }
             product.setBrand(brandOptional.get());
         }
+
+        if (request.getNetWeight() != null) {
+            product.setNetWeight(request.getNetWeight());
+        }
+
+        if (request.getBeanType() != null) {
+            product.setBeanType(request.getBeanType());
+        }
+
+        if (request.getOrigin() != null) {
+            product.setOrigin(request.getOrigin());
+        }
+
+        if (request.getRoadLevel() != null) {
+            product.setRoadLevel(request.getRoadLevel());
+        }
+
+        if (request.getFlavoNotes() != null) {
+            product.setFlavoNotes(request.getFlavoNotes());
+        }
+
+        if (request.getCaffeineContents() != null) {
+            product.setCaffeineContents(request.getCaffeineContents());
+        }
+
+        if (request.getCafeForm() != null) {
+            product.setCafeForm(request.getCafeForm());
+        }
+
+        if (request.getArticleTitle() != null) {
+            product.setArticleTitle(request.getArticleTitle());
+        }
+
+        if (request.getArticle() != null) {
+            product.setArticle(request.getArticle());
+        }
+
         productRepository.save(product);
         return messageBuilder.buildSuccessMessage(getProductResponse(product));
     }
+
 
     public RespMessage getAllTypeProduct() {
         List<TypeProduct> typeProducts = typeProductRepository.findAll().stream()
@@ -240,6 +292,15 @@ public class ProductService {
             productResponse.setDescription(product.getDescription());
             productResponse.setCategory(product.getCategory());
             productResponse.setBrand(product.getBrand());
+            productResponse.setNetWeight(product.getNetWeight());
+            productResponse.setBeanType(product.getBeanType());
+            productResponse.setOrigin(product.getOrigin());
+            productResponse.setRoadLevel(product.getRoadLevel());
+            productResponse.setFlavoNotes(product.getFlavoNotes());
+            productResponse.setCaffeineContents(product.getCaffeineContents());
+            productResponse.setCafeForm(product.getCafeForm());
+            productResponse.setArticleTitle(product.getArticleTitle());
+            productResponse.setArticle(product.getArticle());
 
             List<Image> images = imageRepository.findByProduct(product);
             productResponse.setImages(images);

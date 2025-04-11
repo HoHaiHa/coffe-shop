@@ -29,6 +29,12 @@ public class Category {
 
     @Column(name = "default_image_url")
     private String defaultImageUrl;
+    
+    @Column(name = "articleTitle")
+    private String articleTitle;
+    
+    @Column(name = "article", columnDefinition = "TEXT")
+    private String article;
 
     @PrePersist
     public void prePersist() {

@@ -13,13 +13,13 @@ const DescriptionProduct = ({ product }) => {
             </li>
             <li className="flex justify-start border-b py-2">
               <span className="font-semibold md:w-1/4 w-1/3">Xuất xứ:</span>
-              <span>Việt Nam </span>
+              <span>{product.origin}</span>
             </li>
             <li className="flex justify-start border-b py-2">
               <span className="font-semibold md:w-1/4 w-1/3">
                 Loại thực phẩm:
               </span>
-              <span>Đồ uống </span>
+              <span>Cafe đóng gói</span>
             </li>
             <li className="flex justify-start border-b py-2">
               <span className="font-semibold md:w-1/4 w-1/3">Loại Cafe:</span>
@@ -35,6 +35,30 @@ const DescriptionProduct = ({ product }) => {
                   ? product.description
                   : "Không có mô tả sản phẩm"}
               </span>
+            </li>
+            <li className="flex justify-start border-b py-2">
+              <span className="font-semibold md:w-1/4 w-1/3">Khối lượng tịnh:</span>
+              <span>{product.netWeight}</span>
+            </li>
+            <li className="flex justify-start border-b py-2">
+              <span className="font-semibold md:w-1/4 w-1/3">Loại hạt:</span>
+              <span>{product.beanType}</span>
+            </li>
+            <li className="flex justify-start border-b py-2">
+              <span className="font-semibold md:w-1/4 w-1/3">Độ rang:</span>
+              <span>{product.roadLevel}</span>
+            </li>
+            <li className="flex justify-start border-b py-2">
+              <span className="font-semibold md:w-1/4 w-1/3">Hương vị:</span>
+              <span>{product.flavoNotes}</span>
+            </li>
+            <li className="flex justify-start border-b py-2">
+              <span className="font-semibold md:w-1/4 w-1/3">Độ caffeine:</span>
+              <span>{product.caffeineContents}</span>
+            </li>
+            <li className="flex justify-start border-b py-2">
+              <span className="font-semibold md:w-1/4 w-1/3">Dạng cafe:</span>
+              <span>{product.cafeForm}</span>
             </li>
           </ul>
         </div>

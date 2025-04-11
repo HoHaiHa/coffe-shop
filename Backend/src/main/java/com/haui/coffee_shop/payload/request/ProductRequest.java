@@ -19,22 +19,22 @@ public class ProductRequest {
     private long categoryId;
     @JsonProperty("BrandId")
     private long brandId;
-    @JsonProperty("netWeight")
+    @JsonProperty("NetWeight")
     private String netWeight;
-    @JsonProperty("beanType")
+    @JsonProperty("BeanType")
     private String beanType;
-    @JsonProperty("origin")
+    @JsonProperty("Origin")
     private String origin;
-    @JsonProperty("roadLevel")
+    @JsonProperty("RoadLevel")
     private String roadLevel;
-    @JsonProperty("flavoNotes")
+    @JsonProperty("FlavoNotes")
     private String flavoNotes;
-    @JsonProperty("caffeineContents")
+    @JsonProperty("CaffeineContents")
     private String caffeineContents;
-    @JsonProperty("cafeForm")
+    @JsonProperty("CafeForm")
     private String cafeForm;
-    @JsonProperty("articleTitle")
+    @JsonProperty("ArticleTitle")
     private String articleTitle;
-    @JsonProperty("article")
+    @JsonProperty("Article")
     private String article;
 }

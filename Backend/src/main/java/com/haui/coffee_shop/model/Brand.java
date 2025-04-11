@@ -23,6 +23,14 @@ public class Brand {
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private Status status;
+    
+    
+    @Column(name = "articleTitle")
+    private String articleTitle;
+    
+    @Column(name = "article", columnDefinition = "TEXT")
+    private String article;
+   
 
     @PrePersist
     public void prePersist() {
