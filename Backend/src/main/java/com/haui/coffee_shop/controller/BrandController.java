@@ -5,32 +5,26 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import com.haui.coffee_shop.common.Constant;
 import com.haui.coffee_shop.common.GsonUtil;
 import com.haui.coffee_shop.config.MessageBuilder;
 import com.haui.coffee_shop.exception.CoffeeShopException;
-import com.haui.coffee_shop.model.Brand;
+import com.haui.coffee_shop.payload.request.BrandRequest;
 import com.haui.coffee_shop.payload.response.RespMessage;
 import com.haui.coffee_shop.service.BrandService;
-import com.haui.coffee_shop.service.ProductService;
-
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/brand")
 public class BrandController {
-    private final ProductService productService;
-    private final MessageBuilder messageBuilder;
     private final BrandService brandService;
+    private final MessageBuilder messageBuilder;
 
     @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> addBrand(@RequestBody Map<String, String> payload) {
-        String name = payload.get("name");
+    public ResponseEntity<String> addBrand(@RequestBody BrandRequest brandRequest) {
         try {
-            RespMessage respMessage = productService.addBrand(name);
+            RespMessage respMessage = brandService.addBrand(brandRequest);
             return new ResponseEntity<>(GsonUtil.getInstance().toJson(respMessage), HttpStatus.OK);
         } catch (CoffeeShopException e) {
             RespMessage resp = messageBuilder.buildFailureMessage(e.getCode(), e.getObjects(), e.getMessage());
@@ -41,7 +35,6 @@ public class BrandController {
         }
     }
 
-
     @RequestMapping(value = "/all", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<String> getAllBrand() {
         RespMessage respMessage = brandService.getAllBrands();
@@ -50,9 +43,9 @@ public class BrandController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> updateBrand(@PathVariable long id, @RequestBody Brand brand) {
+    public ResponseEntity<String> updateBrand(@PathVariable long id, @RequestBody BrandRequest brandRequest) {
         try {
-            RespMessage respMessage = brandService.updateBrand(id,brand);
+            RespMessage respMessage = brandService.updateBrand(id, brandRequest);
             return new ResponseEntity<>(GsonUtil.getInstance().toJson(respMessage), HttpStatus.OK);
         } catch (CoffeeShopException e) {
             RespMessage resp = messageBuilder.buildFailureMessage(e.getCode(), e.getObjects(), e.getMessage());

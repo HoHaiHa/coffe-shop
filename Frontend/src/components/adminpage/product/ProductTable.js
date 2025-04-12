@@ -487,13 +487,13 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
                             dropdownRender={(menu) => (
                                 <>
                                     {menu}
-                                    <Button
+                                    {/* <Button
                                         type="text"
                                         className="w-full text-left"
                                         onClick={() => setIsBrandModalVisible(true)}
                                     >
                                         + Add New Brand
-                                    </Button>
+                                    </Button> */}
                                 </>
                             )}
                         >
@@ -606,7 +606,7 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
                 </Button>
             </Modal>
 
-            <Modal
+            {/* <Modal
                 title="Add New Brand"
                 open={isBrandModalVisible}
                 onCancel={() => setIsBrandModalVisible(false)}
@@ -625,7 +625,7 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
                 >
                     Add Brand
                 </Button>
-            </Modal>
+            </Modal> */}
 
 
         </div>

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import { Table, Button, Modal, Form, Input, Popconfirm } from 'antd';
-import { PlusOutlined, SearchOutlined  } from '@ant-design/icons';
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import fetchWithAuth from '../../../helps/fetchWithAuth';
 import summaryApi from '../../../common';
 import Search from 'antd/es/transfer/search';
 import { toast } from 'react-toastify';
+import TextArea from 'antd/es/input/TextArea';
 
 const BrandTable = ({ brands, setBrands }) => {
     // const [brands, setBrands] = useState([]);
@@ -25,12 +26,12 @@ const BrandTable = ({ brands, setBrands }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name: values.name }),
+                body: JSON.stringify({ Name: values.name, Description: values.description, ArticleTitle: values.articleTitle, Article: values.article }),
             });
             const data = await response.json();
             if (data.respCode === '000' && data.data) {
                 setNameError('')
-                currentBrand? toast.success("Chỉnh sửa nhãn hàng thành công!") : toast.success("Thêm nhãn hàng thành công!")
+                currentBrand ? toast.success("Chỉnh sửa nhãn hàng thành công!") : toast.success("Thêm nhãn hàng thành công!")
                 if (currentBrand) {
                     setBrands(brands.map(brand => brand.id === currentBrand.id ? data.data : brand));
                 } else {
@@ -41,15 +42,16 @@ const BrandTable = ({ brands, setBrands }) => {
                 setCurrentBrand(null);
             } else {
                 console.log(data);
-                currentBrand? toast.error("Chỉnh sửa nhãn hàng không thành công! Vui lòng thử lại sau!") : toast.error("Thêm nhãn hàng không thành công! Vui lòng thử lại sau!")
+                currentBrand ? toast.error("Chỉnh sửa nhãn hàng không thành công! Vui lòng thử lại sau!") : toast.error("Thêm nhãn hàng không thành công! Vui lòng thử lại sau!")
             }
-            if(data.respCode === '100'){
+            if (data.respCode === '100') {
                 setNameError('Tên nhãn hàng không được để trống!')
             }
-            if(data.respCode === '102'){
+            if (data.respCode === '102') {
                 setNameError('Nhãn hàng đã tồn tại!')
             }
         };
+        console.log(JSON.stringify({ Name: values.name, Description: values.description, ArticleTitle: values.articleTitle, Article: values.article }))
         fetchAddOrUpdateBrand();
     };
 
@@ -131,6 +133,11 @@ const BrandTable = ({ brands, setBrands }) => {
             ...getColumnSearchProps("name")
         },
         {
+            title: 'Mô tả',
+            dataIndex: 'description',
+            key: 'description',
+        },
+        {
             title: 'Hành động',
             key: 'action',
             render: (_, record) => (
@@ -139,7 +146,7 @@ const BrandTable = ({ brands, setBrands }) => {
                         type="link"
                         onClick={() => {
                             setCurrentBrand(record);
-                            form.setFieldsValue({ name: record.name });
+                            form.setFieldsValue({ name: record.name, description:record.description, articleTitle: record.articleTitle, article: record.article });
                             setIsModalVisible(true);
                         }}
                     >
@@ -199,6 +206,29 @@ const BrandTable = ({ brands, setBrands }) => {
                         validateStatus={nameError ? 'error' : ''}
                     >
                         <Input placeholder="Nhập tên nhãn hàng" className="rounded-md" />
+                    </Form.Item>
+                    <Form.Item
+                        name="description"
+                        label="Mô tả"
+                        rules={[{ required: false, message: 'Vui lòng nhập Mô tả!' }]}
+                    >
+                        <Input placeholder="Nhập tên bài viết" className="rounded-md" />
+                    </Form.Item>
+                    <Form.Item
+                        name="articleTitle"
+                        label="Tên bài viết"
+                        rules={[{ required: false, message: 'Vui lòng nhập tên bài viết!' }]}
+
+                    >
+                        <Input placeholder="Nhập tên bài viết" className="rounded-md" />
+                    </Form.Item>
+                    <Form.Item
+                        name="article"
+                        label="Bài viết"
+                        rules={[{ required: false, message: 'Vui lòng nhập bài viết!' }]}
+
+                    >
+                        <TextArea placeholder="Nhập bài viết" className="rounded-md" />
                     </Form.Item>
                     <Button
                         type="primary"

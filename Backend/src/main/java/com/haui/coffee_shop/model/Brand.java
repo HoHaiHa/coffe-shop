@@ -24,6 +24,9 @@ public class Brand {
     @Enumerated(EnumType.STRING)
     private Status status;
     
+    @Column(name = "description")
+    private String description;
+    
     
     @Column(name = "articleTitle")
     private String articleTitle;
