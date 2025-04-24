@@ -41,7 +41,7 @@ public class CategoryService {
         }
     }
 
-    public RespMessage addCategory(String name, String description, MultipartFile imageFile) {
+    public RespMessage addCategory(String name, String description,String articleTitle, String article, MultipartFile imageFile) {
         if (name == null || name.trim().isEmpty()) {
             throw new CoffeeShopException(Constant.FIELD_NOT_NULL, new Object[]{"name"}, "Category name must be not null");
         }
@@ -51,6 +51,8 @@ public class CategoryService {
         Category category = new Category();
         category.setName(name.trim());
         category.setDescription(description.trim());
+        category.setArticleTitle(articleTitle);
+        category.setArticle(article);
         if (imageFile != null && !imageFile.isEmpty()) {
             try {
                 Map uploadResult = cloudinaryService.upload(imageFile, "categories");
@@ -69,7 +71,7 @@ public class CategoryService {
         }
     }
 
-    public RespMessage updateCategory(Long id, String name, String description, MultipartFile imageFile) {
+    public RespMessage updateCategory(Long id, String name, String description,String articleTitle, String article, MultipartFile imageFile) {
         if (name == null || name.trim().isEmpty()) {
             throw new CoffeeShopException(Constant.FIELD_NOT_NULL, new Object[]{"name"}, "Category name must be not null");
         }
@@ -81,6 +83,8 @@ public class CategoryService {
         existingCategory.setName(name.trim());
         existingCategory.setDescription(description.trim());
         existingCategory.setStatus(Status.ACTIVE);
+        existingCategory.setArticleTitle(articleTitle);
+        existingCategory.setArticle(article);
 
         if (existingCategory.getDefaultImageUrl() != null && !existingCategory.getDefaultImageUrl().isEmpty()) {
             try {

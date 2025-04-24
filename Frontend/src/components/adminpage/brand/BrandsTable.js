@@ -210,14 +210,14 @@ const BrandTable = ({ brands, setBrands }) => {
                     <Form.Item
                         name="description"
                         label="Mô tả"
-                        rules={[{ required: false, message: 'Vui lòng nhập Mô tả!' }]}
+                        
                     >
-                        <Input placeholder="Nhập tên bài viết" className="rounded-md" />
+                        <TextArea
+                         placeholder="Nhập tên bài viết" className="rounded-md" rows={2}/>
                     </Form.Item>
                     <Form.Item
                         name="articleTitle"
                         label="Tên bài viết"
-                        rules={[{ required: false, message: 'Vui lòng nhập tên bài viết!' }]}
 
                     >
                         <Input placeholder="Nhập tên bài viết" className="rounded-md" />
@@ -225,10 +225,9 @@ const BrandTable = ({ brands, setBrands }) => {
                     <Form.Item
                         name="article"
                         label="Bài viết"
-                        rules={[{ required: false, message: 'Vui lòng nhập bài viết!' }]}
 
                     >
-                        <TextArea placeholder="Nhập bài viết" className="rounded-md" />
+                        <TextArea placeholder="Nhập bài viết" className="rounded-md" rows={4}/>
                     </Form.Item>
                     <Button
                         type="primary"

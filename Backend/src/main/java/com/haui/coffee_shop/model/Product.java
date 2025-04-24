@@ -7,7 +7,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import com.haui.coffee_shop.common.enums.Status;
 import com.haui.coffee_shop.payload.response.ProductResponse;
@@ -70,6 +73,10 @@ public class Product {
     
     @Column(name = "article", columnDefinition = "TEXT")
     private String article;
+    
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
     
     
     @PrePersist

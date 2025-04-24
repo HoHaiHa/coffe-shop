@@ -11,7 +11,7 @@ import image1 from "../assets/img/empty.jpg";
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart, toggleSelected } from "../store/cartSlice";
 import fetchWithAuth from "../helps/fetchWithAuth";
-import {  message, Modal } from "antd";
+import { message, Modal } from "antd";
 import {
   selectFavorites,
   removeFromFavorites,
@@ -21,6 +21,7 @@ import {
 import ListReview from "../components/layout/ListReview";
 import ProductRating from "../components/layout/ProductRating";
 import DescriptionProduct from "../components/layout/DescriptionProduct";
+import ArticleComponent from "../components/layout/ArticleComponent";
 import { toast } from "react-toastify";
 
 const ProductDetail = () => {
@@ -39,7 +40,7 @@ const ProductDetail = () => {
   const [currentImage, setCurrentImage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [checkQuantity , setCheckQuantity] =  useState(0);
+  const [checkQuantity, setCheckQuantity] = useState(0);
 
   const user = useSelector((store) => store?.user?.user);
   const cartItems = useSelector((store) => store.cart.items);
@@ -167,11 +168,11 @@ const ProductDetail = () => {
       return;
     }
 
-    const checkItem = cartItems.find((item) =>  item.productItemResponse.id === productItem.id)  ;
-    if(checkItem && (checkItem.quantity + quantity >  maxQuantity)) {
+    const checkItem = cartItems.find((item) => item.productItemResponse.id === productItem.id);
+    if (checkItem && (checkItem.quantity + quantity > maxQuantity)) {
       setCheckQuantity(checkItem.quantity)
-       showModal();
-       return;
+      showModal();
+      return;
     }
 
     try {
@@ -224,13 +225,13 @@ const ProductDetail = () => {
   const handleClickFavorites = async () => {
     const isAlreadyFavorite = isFavorite;
 
-    if(!user) {
-      Modal.confirm ({
-        title : "",
-        content: "Bạn cần phải đăng nhập để có thể thêm sản phẩm vào danh sách yêu thích", 
+    if (!user) {
+      Modal.confirm({
+        title: "",
+        content: "Bạn cần phải đăng nhập để có thể thêm sản phẩm vào danh sách yêu thích",
         okText: "Đăng nhập",
         cancelText: "Cancel",
-        onOk : () => {
+        onOk: () => {
           navigate('/login')
         },
       })
@@ -299,6 +300,8 @@ const ProductDetail = () => {
   };
 
 
+
+
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -310,6 +313,8 @@ const ProductDetail = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
+  console.log(product);
 
   return (
     <div className="container mx-auto mt-3">
@@ -328,9 +333,8 @@ const ProductDetail = () => {
                 </div>
               )}
               <img
-                className={`md:w-[300px] md:h-[300px] lg:w-[400px] lg:h-[380px] w-60 h-60 rounded-md object-cover transition-opacity duration-300 ${
-                  imageLoadStatus[currentImage] ? "opacity-100" : "opacity-0"
-                }`}
+                className={`md:w-[300px] md:h-[300px] lg:w-[400px] lg:h-[380px] w-60 h-60 rounded-md object-cover transition-opacity duration-300 ${imageLoadStatus[currentImage] ? "opacity-100" : "opacity-0"
+                  }`}
                 src={images.length > 0 ? images[currentImage].url : image1}
                 alt="Main product"
                 onLoad={() => handleImageLoad(currentImage)}
@@ -343,7 +347,7 @@ const ProductDetail = () => {
                   gridTemplateColumns:
                     images.length > 0
                       ? `repeat(${images.length}, 1fr)`
-                      : "repeat(4, 1fr)", 
+                      : "repeat(4, 1fr)",
                 }}
               >
                 {(images.length > 0
@@ -360,11 +364,9 @@ const ProductDetail = () => {
                       </div>
                     )}
                     <img
-                      className={`w-16 h-16 lg:h-24 lg:w-24 object-cover rounded-lg shadow-md cursor-pointer transition-opacity duration-300 ${
-                        index === currentImage ? "border-2 border-red-500" : ""
-                      } ${
-                        imageLoadStatus[index] ? "opacity-100" : "opacity-0"
-                      }`}
+                      className={`w-16 h-16 lg:h-24 lg:w-24 object-cover rounded-lg shadow-md cursor-pointer transition-opacity duration-300 ${index === currentImage ? "border-2 border-red-500" : ""
+                        } ${imageLoadStatus[index] ? "opacity-100" : "opacity-0"
+                        }`}
                       src={image.url}
                       alt={`Product ${index + 1}`}
                       onLoad={() => handleImageLoad(index)}
@@ -429,11 +431,10 @@ const ProductDetail = () => {
                     disabled={item.stock === 0}
                     key={index}
                     onClick={() => handleClickSize(item)}
-                    className={`shrink-0 w-28 h-8 rounded-sm text-sm border-2 ${
-                      clickButtonSize === item
-                        ? "border-orange-500 text-red-500"
-                        : "bg-white hover:border-orange-500 hover:text-red-500"
-                    }${item.stock === 0 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : ""}` }
+                    className={`shrink-0 w-28 h-8 rounded-sm text-sm border-2 ${clickButtonSize === item
+                      ? "border-orange-500 text-red-500"
+                      : "bg-white hover:border-orange-500 hover:text-red-500"
+                      }${item.stock === 0 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : ""}`}
                   >
                     {item.type.name}
                   </button>
@@ -450,7 +451,7 @@ const ProductDetail = () => {
                 <button
                   onClick={decrement}
                   className="px-2 py-1 text-gray-800 rounded-l focus:outline-none border border-solid"
-                  // disabled={!maxQuantity}
+                // disabled={!maxQuantity}
                 >
                   -
                 </button>
@@ -467,7 +468,7 @@ const ProductDetail = () => {
                 <button
                   onClick={increment}
                   className="px-2 py-1 text-gray-800 rounded-r focus:outline-none border border-solid"
-                  // disabled={!maxQuantity}
+                // disabled={!maxQuantity}
                 >
                   +
                 </button>
@@ -547,15 +548,21 @@ const ProductDetail = () => {
         </div>
       </div>
 
+      <div className="w-full lg:mt-10 mt-6 p-3">
+        <ArticleComponent
+          title={product.articleTitle}
+          article={product.article}
+        />
+      </div>
+
       {/* Tabs */}
-      <div className="w-full lg:mt-10 mt-6">
+      <div className="w-full  p-3"  >
         <div className="flex border-b border-gray-300">
           {tabs.map((tab) => (
             <button
               key={tab}
-              className={`px-4 py-2 font-semibold ${
-                activeTab === tab ? "border-b-2 border-orange-500" : ""
-              }`}
+              className={`px-4 py-2 font-semibold ${activeTab === tab ? "border-b-2 border-orange-500" : ""
+                }`}
               onClick={() => setActiveTab(tab)}
             >
               {tab}
@@ -577,7 +584,7 @@ const ProductDetail = () => {
           </button>,
         ]}
         centered
-        closable={false} 
+        closable={false}
       >
         <p className="  text-base font-normal mt-10 mb-20">
           Bạn đã có {checkQuantity} sản phẩm này trong giỏ hàng. Không thể thêm số lượng đã chọn vào
@@ -585,7 +592,7 @@ const ProductDetail = () => {
         </p>
       </Modal>
 
-    
+
     </div>
   );
 };

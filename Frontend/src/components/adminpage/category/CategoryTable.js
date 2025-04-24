@@ -42,6 +42,8 @@ const CategoryTable = () => {
                 const formData = new FormData();
                 formData.append("name", values.name);
                 formData.append("description", values.description);
+                formData.append("articleTitle", values.articleTitle);
+                formData.append("article", values.article);
                 if (values.image && values.image[0]) {
                     formData.append('image', values.image[0].originFileObj);
                 }
@@ -193,6 +195,8 @@ const CategoryTable = () => {
                             form.setFieldsValue({
                                 name: record.name,
                                 description: record.description,
+                                articleTitle : record.articleTitle,
+                                article:record.article,
                                 image: record.defaultImageUrl
                                     ? [
                                         {
@@ -276,8 +280,20 @@ const CategoryTable = () => {
                         <Input.TextArea
                             placeholder="Nhập mô tả danh mục"
                             className="rounded-md"
-                            rows={4}
+                            rows={2}
                         />
+                    </Form.Item>
+                    <Form.Item
+                        name="articleTitle"
+                        label="Tên bài viết"            
+                    >
+                        <Input placeholder="Nhập tên bài viết" className="rounded-md" />
+                    </Form.Item>
+                    <Form.Item
+                        name="article"
+                        label="Bài viết"            
+                    >
+                        <Input.TextArea placeholder="Nhập tên bài viết" className="rounded-md" rows={4} />
                     </Form.Item>
 
                     <Form.Item

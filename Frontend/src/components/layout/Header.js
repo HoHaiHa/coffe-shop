@@ -86,7 +86,7 @@ const Header = () => {
   }
 
   return (
-    <header className="bg-gray-150 dark:bg-gray-900 px-6 py-2 fixed top-0 w-full z-20">
+    <header className="bg-gray-150 dark:bg-gray-900 px-6 py-4 fixed top-0 w-full z-20">
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-16">
           {/* logo */}

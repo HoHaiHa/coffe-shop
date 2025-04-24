@@ -31,10 +31,10 @@ public class CategoryController {
     @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json",
                         consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<String> addCategory(@RequestParam("name") String name, @RequestParam("description") String description,
-                                              @RequestParam(value = "image", required = false) MultipartFile imageFile) {
+    public ResponseEntity<String> addCategory(@RequestParam("name") String name, @RequestParam("description") String description, @RequestParam("articleTitle") String articleTitle,
+    		@RequestParam("article") String article,@RequestParam(value = "image", required = false) MultipartFile imageFile) {
         try {
-            RespMessage respMessage = categoryService.addCategory(name, description, imageFile);
+            RespMessage respMessage = categoryService.addCategory(name, description,articleTitle,article, imageFile);
             return new ResponseEntity<>(GsonUtil.getInstance().toJson(respMessage), HttpStatus.OK);
         }
         catch (CoffeeShopException e) {
@@ -69,10 +69,10 @@ public class CategoryController {
                     consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> updateCategory (@PathVariable Long id,
-                                                  @RequestParam("name") String name, @RequestParam("description") String description,
+                                                  @RequestParam("name") String name, @RequestParam("description") String description,String articleTitle, String article,
                                                   @RequestParam(value = "image", required = false) MultipartFile imageFile) {
         try {
-            RespMessage respMessage = categoryService.updateCategory(id, name, description,imageFile);
+            RespMessage respMessage = categoryService.updateCategory(id,name, description,articleTitle,article, imageFile);
             return new ResponseEntity<>(GsonUtil.getInstance().toJson(respMessage), HttpStatus.OK);
         } catch (CoffeeShopException e) {
             RespMessage resp = messageBuilder.buildFailureMessage(e.getCode(), e.getObjects(), e.getMessage());
