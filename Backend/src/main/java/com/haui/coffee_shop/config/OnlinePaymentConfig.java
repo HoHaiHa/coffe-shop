@@ -1,7 +1,6 @@
 package com.haui.coffee_shop.config;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
