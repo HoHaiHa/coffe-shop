@@ -301,7 +301,7 @@ public class ProductService {
             productResponse.setCafeForm(product.getCafeForm());
             productResponse.setArticleTitle(product.getArticleTitle());
             productResponse.setArticle(product.getArticle());
-            productResponse.setCreateAt(product.getCreatedAt());
+            productResponse.setCreatedAt(product.getCreatedAt());
 
             List<Image> images = imageRepository.findByProduct(product);
             productResponse.setImages(images);

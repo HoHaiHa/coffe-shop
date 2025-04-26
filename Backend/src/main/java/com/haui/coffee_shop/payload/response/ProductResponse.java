@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import com.haui.coffee_shop.common.enums.Status;
@@ -56,7 +57,7 @@ public class ProductResponse {
     private String cafeForm;
     private String articleTitle;
     private String article;
-    private LocalDateTime createAt;
+    private Date createdAt;
 
 
 }

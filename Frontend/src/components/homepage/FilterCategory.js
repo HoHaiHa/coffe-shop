@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import summaryApi from "../../common";
 import { Slider, Box, Typography } from "@mui/material";
 
-const Filter = ({ onFilter, products ,onClickFilter }) => {
+const FilterCategory = ({ onFilter, products ,onClickFilter }) => {
   const min = 0 ;
   const max = 5000000;
   const step= 50000;
@@ -165,4 +165,4 @@ const Filter = ({ onFilter, products ,onClickFilter }) => {
   );
 };
 
-export default Filter;
+export default FilterCategory;

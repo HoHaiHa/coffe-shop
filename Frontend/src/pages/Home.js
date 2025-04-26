@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
@@ -15,6 +15,7 @@ import BreadcrumbNav from "../components/layout/BreadcrumbNav";
 import { setCartItems } from "../store/cartSlice";
 import { selectFavorites, addToFavorites } from "../store/favoritesSlice ";
 import ChatWidget from "../components/layout/ChatWidget";
+import FilterAdvanced from "../components/homepage/FilterAdvanced";
 
 const Home = () => {
   const location = useLocation();
@@ -31,7 +32,10 @@ const Home = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const cartItems = useSelector((state) => state.cart.items);
+  const [onClickFilter , setOnClickFilter] = useState(false);
   const favorites = useSelector(selectFavorites);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -133,13 +137,24 @@ const Home = () => {
         }
       } catch (error) {
         console.log("error", error);
-      }finally {
+      } finally {
         setIsCategoriesLoading(false);
       }
     };
 
     fetchCategory();
   }, []);
+
+  const handleFilterProducts = (filtered) => {
+    setFilteredProducts(filtered);
+
+  };
+  const handleClickFilter = () => {
+    setOnClickFilter(true);
+  };
+  const productList = useMemo(() => {
+    return filteredProducts.length > 0 ? filteredProducts : products;
+  }, [products, filteredProducts]);
 
   if (user?.roleName === "ROLE_ADMIN") {
     navigate("/admin");
@@ -165,31 +180,30 @@ const Home = () => {
           {location.pathname === "/" && (
             <>
               <Slideshow />
-              <div className="flex flex-col md:flex-row mt-5">
-                <div className="md:w-2/6 lg:w-1/5 w-full md:pr-4">
-                  <div className="sticky top-24">
-                    {isCategoriesLoading ? (
-                    <div className="flex justify-center items-center h-screen">
-                      <LoadingOutlined
-                        style={{ fontSize: 48, color: "red" }}
-                        spin
-                      />
-                    </div>
-                  ) : (
-                    <ListCategory  categories={categories}/>
-                  )}
+              <div className="container  mx-auto ">
+                {isProductsLoading && (
+                  <div className="flex justify-center items-center h-screen">
+                    <LoadingOutlined style={{ fontSize: 48, color: 'red' }} spin />
                   </div>
-                </div>
-                <div className="md:w-4/6 lg:w-4/5 w-full md:pl-4">
-                  {isProductsLoading ? (
-                    <div className="flex justify-center items-center h-screen">
-                      <LoadingOutlined
-                        style={{ fontSize: 48, color: "red" }}
-                        spin
-                      />
+                )}
+
+                <div className=" grid grid-cols-12 lg:gap-x-10 gap-x-3">
+                  <div className="lg:col-span-3 md:col-span-4 col-span-12 mt-10 sm:min-h-screen ">
+                    <div className=" top-28 ">
+                      <FilterAdvanced onFilter={handleFilterProducts} onClickFilter={handleClickFilter} products={products} />
+                    </div>
+                  </div>
+
+                  {((filteredProducts.length === 0 && onClickFilter) || productList.length === 0) ? (
+                    <div className="lg:col-start-4 lg:col-span-9 md:col-start-5 md:col-span-8 bg-white shadow-md mt-10 ">
+                      <p className="text-center text-lg font-bold text-gray-500 ">
+                        No results found
+                      </p>
                     </div>
                   ) : (
-                    <ListProduct products={products} title={"All products"} />
+                    <div className="lg:col-start-4 lg:col-span-9 md:col-start-5 md:col-span-8  col-span-12">
+                      <ListProduct products={productList}  />
+                    </div>
                   )}
                 </div>
               </div>

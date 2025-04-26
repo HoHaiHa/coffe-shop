@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import summaryApi from "../common";
 import ListProduct from "../components/homepage/ListProduct";
-import Filter from "../components/homepage/Filter";
+import FilterCategory from "../components/homepage/FilterCategory";
 import { Spin } from "antd";
 
 const SearchProduct = () => {
@@ -66,7 +66,7 @@ const SearchProduct = () => {
         <div className="grid grid-cols-12 lg:gap-x-10 gap-x-3">
           <div className="lg:col-span-3 md:col-span-4 col-span-12 mt-10 sm:min-h-screen">
             <div className="sticky top-28 ">
-              <Filter
+              <FilterCategory
                 onFilter={handleFilterProducts}
                 products={products}
                 onClickFilter={handleClickFilter}

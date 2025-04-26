@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -76,7 +77,7 @@ public class Product {
     
     @CreationTimestamp
     @Column(updatable = false)
-    private LocalDateTime createdAt;
+    private Date createdAt;
     
     
     @PrePersist
