@@ -113,7 +113,7 @@ const FilterAdvanced = ({ onFilter, products, onClickFilter }) => {
                     </div>
                 </div>
                 {/* Lọc theo thương hiệu */}
-                <div className="">
+                <div className="mb-6">
                     <p className="text-xl font-semibold mb-4">Brand</p>
                     <div className="grid grid-cols-2 gap-3 mt-2">
                         {brands.map((brand, index) => (

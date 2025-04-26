@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Logo from "./Logo";
 import { GrSearch } from "react-icons/gr";
+import { GiCoffeeCup } from "react-icons/gi";
 
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { PiUserCircle } from "react-icons/pi";
+import { AiOutlineTrademark } from "react-icons/ai";
 
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,6 +18,9 @@ import { clearCart } from "../../store/cartSlice";
 import { clearFavorites } from "../../store/favoritesSlice ";
 import CartTab from "../cart/CartTab";
 import { clearAddress } from "../../store/shippingAddressSlice ";
+import DropdownWithList from "./DropdownWithList";
+import ListCategory from "../homepage/ListCategory";
+import ListBrand from "../homepage/ListBrand";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -117,6 +122,12 @@ const Header = () => {
 
         {/* user */}
         <div className="flex items-center space-x-4">
+          <DropdownWithList title='Thương hiệu' Icon={AiOutlineTrademark}>
+            <ListBrand/>
+          </DropdownWithList>
+          <DropdownWithList title='Danh mục' Icon={GiCoffeeCup}>
+            <ListCategory/>
+          </DropdownWithList>
           <div
             className="flex items-center space-x-4 relative"
             onMouseEnter={() => setShowCartTab(true)}

@@ -5,7 +5,7 @@ const ArticleComponent = ({ keyword, title, article }) => {
   return (
     <div className="w-full mx-0 mt-8">
       {keyword && (
-        <div className="relative w-full h-64 overflow-hidden mb-8">
+        <div className="relative w-full h-40 overflow-hidden mb-8">
           <img
             src={cafeBean}
             alt={keyword}
@@ -20,7 +20,7 @@ const ArticleComponent = ({ keyword, title, article }) => {
       )}
 
 
-      <h1 className="text-3xl font-bold mb-6 text-gray-900">
+      <h1 className="text-3xl font-bold mb-6 text-gray-900 px-2">
         {title}
       </h1>
 

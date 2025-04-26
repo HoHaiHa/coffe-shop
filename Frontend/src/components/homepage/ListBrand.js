@@ -1,38 +1,37 @@
 import React, { useEffect, useState } from "react";
 
-
-import CategoryCard from "../layout/CategoryCard";
 import summaryApi from "../../common";
-const ListCategory = () => {
-  const [categories, setCategories] = useState([]);
+import BrandCard from "../layout/BrandCard";
+const ListBrand = () => {
+  const [brands, setBrands] = useState([]);
 
   useEffect(() => {
-    const fetchCategory = async () => {
+    const fetchBrands = async () => {
       try {
-        const categoryResponse = await fetch(summaryApi.allCategory.url, {
-          method: summaryApi.allCategory.method,
+        const brandResponse = await fetch(summaryApi.allBrand.url, {
+          method: summaryApi.allBrand.method,
           headers: {
             "Content-Type": "application/json",
           },
         });
 
-        const dataResult = await categoryResponse.json();
+        const dataResult = await brandResponse.json();
         if (dataResult.respCode === "000") {
-          setCategories(dataResult.data);
+          setBrands(dataResult.data);
         }
       } catch (error) {
         console.log("error", error);
       }
     };
-    fetchCategory();
+    fetchBrands();
   }, []);
 
   return (
     <>
       <div className="container mx-auto bg-white p-2  md:p-4  shadow-md md:rounded-md">
         <div className="mt-4 grid md:grid-cols-1 grid-cols-2 gap-1 lg:gap-2   ">
-          {categories.map((category, index) => (
-            <CategoryCard key={index} category={category} />
+          {brands.map((brand, index) => (
+            <BrandCard key={index} brand={brand} />
           ))}
         </div>
       </div>
@@ -40,4 +39,4 @@ const ListCategory = () => {
   );
 };
 
-export default ListCategory;
+export default ListBrand;

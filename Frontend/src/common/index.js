@@ -212,6 +212,10 @@ const summaryApi = {
         url : `${backendDomain}/product/category/`,
         method : "GET"
     },
+    getProductByBrand : {
+        url : `${backendDomain}/product/brand/`,
+        method : "GET"
+    },
     updateProfile : {
         url : `${backendDomain}/profile`,
         method : "PUT"

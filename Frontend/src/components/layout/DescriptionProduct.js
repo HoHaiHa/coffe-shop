@@ -12,6 +12,10 @@ const DescriptionProduct = ({ product }) => {
               <span>{product.brand.name}</span>
             </li>
             <li className="flex justify-start border-b py-2">
+              <span className="font-semibold md:w-1/4 w-1/3">Danh mục:</span>
+              <span>{product.category.name}</span>
+            </li>
+            <li className="flex justify-start border-b py-2">
               <span className="font-semibold md:w-1/4 w-1/3">Xuất xứ:</span>
               <span>{product.origin}</span>
             </li>

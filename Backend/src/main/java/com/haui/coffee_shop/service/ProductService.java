@@ -73,6 +73,21 @@ public class ProductService {
             throw new CoffeeShopException(Constant.SYSTEM_ERROR, null , null);
         }
     }
+    
+    public RespMessage getProductsByBrandId(Long brandId) {
+        try {
+            List<Product> tempProducts = productRepository.findByBrandId(brandId);
+            List<Product> products = tempProducts.stream().filter(product -> product.getStatus() == Status.ACTIVE).toList();
+            List<ProductResponse> productResponseList = new ArrayList<>();
+            for (Product product : products) {
+                ProductResponse productResponse = getProductResponse(product);
+                productResponseList.add(productResponse);
+            }
+            return messageBuilder.buildSuccessMessage(productResponseList);
+        } catch (Exception e) {
+            throw new CoffeeShopException(Constant.SYSTEM_ERROR, null , null);
+        }
+    }
 
 
     // Tìm kiếm sản phẩm theo từ khóa và trả về RespMessage

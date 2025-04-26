@@ -16,8 +16,8 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <div className="min-h-80 bg-white rounded border p-3 overflow-hidden shadow-lg">
-      <div className="border-b cursor-pointer" onClick={handleCardClick}>
+    <div className="min-h-80 bg-white rounded border p-3 overflow-hidden shadow-lg cursor-pointer" onClick={handleCardClick}>
+      <div className="border-b cursor-pointer" >
         {product?.images?.[0]?.url ? (
           <div className="relative w-full h-36 md:h-40">
             {!isImageLoaded && (
@@ -57,7 +57,6 @@ const ProductCard = ({ product }) => {
         <div className="flex items-center justify-between mt-4">
           <div
             className="py-2 px-7 w-full text-center bg-gradient-to-r from-orange-400 to-red-400 text-white rounded-full cursor-pointer hover:scale-105 transition-transform duration-300"
-            onClick={handleCardClick}
           >
             <button>Xem chi tiết</button>
           </div>
