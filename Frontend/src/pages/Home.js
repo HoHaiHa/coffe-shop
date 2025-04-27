@@ -5,7 +5,6 @@ import { LoadingOutlined } from "@ant-design/icons";
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
 import Slideshow from "../components/homepage/Slideshow";
-import ListCategory from "../components/homepage/ListCategory";
 import ListProduct from "../components/homepage/ListProduct";
 import { useDispatch, useSelector } from "react-redux";
 import fetchWithAuth from "../helps/fetchWithAuth";
@@ -16,6 +15,7 @@ import { setCartItems } from "../store/cartSlice";
 import { selectFavorites, addToFavorites } from "../store/favoritesSlice ";
 import ChatWidget from "../components/layout/ChatWidget";
 import FilterAdvanced from "../components/homepage/FilterAdvanced";
+import ProductSlider from "../components/layout/ProductSlider";
 
 const Home = () => {
   const location = useLocation();
@@ -24,17 +24,17 @@ const Home = () => {
     (prev, next) => prev === next
   );
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
 
   const [isCartLoading, setIsCartLoading] = useState(false);
   const [isProductsLoading, setIsProductsLoading] = useState(false);
-  const [isCategoriesLoading, setIsCategoriesLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const cartItems = useSelector((state) => state.cart.items);
-  const [onClickFilter , setOnClickFilter] = useState(false);
+  const [onClickFilter, setOnClickFilter] = useState(false);
   const favorites = useSelector(selectFavorites);
   const [filteredProducts, setFilteredProducts] = useState([]);
+
+  const [newProducts,setNewProducts] = useState([])
 
 
   useEffect(() => {
@@ -120,6 +120,10 @@ const Home = () => {
     fetchProduct();
   }, []);
 
+  useEffect(()=>{
+    setNewProducts(products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 20))
+  },[products]);
+
   const handleFilterProducts = (filtered) => {
     setFilteredProducts(filtered);
 
@@ -177,11 +181,22 @@ const Home = () => {
                     </div>
                   ) : (
                     <div className="lg:col-start-4 lg:col-span-9 md:col-start-5 md:col-span-8  col-span-12">
-                      <ListProduct products={productList}  />
+                      <ListProduct products={productList} />
                     </div>
                   )}
                 </div>
               </div>
+              {(  newProducts.length === 0) ? (
+                <div className="lg:col-start-4 lg:col-span-9 md:col-start-5 md:col-span-8 bg-white shadow-md mt-10 ">
+                  <p className="text-center text-lg font-bold text-gray-500 ">
+                    No results found
+                  </p>
+                </div>
+              ) : (
+                <div className="lg:col-start-4 lg:col-span-9 md:col-start-5 md:col-span-8  col-span-12">
+                  <ProductSlider productList={newProducts} title={'Sản phẩm mới'} />
+                </div>
+              )}
             </>
           )}
           <section className=" mb-8">

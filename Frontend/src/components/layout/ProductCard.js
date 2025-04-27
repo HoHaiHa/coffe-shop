@@ -6,9 +6,34 @@ import { LoadingOutlined } from "@ant-design/icons";
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [startPos, setStartPos] = useState({ x: 0, y: 0 });
 
-  const handleCardClick = () => {
-    navigate(`/product/${product.id}`);
+  const handleMouseDown = (e) => {
+    setStartPos({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleMouseUp = (e) => {
+    const dx = Math.abs(e.clientX - startPos.x);
+    const dy = Math.abs(e.clientY - startPos.y);
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance < 5) {
+      navigate(`/product/${product.id}`);
+    }
+  };
+
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    setStartPos({ x: touch.clientX, y: touch.clientY });
+  };
+
+  const handleTouchEnd = (e) => {
+    const touch = e.changedTouches[0];
+    const dx = Math.abs(touch.clientX - startPos.x);
+    const dy = Math.abs(touch.clientY - startPos.y);
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance < 5) {
+      navigate(`/product/${product.id}`);
+    }
   };
 
   const handleImageLoad = () => {
@@ -16,12 +41,18 @@ const ProductCard = ({ product }) => {
   };
 
   return (
-    <div className="min-h-80 bg-white rounded border p-3 overflow-hidden shadow-lg cursor-pointer" onClick={handleCardClick}>
-      <div className="border-b cursor-pointer" >
+    <div
+      className="min-h-80 bg-white rounded border p-3 overflow-hidden shadow-lg cursor-pointer"
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      <div className="border-b cursor-pointer">
         {product?.images?.[0]?.url ? (
           <div className="relative w-full h-36 md:h-40">
             {!isImageLoaded && (
-              <div className="absolute inset-0  flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center justify-center">
                 <LoadingOutlined className="text-3xl text-gray-400" spin />
               </div>
             )}
@@ -41,7 +72,7 @@ const ProductCard = ({ product }) => {
         )}
       </div>
       <div className="mt-3">
-        <div className="font-medium text-lg line-clamp-1 ">{product.name}</div>
+        <div className="font-medium text-lg line-clamp-1">{product.name}</div>
         <p className="text-gray-400 font-normal mt-1">{product.brand.name}</p>
 
         <div className="flex items-center justify-between mt-2">
@@ -55,9 +86,7 @@ const ProductCard = ({ product }) => {
           </span>
         </div>
         <div className="flex items-center justify-between mt-4">
-          <div
-            className="py-2 px-7 w-full text-center bg-gradient-to-r from-orange-400 to-red-400 text-white rounded-full cursor-pointer hover:scale-105 transition-transform duration-300"
-          >
+          <div className="py-2 px-7 w-full text-center bg-gradient-to-r from-orange-400 to-red-400 text-white rounded-full cursor-pointer hover:scale-105 transition-transform duration-300">
             <button>Xem chi tiết</button>
           </div>
         </div>
