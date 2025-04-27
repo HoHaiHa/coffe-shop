@@ -6,7 +6,7 @@ const BrandCard = ({brand}) => {
   const navigate = useNavigate();
 
   const handleCategoryClick = () => {
-    navigate(`/${brand.name}/${brand.id}`);
+    navigate(`/brand/${brand.name}/${brand.id}`);
   };
 
   return (

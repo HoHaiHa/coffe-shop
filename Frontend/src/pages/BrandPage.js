@@ -3,12 +3,12 @@ import summaryApi from "../common";
 import ListProduct from "../components/homepage/ListProduct";
 import { useParams } from "react-router-dom";
 import { LoadingOutlined } from "@ant-design/icons";
-import FilterCategory from "../components/homepage/FilterCategory";
 import ArticleComponent from "../components/layout/ArticleComponent";
+import FilterBrand from "../components/homepage/FilterBrand";
 
-const CategoryPage = () => {
+const BrandPage = () => {
   const [products, setProducts] = useState([]);
-  const { categoryName, categoryId } = useParams();
+  const { brandName, brandId } = useParams();
   const [loading, setLoading] = useState(false);
   const [onClickFilter, setOnClickFilter] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -26,19 +26,19 @@ const CategoryPage = () => {
 
   useEffect(() => {
     setLoading(true);
-    const fetchProductByCategory = async () => {
+    const fetchProductByBrand = async () => {
       try {
-        const categoryResponse = await fetch(
-          summaryApi.getProductByCategory.url + `${categoryId}`,
+        const brandResponse = await fetch(
+          summaryApi.getProductByBrand.url + `${brandId}`,
           {
-            method: summaryApi.getProductByCategory.method,
+            method: summaryApi.getProductByBrand.method,
             headers: {
               "Content-Type": "application/json",
             },
           }
         );
 
-        const dataResult = await categoryResponse.json();
+        const dataResult = await brandResponse.json();
         if (dataResult.respCode === "000") {
           setProducts(dataResult.data);
         }
@@ -49,16 +49,16 @@ const CategoryPage = () => {
       }
     };
 
-    fetchProductByCategory();
-  }, [categoryId]);
+    fetchProductByBrand();
+  }, [brandId]);
 
   return (
     <>
-      {products[0]?.category && (
+      {products[0]?.brand && (
         <ArticleComponent
-          keyword={categoryName}
-          title={products[0].category.articleTitle}
-          article={products[0].category.article}
+          keyword={brandName}
+          title={products[0].brand.articleTitle}
+          article={products[0].brand.article}
         />
       )}
 
@@ -72,7 +72,7 @@ const CategoryPage = () => {
         <div className=" grid grid-cols-12 lg:gap-x-10 gap-x-3">
           <div className="lg:col-span-3 md:col-span-4 col-span-12 mt-10 sm:min-h-screen ">
             <div className=" top-28 ">
-              <FilterCategory onFilter={handleFilterProducts} onClickFilter={handleClickFilter} products={products} />
+              <FilterBrand onFilter={handleFilterProducts} onClickFilter={handleClickFilter} products={products} />
             </div>
           </div>
 
@@ -84,7 +84,7 @@ const CategoryPage = () => {
             </div>
           ) : (
             <div className="lg:col-start-4 lg:col-span-9 md:col-start-5 md:col-span-8  col-span-12">
-              <ListProduct products={productList} title={categoryName} />
+              <ListProduct products={productList} title={brandName} />
             </div>
           )}
         </div>
@@ -93,4 +93,4 @@ const CategoryPage = () => {
   );
 };
 
-export default CategoryPage;
+export default BrandPage;

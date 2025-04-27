@@ -25,6 +25,7 @@ import OrderDetails from "../components/profile/OrderDetails";
 
 import BrandsContent from "../components/adminpage/brand/BrandsContent";
 import CategoryContent from "../components/adminpage/category/CategoryContent";
+import BrandPage from "../pages/BrandPage";
 
 const router = createBrowserRouter([
     {
@@ -88,8 +89,12 @@ const router = createBrowserRouter([
 
                     },
                     {
-                        path: "/:categoryName/:categoryId",
+                        path: "/category/:categoryName/:categoryId",
                         element: <CategoryPage />
+                    },
+                    {
+                        path: "/brand/:brandName/:brandId",
+                        element: <BrandPage />
                     },
                     {
                         path: "/order-detail",
