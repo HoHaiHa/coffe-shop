@@ -71,6 +71,10 @@ const summaryApi = {
         url: `${backendDomain}/product/all`,
         method: "GET"
     },
+    bestSellingProduct: {
+        url: `${backendDomain}/product/best`,
+        method: "GET"
+    },
     addProduct: {
         url: `${backendDomain}/product`,
         method: "POST"

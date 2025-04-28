@@ -2,8 +2,11 @@ package com.haui.coffee_shop.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.haui.coffee_shop.common.enums.Status;
+import com.haui.coffee_shop.model.Image;
 import com.haui.coffee_shop.model.Product;
 
 import java.util.List;
@@ -25,4 +28,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT MIN(pi.price) FROM ProductItem pi WHERE pi.product.id = :productId AND pi.stock > 0 AND pi.status = 'ACTIVE'")
     Optional<Double> minPrice(long productId);
+    
+   
 }

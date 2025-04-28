@@ -39,7 +39,7 @@ function Cart() {
             <button
               onClick={handleReturnHome}
               className="flex items-center p-2 text-white uppercase rounded-lg shadow-lg
-                        bg-gradient-to-r from-teal-500 via-teal-300 to-teal-500 transition-all 
+                        bg-gradient-to-r from-amber-700 to-stone-500 transition-all 
                         duration-500 ease-in-out bg-[length:200%_auto] hover:bg-[position:right_center]"
             >
             <FaArrowLeftLong className="mr-3"/>

@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { LoadingOutlined } from "@ant-design/icons";
 import ArticleComponent from "../components/layout/ArticleComponent";
 import FilterBrand from "../components/homepage/FilterBrand";
+import ProductSlider from "../components/layout/ProductSlider";
 
 const BrandPage = () => {
   const [products, setProducts] = useState([]);
@@ -12,6 +13,9 @@ const BrandPage = () => {
   const [loading, setLoading] = useState(false);
   const [onClickFilter, setOnClickFilter] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState([]);
+
+  const [newProducts, setNewProducts] = useState([]);
+  const [bestSellingProducts, setBestSellingProducts] = useState([])
 
   const handleFilterProducts = (filtered) => {
     setFilteredProducts(filtered);
@@ -52,6 +56,32 @@ const BrandPage = () => {
     fetchProductByBrand();
   }, [brandId]);
 
+  useEffect(() => {
+    const fetchBestSellingProduct = async () => {
+      try {
+        const productResponse = await fetch(`${summaryApi.bestSellingProduct.url}+?brandId=+${brandId}`, {
+          method: summaryApi.allProduct.method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const productResult = await productResponse.json();
+
+        if (productResult.respCode === "000") {
+          setBestSellingProducts(productResult.data);
+        }
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+    fetchBestSellingProduct();
+  }, []);
+
+  useEffect(() => {
+    setNewProducts(products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 20))
+  }, [products]);
+
   return (
     <>
       {products[0]?.brand && (
@@ -89,6 +119,13 @@ const BrandPage = () => {
           )}
         </div>
       </div>
+      <div className="lg:col-start-4 lg:col-span-9 md:col-start-5 md:col-span-8  col-span-12">
+        <ProductSlider productList={newProducts} title={'Sản phẩm mới của nhãn hàng'} />
+      </div>
+      <div className="lg:col-start-4 lg:col-span-9 md:col-start-5 md:col-span-8  col-span-12">
+        <ProductSlider productList={bestSellingProducts} title={'Sản phẩm bán chạy của nhãn hàng'} />
+      </div>
+      
     </>
   );
 };

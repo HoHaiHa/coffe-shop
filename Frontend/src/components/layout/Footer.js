@@ -26,7 +26,7 @@ const Footer = () => {
               className="p-2 pl-4 w-full bg-gray-800 dark:bg-gray-200 rounded-md text-white dark:text-gray-800 placeholder-gray-400"
               placeholder="Email address"
             />
-            <button className="p-2 bg-blue-123 text-white rounded-md ml-2">SEND</button>
+            <button className="p-2 bg-gradient-to-r from-amber-700 to-stone-500 text-white rounded-md ml-2">SEND</button>
           </form>
         </div>
 

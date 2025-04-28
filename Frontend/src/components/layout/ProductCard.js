@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaStar } from "react-icons/fa";
 import { LoadingOutlined } from "@ant-design/icons";
 
 const ProductCard = ({ product }) => {
@@ -74,20 +73,12 @@ const ProductCard = ({ product }) => {
       <div className="mt-3">
         <div className="font-medium text-lg line-clamp-1">{product.name}</div>
         <p className="text-gray-400 font-normal mt-1">{product.brand.name}</p>
-
+        <p className="text-gray-400 font-normal mt-1">{product.category.name}</p>
         <div className="flex items-center justify-between mt-2">
-          <span className="text-base font-medium text-red-500 mt-1">
-            {Number(product.minPrice).toLocaleString("vi-VN")}đ
-          </span>
-
-          <span className="flex items-center">
-            {product?.rating !== 0.0 ? product?.rating?.toFixed(1) : ""}
-            <FaStar className="text-yellow-500 mx-1" />
-          </span>
         </div>
         <div className="flex items-center justify-between mt-4">
-          <div className="py-2 px-7 w-full text-center bg-gradient-to-r from-orange-400 to-red-400 text-white rounded-full cursor-pointer hover:scale-105 transition-transform duration-300">
-            <button>Xem chi tiết</button>
+          <div className="py-2 px-7 w-full text-center bg-gradient-to-r from-amber-700 to-stone-500 text-white rounded-full cursor-pointer transition-transform duration-300">
+            <button>{Number(product.minPrice).toLocaleString("vi-VN")}đ</button>
           </div>
         </div>
       </div>

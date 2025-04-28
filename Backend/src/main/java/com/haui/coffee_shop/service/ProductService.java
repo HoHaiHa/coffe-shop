@@ -2,6 +2,9 @@ package com.haui.coffee_shop.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,7 +19,10 @@ import com.haui.coffee_shop.payload.response.RespMessage;
 import com.haui.coffee_shop.payload.response.ReviewResponse;
 import com.haui.coffee_shop.repository.*;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -362,5 +368,33 @@ public class ProductService {
         ProductResponse productResponse = getProductResponse(image.getProduct());
 
         return messageBuilder.buildSuccessMessage(productResponse);
+    }
+    	
+    public RespMessage getBestSellingProducts(Long brandId, Long CategoryId ) {
+    	LocalDate localDate = LocalDate.now().minusDays(90);
+    	Date fromDate = java.util.Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+    	Pageable  pageable = PageRequest.of(0, 15);
+    	List<Long> ids = orderItemRepository.findTop15ActiveBestSellingProductsInLast90Days(CategoryId, brandId, fromDate, pageable);
+        List<ProductResponse> productResponses = new ArrayList<>();
+        
+        for (Long id : ids) {
+            try {
+                Optional<Product> productOp = productRepository.findById(id);
+                if (productOp.isPresent()) {
+                    Product product = productOp.get();
+                    if (product.getStatus() == Status.ACTIVE) {
+                        ProductResponse productResponse = getProductResponse(product);
+                        List<Image> images = imageRepository.findByProduct(product);
+                        productResponse.setImages(images);
+                        productResponses.add(productResponse);
+                    }
+                }
+            } catch (Exception e) {
+                continue;
+            }
+        }
+        
+        return messageBuilder.buildSuccessMessage(productResponses);
     }
 }

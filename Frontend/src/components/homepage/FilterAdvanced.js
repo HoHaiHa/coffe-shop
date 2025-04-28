@@ -54,7 +54,7 @@ const FilterAdvanced = ({ onFilter, products, onClickFilter }) => {
                 }
             } catch (error) {
                 console.log("error", error);
-            } 
+            }
         };
 
         fetchCategory();
@@ -78,19 +78,19 @@ const FilterAdvanced = ({ onFilter, products, onClickFilter }) => {
 
     const handleClickFilter = () => {
         const filtered = products.filter((product) => {
-          const inPriceRange =
-            product.minPrice >= value[0] && product.minPrice <= value[1];
-          const matchesBrand = selectBrand.length
-            ? selectBrand.includes(product.brand.name)
-            : true  ;
-          const matchesCategory =  selectCategories.length
-            ? selectCategories.includes(product.category.name)
-            : true  ;
-          return inPriceRange && matchesBrand && matchesCategory;
+            const inPriceRange =
+                product.minPrice >= value[0] && product.minPrice <= value[1];
+            const matchesBrand = selectBrand.length
+                ? selectBrand.includes(product.brand.name)
+                : true;
+            const matchesCategory = selectCategories.length
+                ? selectCategories.includes(product.category.name)
+                : true;
+            return inPriceRange && matchesBrand && matchesCategory;
         });
         onClickFilter();
         onFilter(filtered);
-      };
+    };
 
     return (
         <div className="relative p-6 w-full bg-white rounded-lg shadow-xl ">
@@ -150,30 +150,30 @@ const FilterAdvanced = ({ onFilter, products, onClickFilter }) => {
                         min={min}
                         max={max}
                         disableSwap
-                        // marks={marks}
                         sx={{
                             width: "100%",
                             "& .MuiSlider-thumb": {
                                 width: 12,
                                 height: 12,
-                                backgroundColor: "#02AAB0",
+                                backgroundColor: "#8B4513", 
                                 "&:hover, &.Mui-focusVisible": {
-                                    boxShadow: "0px 0px 0px 8px rgba(2, 170, 176, 0.16)",
+                                    boxShadow: "0px 0px 0px 8px rgba(139, 69, 19, 0.16)",
                                 },
                             },
                             "& .MuiSlider-track": {
                                 height: 6,
-                                backgroundColor: "#00CDAC",
+                                backgroundColor: "#D2B48C", 
                             },
                             "& .MuiSlider-rail": {
                                 height: 6,
-                                backgroundColor: "#ccc",
+                                backgroundColor: "#EDEDED", 
                             },
                             "& .MuiSlider-valueLabel": {
-                                backgroundColor: "#02AAB0",
+                                backgroundColor: "#8B4513", 
                             },
                         }}
                     />
+
                     <div className="grid grid-cols-2 gap-6 justify-between ">
                         <Box
                             sx={{
@@ -206,7 +206,7 @@ const FilterAdvanced = ({ onFilter, products, onClickFilter }) => {
                     onClick={handleClickFilter}
 
                     className="w-full p-2 text-white uppercase rounded-lg shadow-lg
-               bg-gradient-to-r from-teal-500 via-teal-300 to-teal-500 transition-all 
+               bg-gradient-to-r from-amber-700 to-stone-500 transition-all 
                duration-500 ease-in-out bg-[length:200%_auto] hover:bg-[position:right_center]"
                 >
                     Áp dụng

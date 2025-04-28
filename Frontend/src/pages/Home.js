@@ -16,6 +16,7 @@ import { selectFavorites, addToFavorites } from "../store/favoritesSlice ";
 import ChatWidget from "../components/layout/ChatWidget";
 import FilterAdvanced from "../components/homepage/FilterAdvanced";
 import ProductSlider from "../components/layout/ProductSlider";
+import ArticleComponent from "../components/layout/ArticleComponent";
 
 const Home = () => {
   const location = useLocation();
@@ -34,7 +35,8 @@ const Home = () => {
   const favorites = useSelector(selectFavorites);
   const [filteredProducts, setFilteredProducts] = useState([]);
 
-  const [newProducts,setNewProducts] = useState([])
+  const [newProducts, setNewProducts] = useState([])
+  const [bestSellingProducts, setBestSellingProducts] = useState([])
 
 
   useEffect(() => {
@@ -120,9 +122,31 @@ const Home = () => {
     fetchProduct();
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
+    const fetchBestSellingProduct = async () => {
+      try {
+        const productResponse = await fetch(summaryApi.bestSellingProduct.url, {
+          method: summaryApi.allProduct.method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const productResult = await productResponse.json();
+
+        if (productResult.respCode === "000") {
+          setBestSellingProducts(productResult.data);
+        }
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+    fetchBestSellingProduct();
+  }, []);
+
+  useEffect(() => {
     setNewProducts(products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 20))
-  },[products]);
+  }, [products]);
 
   const handleFilterProducts = (filtered) => {
     setFilteredProducts(filtered);
@@ -186,17 +210,12 @@ const Home = () => {
                   )}
                 </div>
               </div>
-              {(  newProducts.length === 0) ? (
-                <div className="lg:col-start-4 lg:col-span-9 md:col-start-5 md:col-span-8 bg-white shadow-md mt-10 ">
-                  <p className="text-center text-lg font-bold text-gray-500 ">
-                    No results found
-                  </p>
-                </div>
-              ) : (
-                <div className="lg:col-start-4 lg:col-span-9 md:col-start-5 md:col-span-8  col-span-12">
-                  <ProductSlider productList={newProducts} title={'Sản phẩm mới'} />
-                </div>
-              )}
+              <div className="lg:col-start-4 lg:col-span-9 md:col-start-5 md:col-span-8  col-span-12">
+                <ProductSlider productList={newProducts} title={'Sản phẩm mới'} />
+              </div>
+              <div className="lg:col-start-4 lg:col-span-9 md:col-start-5 md:col-span-8  col-span-12">
+                <ProductSlider productList={bestSellingProducts} title={'Sản phẩm bán chạy'} />
+              </div> 
             </>
           )}
           <section className=" mb-8">

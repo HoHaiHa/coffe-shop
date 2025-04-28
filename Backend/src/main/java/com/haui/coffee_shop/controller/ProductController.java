@@ -1,6 +1,9 @@
 package com.haui.coffee_shop.controller;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -125,6 +128,21 @@ public class ProductController {
     public ResponseEntity<RespMessage> getProductsByBrandId(@PathVariable Long brandId) {
         try {
             RespMessage respMessage = productService.getProductsByBrandId(brandId);
+            return new ResponseEntity<>(respMessage, HttpStatus.OK);
+        } catch (CoffeeShopException e) {
+            RespMessage respMessage = messageBuilder.buildFailureMessage(e.getCode(), e.getObjects(), e.getMessage());
+            return new ResponseEntity<>(respMessage, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            RespMessage respMessage = messageBuilder.buildFailureMessage(Constant.UNDEFINED, null, e.getMessage());
+            return new ResponseEntity<>(respMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @RequestMapping(value = "/best", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<RespMessage> getProductsByIds(@RequestParam(required = false) Long categoryId,
+                                                        @RequestParam(required = false) Long brandId) {
+        try {
+            RespMessage respMessage = productService.getBestSellingProducts(categoryId, brandId);
             return new ResponseEntity<>(respMessage, HttpStatus.OK);
         } catch (CoffeeShopException e) {
             RespMessage respMessage = messageBuilder.buildFailureMessage(e.getCode(), e.getObjects(), e.getMessage());

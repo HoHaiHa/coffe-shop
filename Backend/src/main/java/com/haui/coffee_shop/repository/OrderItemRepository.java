@@ -56,5 +56,25 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
     @Query("SELECT SUM(oi.amount) FROM OrderItem oi WHERE oi.productItem.product.id = :productId")
     Optional<Integer> findTotalSold(long productId);
+    
+    @Query("SELECT oi.productItem.product.id " +
+    	       "FROM OrderItem oi " +
+    	       "JOIN oi.order o " +
+    	       "JOIN oi.productItem pi " +
+    	       "JOIN pi.product p " +
+    	       "WHERE o.status = 'Completed' " +
+    	       "AND p.status = 'ACTIVE' " +
+    	       "AND o.orderDate >= :fromDate " +
+    	       "AND (:categoryId IS NULL OR p.category.id = :categoryId) " +
+    	       "AND (:brandId IS NULL OR p.brand.id = :brandId) " +
+    	       "GROUP BY oi.productItem.product.id " +
+    	       "ORDER BY SUM(oi.amount) DESC")
+    	List<Long> findTop15ActiveBestSellingProductsInLast90Days(
+    	        @Param("categoryId") Long categoryId,
+    	        @Param("brandId") Long brandId,
+    	        @Param("fromDate") Date fromDate,
+    	        Pageable pageable);
+
+ 
 
 }

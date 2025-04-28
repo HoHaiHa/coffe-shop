@@ -154,7 +154,7 @@ const SignUp = () => {
                 ? "bg-gray-300 cursor-wait"
                 : (passwordError || emailError)
                   ? "bg-gray-300 cursor-not-allowed"
-                  : "bg-gradient-to-r from-teal-500 via-teal-300 to-teal-500 transition-all duration-500 ease-in-out bg-[length:200%_auto] hover:bg-[position:right_center]"
+                  : "bg-gradient-to-r from-amber-700 to-stone-500 transition-all duration-500 ease-in-out bg-[length:200%_auto] hover:bg-[position:right_center]"
                 }`}
               disabled={isLoading || passwordError || emailError}
             >

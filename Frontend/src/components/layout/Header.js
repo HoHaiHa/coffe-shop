@@ -113,7 +113,7 @@ const Header = () => {
           <div
             onClick={handleSearch}
             className="flex h-full min-w-[40px] items-center justify-center rounded-r-full cursor-pointer 
-        text-white text-base bg-gradient-to-r from-teal-500 via-teal-400 to-teal-500 transition-all 
+        text-white text-base bg-gradient-to-r from-amber-700 to-stone-500 transition-all 
         duration-500 ease-in-out bg-[length:200%_auto] hover:bg-[position:right_center]"
           >
             <GrSearch />
@@ -165,7 +165,7 @@ const Header = () => {
           ) : (
             <Link to="/login">
               <button className="rounded-full px-4 py-1 text-white text-sm shadow-md
-          bg-gradient-to-r from-teal-500 via-teal-400 to-teal-500 transition-all duration-300 
+          bg-gradient-to-r from-amber-700 to-stone-500 transition-all duration-300 
           ease-in-out bg-[length:200%_auto] hover:bg-[position:right_center]">
                 Sign In
               </button>
@@ -175,8 +175,7 @@ const Header = () => {
           {user?.id && (
             <button
               onClick={handleLogout}
-              className="rounded-full px-4 py-1 text-white text-sm shadow-md bg-gradient-to-r
-           from-teal-500 via-teal-400 to-teal-500 transition-all duration-300 ease-in-out bg-[length:200%_auto]
+              className="rounded-full px-4 py-1 text-white text-sm shadow-md bg-gradient-to-r from-amber-700 to-stone-500 transition-all duration-300 ease-in-out bg-[length:200%_auto]
             hover:bg-[position:right_center]"
             >
               Logout

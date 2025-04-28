@@ -36,8 +36,7 @@ const Topbar = () => {
           <div>
             <button
               onClick={handleLogout}
-              className="rounded-full  px-5 py-1 text-white text-lg shadow-lg bg-gradient-to-r
-                 from-teal-500 via-teal-400 to-teal-500 transition-all duration-500 ease-in-out bg-[length:200%_auto]
+              className="rounded-full  px-5 py-1 text-white text-lg shadow-lg bg-gradient-to-r from-amber-700 to-stone-500 transition-all duration-500 ease-in-out bg-[length:200%_auto]
                   hover:bg-[position:right_center]"
             >
               Logout

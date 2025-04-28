@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import summaryApi from "../../common";
 import { Slider, Box, Typography } from "@mui/material";
 
-const FilterCategory = ({ onFilter, products ,onClickFilter }) => {
-  const min = 0 ;
+const FilterCategory = ({ onFilter, products, onClickFilter }) => {
+  const min = 0;
   const max = 5000000;
-  const step= 50000;
+  const step = 50000;
   const [brands, setBrands] = useState([]);
   const [selectBrand, setSelectBrand] = useState([]);
   const [value, setValue] = useState([min, max]);
 
-  const handleChange = (event, newValue) => { 
+  const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
@@ -36,10 +36,10 @@ const FilterCategory = ({ onFilter, products ,onClickFilter }) => {
   }, []);
 
   const handleSelectBrand = (brand) => {
-    setSelectBrand((pre) => 
-      pre.includes(brand.name ) 
-      ? pre.filter((item) => item !== brand.name) 
-      : [...pre , brand.name]
+    setSelectBrand((pre) =>
+      pre.includes(brand.name)
+        ? pre.filter((item) => item !== brand.name)
+        : [...pre, brand.name]
     );
   };
 
@@ -49,7 +49,7 @@ const FilterCategory = ({ onFilter, products ,onClickFilter }) => {
         product.minPrice >= value[0] && product.minPrice <= value[1];
       const matchesBrand = selectBrand.length
         ? selectBrand.includes(product.brand.name)
-        : true  ;
+        : true;
       return inPriceRange && matchesBrand;
     });
     onClickFilter();
@@ -79,30 +79,30 @@ const FilterCategory = ({ onFilter, products ,onClickFilter }) => {
               min={min}
               max={max}
               disableSwap
-              // marks={marks}
               sx={{
                 width: "100%",
                 "& .MuiSlider-thumb": {
                   width: 12,
                   height: 12,
-                  backgroundColor: "#02AAB0", 
+                  backgroundColor: "#8B4513", // nâu đất (SaddleBrown)
                   "&:hover, &.Mui-focusVisible": {
-                    boxShadow: "0px 0px 0px 8px rgba(2, 170, 176, 0.16)", 
+                    boxShadow: "0px 0px 0px 8px rgba(139, 69, 19, 0.16)",
                   },
                 },
                 "& .MuiSlider-track": {
                   height: 6,
-                  backgroundColor: "#00CDAC",
+                  backgroundColor: "#D2B48C", // be vàng sáng (Tan)
                 },
                 "& .MuiSlider-rail": {
                   height: 6,
-                  backgroundColor: "#ccc",
+                  backgroundColor: "#EDEDED", // màu rail nhẹ
                 },
                 "& .MuiSlider-valueLabel": {
-                  backgroundColor: "#02AAB0", 
+                  backgroundColor: "#8B4513", // label nâu
                 },
               }}
             />
+
 
             <div className="grid grid-cols-2 gap-6 justify-between ">
               <Box
@@ -138,9 +138,8 @@ const FilterCategory = ({ onFilter, products ,onClickFilter }) => {
             {brands.map((brand, index) => (
               <button
                 key={index}
-                className={`border rounded p-2 text-nowrap text-sm line-clamp-1 ${
-                  selectBrand.includes(brand.name) ? "bg-yellow-500 text-white" : ""
-                }`}
+                className={`border rounded p-2 text-nowrap text-sm line-clamp-1 ${selectBrand.includes(brand.name) ? "bg-yellow-500 text-white" : ""
+                  }`}
                 onClick={() => handleSelectBrand(brand)}
               >
                 {brand.name}
@@ -153,9 +152,9 @@ const FilterCategory = ({ onFilter, products ,onClickFilter }) => {
       <div className=" mt-10">
         <button
           onClick={handleClickFilter}
-        
-          className ="w-full p-2 text-white uppercase rounded-lg shadow-lg
-           bg-gradient-to-r from-teal-500 via-teal-300 to-teal-500 transition-all 
+
+          className="w-full p-2 text-white uppercase rounded-lg shadow-lg
+           bg-gradient-to-r from-amber-700 to-stone-500 transition-all 
            duration-500 ease-in-out bg-[length:200%_auto] hover:bg-[position:right_center]"
         >
           Áp dụng
