@@ -38,52 +38,53 @@ const ProductCard = ({ product }) => {
   const handleImageLoad = () => {
     setIsImageLoaded(true);
   };
-
   return (
     <div
-      className="min-h-80 bg-white rounded border p-3 overflow-hidden shadow-lg cursor-pointer"
+      className="h-80 bg-white rounded-xl border overflow-hidden shadow-lg cursor-pointer flex flex-col group"
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="border-b cursor-pointer">
+      <div className="relative h-2/3 overflow-hidden">
         {product?.images?.[0]?.url ? (
-          <div className="relative w-full h-36 md:h-40">
+          <>
             {!isImageLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center justify-center z-10 bg-white">
                 <LoadingOutlined className="text-3xl text-gray-400" spin />
               </div>
             )}
             <img
-              className={`w-full rounded object-cover h-36 md:h-40 transition-opacity duration-300 ${
-                isImageLoaded ? "opacity-100" : "opacity-0"
-              }`}
               src={product.images[0].url}
               alt={product.name || "Product Image"}
               onLoad={handleImageLoad}
+              className={`w-full h-full object-cover transition-transform duration-[500ms] ease-in-out will-change-transform ${
+                isImageLoaded ? "scale-100" : "scale-95"
+              } group-hover:scale-125 rounded-xl`}
             />
-          </div>
+          </>
         ) : (
-          <div className="w-full rounded bg-gray-200 flex items-center justify-center h-36 md:h-40">
+          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
             <p className="text-gray-500">No image available</p>
           </div>
         )}
       </div>
-      <div className="mt-3">
-        <div className="font-medium text-lg line-clamp-1">{product.name}</div>
-        <p className="text-gray-400 font-normal mt-1">{product.brand.name}</p>
-        <p className="text-gray-400 font-normal mt-1">{product.category.name}</p>
-        <div className="flex items-center justify-between mt-2">
+  
+      <div className="-mt-4 px-4 pt-4 pb-3 flex flex-col justify-between bg-white rounded-xl z-10">
+        <div>
+          <div className="font-medium text-sm line-clamp-1">{product.name}</div>
+          <p className="text-gray-400 text-xs mt-0.5">{product.brand.name}</p>
+          <p className="text-gray-400 text-xs">{product.category.name}</p>
         </div>
-        <div className="flex items-center justify-between mt-4">
-          <div className="py-2 px-7 w-full text-center bg-gradient-to-r from-amber-700 to-stone-500 text-white rounded-full cursor-pointer transition-transform duration-300">
-            <button>{Number(product.minPrice).toLocaleString("vi-VN")}đ</button>
-          </div>
+        <div className="mt-2">
+          <button className="w-full py-1.5 rounded-full text-white text-sm bg-opacity-70 bg-amber-700 group-hover:bg-opacity-100 group-hover:scale-105 transition-all duration-300">
+            {Number(product.minPrice).toLocaleString("vi-VN")}đ
+          </button>
         </div>
       </div>
     </div>
   );
+  
 };
 
 export default ProductCard;

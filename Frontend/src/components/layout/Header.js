@@ -22,6 +22,8 @@ import DropdownWithList from "./DropdownWithList";
 import ListCategory from "../homepage/ListCategory";
 import ListBrand from "../homepage/ListBrand";
 
+import { FaMapLocationDot } from "react-icons/fa6";
+
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -122,11 +124,15 @@ const Header = () => {
 
         {/* user */}
         <div className="flex items-center space-x-4">
+          <div className="flex items-center py-2 bg-transparent text-black font-semibold rounded cursor-pointer relative z-20 hover:underline" onClick={()=> navigate('/about-we')}>
+            <FaMapLocationDot />
+            <label className="cursor-pointer px-2">'Về chúng tôi'</label>
+          </div>
           <DropdownWithList title='Thương hiệu' Icon={AiOutlineTrademark}>
-            <ListBrand/>
+            <ListBrand />
           </DropdownWithList>
           <DropdownWithList title='Danh mục' Icon={GiCoffeeCup}>
-            <ListCategory/>
+            <ListCategory />
           </DropdownWithList>
           <div
             className="flex items-center space-x-4 relative"

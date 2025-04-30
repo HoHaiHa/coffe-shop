@@ -1,11 +1,14 @@
 import React from "react";
 import { Carousel } from "antd";
+import slide1 from "../../assets/img/slide1.jpg"; 
+import slide2 from "../../assets/img/slide2.jpg";
+import slide3 from "../../assets/img/slide3.jpg";
 
 const slides = [
-  { id: 1, image: "https://sondnpt00343.github.io/f8-project-08/assets/img/slideshow/item-1.png" },
-  { id: 2, image: "https://sondnpt00343.github.io/f8-project-08/assets/img/slideshow/item-1.png" }
+  { id: 1, image: slide1 },
+  { id: 2, image: slide2 },
+  { id: 3, image: slide3 }
 ];
-
 const Slideshow = () => {
   return (
     <div className="w-full mt-10 px-4">

@@ -33,7 +33,7 @@ const ListProduct = ({ products: initialProducts, title }) => {
   } 
 
   return (
-    <div className="container bg-white shadow-md p-3 mx-auto mt-10 ">
+    <div className="container bg-white shadow-md p-3 mx-auto mt-10 rounded-lg">
       {title && (
         <div>
           <h2 ref={titleRef} className="font-bold text-base ">

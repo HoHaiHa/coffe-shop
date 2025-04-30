@@ -9,10 +9,10 @@ import Context from "./context";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser, setLoading } from "./store/userSlice";
 import Cookies from "js-cookie";
+import img_bg from "./assets/img/slide3.jpg";
 
 function App() {
   const dispatch = useDispatch();
-  // Để tránh việc fetch user details nhiều lần
   const user = useSelector((state) => state.user.user, (prev, next) => prev === next);
   const fetchUserDetails = useCallback(async () => {
     dispatch(setLoading(true));
@@ -25,7 +25,6 @@ function App() {
     }
 
     try {
-      // Thử lấy thông tin user
       const response = await fetchWithAuth(summaryApi.current_user.url, {
         method: summaryApi.current_user.method,
       });
@@ -94,8 +93,17 @@ function App() {
 
   return (
     <Context.Provider value={{ fetchUserDetails }}>
-      <Outlet />
-      <ToastContainer autoClose={2000} />
+      <div className="relative min-h-screen">
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-20 blur-sm z-0 top-[-10%]"
+          style={{ backgroundImage: `url(${img_bg})` }}
+        ></div>
+  
+        <div className="relative z-10">
+          <Outlet />
+          <ToastContainer autoClose={2000} />
+        </div>
+      </div>
     </Context.Provider>
   );
 }

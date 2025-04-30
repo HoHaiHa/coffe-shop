@@ -100,88 +100,73 @@ const SignUp = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen">
-      <div className="bg-gray-100 md:w-1/2 md:flex hidden items-center justify-center p-8">
-        <div className="w-96 h-80 ">
-          <img src={img_login} alt="img-Login" className="" />
-          <p className="text-lg font-sans mb-4 mt-12 text-center">
-            The best of luxury brand values, high quality products, and
-            innovative services.
+    <div
+      className="min-h-screen bg-cover bg-center flex items-center justify-end"
+      style={{ backgroundImage: `url(${img_login})` }}
+    >
+      <div className="w-full max-w-md bg-white bg-opacity-80 backdrop-blur-md rounded-lg shadow-lg p-8 m-6">
+        <div className="flex justify-center">
+          <Link to="/">
+            <Logo />
+          </Link>
+        </div>
+
+        <div>
+          <h1 className="text-3xl font-bold mt-8 text-center">Sign Up</h1>
+          <p className="mt-3 mb-10 text-gray-600 text-center text-sm">
+            Let’s create your account and shop like a pro and save money.
           </p>
         </div>
-      </div>
 
-      <div className="bg-white md:w-1/2 flex items-center justify-center p-8">
-        <div className="w-full max-w-md">
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          <EmailInput onEmailChange={handleOnchange} setErrors={setEmailError} />
+          <PasswordInput
+            label={"Password"}
+            placeholder={"Enter password"}
+            name={"password"}
+            onChange={handleOnchange}
+            setErrors={setPasswordError}
+          />
+          <PasswordInput
+            label={"Confirm Password"}
+            placeholder={"Enter confirmPassword"}
+            name={"confirmPassword"}
+            onChange={handleOnchange}
+            setErrors={setPasswordError}
+          />
+          {error && <p className="text-sm text-red-500 my-2">{error}</p>}
 
-          <div className="flex justify-center  ">
-            <Link to="/">
-              <Logo />
-            </Link>
-          </div>
-
-          <div>
-            <h1 className="text-3xl font-bold mt-12 text-center ">Sign Up</h1>
-
-            <p className="mt-3 mb-14 text-gray-400 text-center text-sm">
-              Let’s create your account and Shop like a pro and save money.
-            </p>
-          </div>
-
-          <form className="space-y-5" onSubmit={handleSubmit}>
-            <EmailInput onEmailChange={handleOnchange} setErrors={setEmailError} />
-            <PasswordInput
-              label={"Password"}
-              placeholder={"Enter password"}
-              name={"password"}
-              onChange={handleOnchange}
-              setErrors={setPasswordError}
-            />
-
-            <PasswordInput
-              label={"Confirm Password"}
-              placeholder={"Enter confirmPassword"}
-              name={"confirmPassword"}
-              onChange={handleOnchange}
-              setErrors={setPasswordError}
-
-            />
-            {error && <p className="text-sm text-red-500 my-2">{error}</p>}
-
-            <button
-              type="submit"
-              className={`w-full py-2 px-4 text-white font-semibold rounded-md shadow focus:outline-none focus:ring-2 focus:ring-offset-2 ${isLoading
+          <button
+            type="submit"
+            className={`w-full py-2 px-4 text-white font-semibold rounded-md shadow focus:outline-none focus:ring-2 focus:ring-offset-2 ${isLoading
                 ? "bg-gray-300 cursor-wait"
-                : (passwordError || emailError)
+                : passwordError || emailError
                   ? "bg-gray-300 cursor-not-allowed"
                   : "bg-gradient-to-r from-amber-700 to-stone-500 transition-all duration-500 ease-in-out bg-[length:200%_auto] hover:bg-[position:right_center]"
-                }`}
-              disabled={isLoading || passwordError || emailError}
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center">
-                  <LoadingOutlined className="text-black animate-spin text-lg" />
-                  <span className="ml-2">Loading...</span>
-                </div>
-              ) : (
-                "Sign Up"
-              )}
-            </button>
+              }`}
+            disabled={isLoading || passwordError || emailError}
+          >
+            {isLoading ? (
+              <div className="flex items-center justify-center">
+                <LoadingOutlined className="text-black animate-spin text-lg" />
+                <span className="ml-2">Loading...</span>
+              </div>
+            ) : (
+              "Sign Up"
+            )}
+          </button>
+        </form>
 
-          </form>
-
-          <div className="flex items-center mt-5 space-x-3 justify-center">
-            <span className=" text-center text-gray-500">
-              You have an account yet?{" "}
-            </span>
-            <Link to="/login">
-              <span className="text-blue-600 hover:underline">Sign In</span>.
-            </Link>
-          </div>
+        <div className="flex items-center mt-5 space-x-2 justify-center">
+          <span className="text-gray-600 text-sm">Already have an account?</span>
+          <Link to="/login">
+            <span className="text-blue-600 hover:underline text-sm">Sign In</span>
+          </Link>
         </div>
       </div>
     </div>
   );
+
 };
 
 export default SignUp;

@@ -26,6 +26,7 @@ import OrderDetails from "../components/profile/OrderDetails";
 import BrandsContent from "../components/adminpage/brand/BrandsContent";
 import CategoryContent from "../components/adminpage/category/CategoryContent";
 import BrandPage from "../pages/BrandPage";
+import AboutWe from "../pages/AboutWe";
 
 const router = createBrowserRouter([
     {
@@ -41,6 +42,13 @@ const router = createBrowserRouter([
                 path: "",
                 element: <Home />,
                 children: [
+                    {
+                        path: "about-we",
+                        element: (
+                            <AboutWe/>
+                        ),
+
+                    },
                     {
                         path: "cart",
                         element: (

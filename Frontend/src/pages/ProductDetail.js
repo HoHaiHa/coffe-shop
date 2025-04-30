@@ -23,6 +23,7 @@ import ProductRating from "../components/layout/ProductRating";
 import DescriptionProduct from "../components/layout/DescriptionProduct";
 import ArticleComponent from "../components/layout/ArticleComponent";
 import { toast } from "react-toastify";
+import ProductSlider from "../components/layout/ProductSlider";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -41,6 +42,9 @@ const ProductDetail = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [checkQuantity, setCheckQuantity] = useState(0);
+
+  const [sameBrandProducts, setSameBrandProducts] = useState([]);
+  const [sameCategoryProducts, setSameCategoryProducts] = useState([]);
 
   const user = useSelector((store) => store?.user?.user);
   const cartItems = useSelector((store) => store.cart.items);
@@ -299,8 +303,80 @@ const ProductDetail = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchProductByBrand = async () => {
+      try {
+        const brandResponse = await fetch(
+          summaryApi.getProductByBrand.url + `${product.brand.id}`,
+          {
+            method: summaryApi.getProductByBrand.method,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
+        const dataResult = await brandResponse.json();
+        if (dataResult.respCode === "000") {
+          setSameBrandProducts(dataResult.data);
+        }
+      } catch (error) {
+        console.log("error", error);
+      } 
+    };
 
+    fetchProductByBrand();
+  }, [product]);
+
+  useEffect(() => {
+    const fetchProductByBrand = async () => {
+      try {
+        const brandResponse = await fetch(
+          summaryApi.getProductByBrand.url + `${product.brand.id}`,
+          {
+            method: summaryApi.getProductByBrand.method,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const dataResult = await brandResponse.json();
+        if (dataResult.respCode === "000") {
+          setSameBrandProducts(dataResult.data);
+        }
+      } catch (error) {
+        console.log("error", error);
+      } 
+    };
+
+    fetchProductByBrand();
+  }, [product]);
+
+  useEffect(() => {
+    const fetchProductByCategory = async () => {
+      try {
+        const categoryResponse = await fetch(
+          summaryApi.getProductByCategory.url + `${product.category.id}`,
+          {
+            method: summaryApi.getProductByCategory.method,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const dataResult = await categoryResponse.json();
+        if (dataResult.respCode === "000") {
+          setSameCategoryProducts(dataResult.data);
+        }
+      } catch (error) {
+        console.log("error", error);
+      } 
+    };
+
+    fetchProductByCategory();
+  }, [product]);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -571,6 +647,9 @@ const ProductDetail = () => {
         </div>
 
         <div className="mt-4">{renderContent(product)}</div>
+
+        <ProductSlider title={'Sản phẩm cùng danh mục'} productList={sameCategoryProducts}/>
+        <ProductSlider title={'Sản phẩm cùng nhãn hàng'} productList={sameBrandProducts}/>
       </div>
 
       <Modal

@@ -12,11 +12,13 @@ const Footer = () => {
           <Link to="/" className="flex items-center space-x-2 mb-4">
               <Logo />
           </Link>
-          <p className="mb-4 text-gray-500 dark:text-gray-400">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam, maxime et veniam eligendi rem
-            voluptatibus.
-          </p>
-          <p className="mb-4 text-gray-500 dark:text-gray-400">
+          <h3 className="font-semibold mb-4">Contact</h3>
+          <ul className="space-y-2">
+            <li><p>Email</p><Link to="mailto:contact@grocerymart.com" className="hover:underline">contact@grocerymart.com</Link></li>
+            <li><p>Hotline</p><Link to="tel:18008888" className="hover:underline">18008888</Link></li>
+            <li><p>Hours</p><p>M - F 08:00am - 06:00pm</p></li>
+          </ul>
+          <p className="mb-4 text-gray-500 dark:text-gray-400 mt-8">
             Receive product news and updates.
           </p>
           
@@ -54,12 +56,16 @@ const Footer = () => {
 
         {/* Footer column 4 */}
         <div>
-          <h3 className="font-semibold mb-4">Contact</h3>
+          <h3 className="font-semibold mb-4">Address</h3>
           <ul className="space-y-2">
-            <li><p>Email</p><Link to="mailto:contact@grocerymart.com" className="hover:underline">contact@grocerymart.com</Link></li>
-            <li><p>Hotline</p><Link to="tel:18008888" className="hover:underline">18008888</Link></li>
-            <li><p>Address</p><p>No. 11D, Lot A10, Nam Trung Yen, Hanoi</p></li>
-            <li><p>Hours</p><p>M - F 08:00am - 06:00pm</p></li>
+            <li>
+            <p>No. 11D, Lot A10, Nam Trung Yen, Hanoi</p>
+            <p>No. 18, Quảng Bá Street, Tây Hồ, Hanoi",</p>
+            <p>No. 22B, Nguyễn Huệ Street, District 1, Ho Chi Minh City</p>
+            <p>No. 79, Nguyễn Thị Minh Khai, District 3, Ho Chi Minh City</p>
+            <p>No. 15, Lê Mao Street, Vinh City, Nghệ An</p>
+            <p>No. 48, Bạch Đằng Street, Hải Châu District, Da Nang</p>
+            </li>
           </ul>
         </div>
       </div>
