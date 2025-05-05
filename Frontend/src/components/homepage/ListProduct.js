@@ -8,7 +8,7 @@ const ListProduct = ({ products: initialProducts, title }) => {
   const [products, setProducts] = useState(initialProducts || []);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
+  const itemsPerPage = 16;
   const productList = products;
 
   const currentProducts = useMemo(() => {

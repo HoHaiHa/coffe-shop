@@ -16,7 +16,6 @@ import { selectFavorites, addToFavorites } from "../store/favoritesSlice ";
 import ChatWidget from "../components/layout/ChatWidget";
 import FilterAdvanced from "../components/homepage/FilterAdvanced";
 import ProductSlider from "../components/layout/ProductSlider";
-import ArticleComponent from "../components/layout/ArticleComponent";
 
 const Home = () => {
   const location = useLocation();

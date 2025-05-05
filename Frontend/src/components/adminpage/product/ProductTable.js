@@ -9,7 +9,8 @@ import {
     Modal,
     Form,
     Select,
-    Image
+    Image,
+    AutoComplete
 } from 'antd';
 import { AiOutlineBars } from "react-icons/ai";
 import { RiEditLine, RiDeleteBinLine } from "react-icons/ri";
@@ -408,7 +409,7 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
             >
                 Add New Product
             </Button>
-            <Table rowKey="id" columns={columns} dataSource={products} />
+            <Table rowKey="id" columns={columns} dataSource={products.slice().reverse()} />
 
             <ReviewModal visible={isReviewModalVisible}
                 onClose={closeReviewModal}
@@ -511,7 +512,14 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
                         initialValue={currentProduct?.netWeight}
 
                     >
-                        <Input placeholder="Enter product net weight" />
+                        <AutoComplete
+                            placeholder="Enter product net weight"
+                            options={[
+                                { value: '500-1000-1500gr' },
+                                { value: '500-1000-2000gr' },
+                                { value: '500-1000gr' },
+                            ]}
+                        />
                     </Form.Item>
                     <Form.Item
                         name="beanType"
@@ -519,48 +527,142 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
                         initialValue={currentProduct?.beanType}
 
                     >
-                        <Input placeholder="Enter product bean type" />
+                        <Select
+                            placeholder="Select a bean type"
+                            dropdownRender={(menu) => (
+                                <>
+                                    {menu}
+                                    {/* <Button
+                                        type="text"
+                                        className="w-full text-left"
+                                        onClick={() => setIsCategoryModalVisible(true)}
+                                    >
+                                        + Add New Category
+                                    </Button> */}
+                                </>
+                            )}
+                        >
+                            {categories.map((cat) => (
+                                <Option key={cat.id} value={cat.id}>
+                                    {cat.name}
+                                </Option>
+                            ))}
+                        </Select>
                     </Form.Item>
                     <Form.Item
                         name="origin"
                         label="Product origin"
                         initialValue={currentProduct?.origin}
-
                     >
-                        <Input placeholder="Enter product origin" />
+                        <AutoComplete
+                            placeholder="Enter product origin"
+                            options={[
+                                { value: 'Vietnam' },
+                                { value: 'USA' },
+                                { value: 'Brazil' },
+                                { value: 'Colombia' },
+                                { value: 'Ethiopia' },
+                                { value: 'Indonesia' },
+                                { value: 'Honduras' },
+                                { value: 'Costa Rica' },
+                                { value: 'Mexico' },
+                                { value: 'Guatemala' },
+                            ]}
+                        >
+                            <Input />
+                        </AutoComplete>
                     </Form.Item>
+
                     <Form.Item
                         name="roadLevel"
                         label="Product road level"
                         initialValue={currentProduct?.roadLevel}
-
                     >
-                        <Input placeholder="Enter product road level" />
+                        <AutoComplete
+                            placeholder="Enter product road level"
+                            options={[
+                                { value: 'Light Roast (Rang nhạt) 180°C – 205°C' },
+                                { value: 'Medium-Light Roast (Rang vừa nhạt) 205°C – 210°C' },
+                                { value: 'Medium Roast (Rang vừa) 210°C – 220°C' },
+                                { value: 'Medium-Dark Roast (Rang vừa đậm) 220°C – 225°C' },
+                                { value: 'Dark Roast (Rang đậm) 225°C – 240°C' },
+                                { value: 'Very Dark Roast (Rang cực đậm) 240°C – 250°C' },
+                            ]}
+                        >
+                            <Input />
+                        </AutoComplete>
                     </Form.Item>
+
                     <Form.Item
                         name="flavoNotes"
                         label="Product flavo notes"
                         initialValue={currentProduct?.flavoNotes}
-
                     >
-                        <Input placeholder="Enter product flavo notes" />
+                        <AutoComplete
+                            placeholder="Nhập flavo notes"
+                            options={[
+                                { value: 'Chocolate (Sô-cô-la)' },
+                                { value: 'Fruity (Trái cây)' },
+                                { value: 'Nutty (Hương hạt)' },
+                                { value: 'Floral (Hương hoa)' },
+                                { value: 'Caramel (Caramen)' },
+                                { value: 'Spicy (Gia vị)' },
+                                { value: 'Citrus (Cam chanh)' },
+                                { value: 'Berry (Quả mọng)' },
+                                { value: 'Sweet (Ngọt)' },
+                                { value: 'Earthy (Đậm vị đất)' },
+                            ]}
+                        >
+                            <Input />
+                        </AutoComplete>
                     </Form.Item>
+
                     <Form.Item
                         name="caffeineContents"
                         label="Product caffeine contents"
                         initialValue={currentProduct?.caffeineContents}
-
                     >
-                        <Input placeholder="Enter product caffeine contents" />
+                        <AutoComplete
+                            placeholder="Nhập hàm lượng caffeine"
+                            options={[
+                                { value: 'Low (Thấp - Dưới 30 mg/100ml)' },
+                                { value: 'Medium (Trung bình - 30–60 mg/100ml)' },
+                                { value: 'High (Cao - 60–100 mg/100ml)' },
+                                { value: 'Very High (Rất cao - Trên 100 mg/100ml)' },
+                                { value: 'Decaf (Không chứa caffeine - Dưới 5 mg/100ml)' },
+                                { value: '50 mg per serving (50 mg mỗi khẩu phần)' },
+                                { value: '75 mg per serving (75 mg mỗi khẩu phần)' },
+                                { value: '100 mg per serving (100 mg mỗi khẩu phần)' },
+                            ]}
+                        >
+                            <Input />
+                        </AutoComplete>
                     </Form.Item>
+
                     <Form.Item
                         name="cafeForm"
                         label="Product cafe form"
                         initialValue={currentProduct?.cafeForm}
-
                     >
-                        <Input placeholder="Enter product cafe form" />
+                        <AutoComplete
+                            placeholder="Chọn hoặc nhập hình thức cà phê"
+                            options={[
+                                { value: 'Whole Bean Coffee (Cà phê nguyên hạt)' },
+                                { value: 'Ground Coffee (Cà phê xay)' },
+                                { value: 'Vietnamese Coffee (Cà phê phin)' },
+                                { value: 'Instant Coffee (Cà phê hòa tan)' },
+                                { value: 'Arabica Coffee Beans (Cà phê Arabica)' },
+                                { value: 'Robusta Coffee Beans (Cà phê Robusta)' },
+                                { value: 'Cold Brew Coffee (Cà phê Cold Brew)' },
+                                { value: 'Espresso Coffee (Cà phê Espresso)' },
+                                { value: 'Decaf Coffee (Cà phê không caffeine)' },
+                                { value: 'Flavored Coffee (Cà phê tẩm hương)' },
+                            ]}
+                        >
+                            <Input />
+                        </AutoComplete>
                     </Form.Item>
+
                     <Form.Item
                         name="articleTitle"
                         label="Product article title"
