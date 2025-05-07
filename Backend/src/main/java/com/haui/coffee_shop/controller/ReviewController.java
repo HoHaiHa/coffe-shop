@@ -37,7 +37,7 @@ public class ReviewController {
 
 
     @RequestMapping(value = "/{reviewId}", method = RequestMethod.DELETE, produces = "application/json")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_STAFF')")
     public ResponseEntity<String> deleteReview(@PathVariable("reviewId") long reviewId) {
         try {
             RespMessage respMessage = reviewService.deleteReview(reviewId);

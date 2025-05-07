@@ -87,7 +87,7 @@ function App() {
   }, [fetchUserDetails, user]);
 
   useEffect(() => {
-    document.title = 'Coffee Shop';
+    document.title = 'Hacafe';
   }, []);
 
 

@@ -49,7 +49,7 @@ const Logo = () => {
         </g>
       </svg>
 
-      <h1 className="text-lg font-semibold text-brown-800 dark:text-white">Coffee Shop</h1>
+      <h1 className="text-lg font-semibold text-brown-800 dark:text-white">Hacafe</h1>
     </div>
   );
 };

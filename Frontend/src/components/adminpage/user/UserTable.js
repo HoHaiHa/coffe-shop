@@ -1,9 +1,10 @@
 import { useState, useRef } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
-import { Button, Input, Space, Table, Popconfirm } from 'antd';
+import { Button, Input, Space, Table, Popconfirm, Select } from 'antd';
 import Highlighter from 'react-highlight-words';
 import fetchWithAuth from '../../../helps/fetchWithAuth';
 import summaryApi from '../../../common';
+import confirm from 'antd/es/modal/confirm';
 
 const UserTable = ({ userList, setUserList }) => {
     const [searchText, setSearchText] = useState('');
@@ -146,6 +147,23 @@ const UserTable = ({ userList, setUserList }) => {
             ),
     });
 
+    const handleChangeRole =(value, record) =>{
+        confirm({
+            title: 'Are you sure you want to change the role?',
+            content: `Are you sure you want to change the role of ${record.key} to ${value}?`,
+            onOk() {
+                // Cập nhật vai trò khi người dùng xác nhận
+                console.log(`Role for record ${record.key} changed to ${value}`);
+            },
+            onCancel() {
+                console.log('Role change cancelled');
+            },
+            // Đảm bảo có nút Cancel, mặc định có rồi
+            okText: 'Yes', // Tùy chỉnh tên nút "OK" nếu muốn
+            cancelText: 'No', // Tùy chỉnh tên nút "Cancel" nếu muốn
+        });
+    };
+
 
 
     const columns = [
@@ -175,8 +193,20 @@ const UserTable = ({ userList, setUserList }) => {
             ...getColumnSearchProps('phone'),
         },
         {
-            title: 'Avatar',
-            dataIndex: 'profile_img',
+            title: 'Role',
+            dataIndex: 'roleName',
+            key: 'roleName', 
+            render: (roleName, record) => (
+                <Select
+                    defaultValue={roleName}
+                    className="w-24"
+                    onChange={(value) => handleChangeRole(value, record)}
+                >
+                    <Select.Option value="ROLE_USER">User</Select.Option>
+                    <Select.Option value="ROLE_STAFF">Staff</Select.Option>
+                    <Select.Option value="ROLE_ADMIN">Admin</Select.Option>
+                </Select>
+            ),
         },
         {
             title: 'Status',

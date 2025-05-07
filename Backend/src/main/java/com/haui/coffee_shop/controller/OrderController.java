@@ -32,7 +32,7 @@ public class OrderController {
 
 
     @GetMapping("/get-all")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_STAFF')")
     public ResponseEntity<String> getAllOrders() {
         RespMessage respMessage = orderService.getAllOrders();
         return new ResponseEntity<>(GsonUtil.getInstance().toJson(respMessage), HttpStatus.OK);
@@ -50,7 +50,7 @@ public class OrderController {
     }
 
     @PostMapping("")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_STAFF')")
     public ResponseEntity<String> addOrder(@RequestBody OrderRequest orderRequest) {
         try {
             RespMessage respMessage = orderService.addOrder(orderRequest);
@@ -65,7 +65,7 @@ public class OrderController {
     }
 
     @PutMapping("/{orderId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_STAFF')")
     public ResponseEntity<String> updateOrderStatus(@PathVariable long orderId) {
         try {
             RespMessage respMessage = orderService.updateOrderStatus(orderId);
@@ -94,7 +94,6 @@ public class OrderController {
     }
 
     @GetMapping("/user/all")
-    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<String> getOrdersByUser() {
         try {
             RespMessage respMessage = orderService.getOrdersByUser();

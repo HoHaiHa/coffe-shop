@@ -24,7 +24,7 @@ public class UserController {
     @Autowired
     private MessageBuilder messageBuilder;
     @GetMapping("/all")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> getAllUsers() {
         try
         {
@@ -41,7 +41,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/ban")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> banUser(@PathVariable Long userId) {
         try {
             RespMessage respMessage = userService.banUser(userId);
@@ -56,7 +56,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/unban")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> unbanUser(@PathVariable Long userId) {
         try {
             RespMessage respMessage = userService.unbanUser(userId);
@@ -71,7 +71,6 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<String> updateUserProfile(@PathVariable Long userId, @RequestBody UserRequest updatedUser) {
         try {
             RespMessage respMessage = userService.updateUserInfo(updatedUser);
@@ -86,7 +85,6 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<String> getUserInfo(@PathVariable Long userId) {
         try {
             RespMessage respMessage = userService.getUserById();

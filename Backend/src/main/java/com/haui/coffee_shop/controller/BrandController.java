@@ -21,7 +21,7 @@ public class BrandController {
     private final MessageBuilder messageBuilder;
 
     @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_STAFF')")
     public ResponseEntity<String> addBrand(@RequestBody BrandRequest brandRequest) {
         try {
             RespMessage respMessage = brandService.addBrand(brandRequest);
@@ -42,7 +42,7 @@ public class BrandController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_STAFF')")
     public ResponseEntity<String> updateBrand(@PathVariable long id, @RequestBody BrandRequest brandRequest) {
         try {
             RespMessage respMessage = brandService.updateBrand(id, brandRequest);
@@ -54,7 +54,7 @@ public class BrandController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_STAFF')")
     public ResponseEntity<String> deleteBrand(@PathVariable long id) {
         try {
             RespMessage respMessage = brandService.deleteBrand(id);

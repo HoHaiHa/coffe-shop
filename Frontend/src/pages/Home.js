@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Spin } from "antd";
+import { Spin, Switch } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import Header from "../components/layout/Header";
 import Footer from "../components/layout/Footer";
@@ -16,6 +16,7 @@ import { selectFavorites, addToFavorites } from "../store/favoritesSlice ";
 import ChatWidget from "../components/layout/ChatWidget";
 import FilterAdvanced from "../components/homepage/FilterAdvanced";
 import ProductSlider from "../components/layout/ProductSlider";
+import SortProduct from "../components/layout/SortProduct";
 
 const Home = () => {
   const location = useLocation();
@@ -37,6 +38,7 @@ const Home = () => {
   const [newProducts, setNewProducts] = useState([])
   const [bestSellingProducts, setBestSellingProducts] = useState([])
 
+  const [sortingCriteria , setSortingCriteria] = useState('CreatedAtDesc')
 
   useEffect(() => {
     const fetchCartItems = async () => {
@@ -154,9 +156,44 @@ const Home = () => {
   const handleClickFilter = () => {
     setOnClickFilter(true);
   };
+
+
   const productList = useMemo(() => {
-    return filteredProducts.length > 0 ? filteredProducts : products;
-  }, [products, filteredProducts]);
+    const list = filteredProducts.length > 0 ? filteredProducts : products;
+    switch (sortingCriteria) {
+      case 'createdAtAsc':
+        return [...list].sort((a, b) => (new Date(a.createdAt) - new Date(b.createdAt))*-1);
+        break;
+      case 'createdAtDesc':
+        return [...list].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        break;
+      case 'priceAsc':
+        return [...list].sort((a, b) => new Date(a.minPrice) - new Date(b.minPrice));
+        break;
+        case 'priceDesc':
+        return [...list].sort((a, b) => (new Date(a.minPrice) - new Date(b.minPrice))*-1);
+        break;
+      case 'soldAsc':
+        return [...list].sort((a, b) => new Date(a.totalSold) - new Date(b.totalSold));
+        break;
+        case 'soldDesc':
+        return [...list].sort((a, b) => (new Date(a.totalSold) - new Date(b.totalSold))*-1);
+        break;
+      case 'rateAsc':
+        return [...list].sort((a, b) => new Date(a.rating) - new Date(b.rating));
+        break;
+        case 'rateDesc':
+        return [...list].sort((a, b) => (new Date(a.rating) - new Date(b.rating))*-1);
+        break;
+      default:
+        return [...list].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        break;
+    }
+  }, [products, filteredProducts,sortingCriteria]);
+
+  const onSortChange = (value) => {
+    setSortingCriteria(value);
+  };
 
   if (user?.roleName === "ROLE_ADMIN") {
     navigate("/admin");
@@ -176,6 +213,7 @@ const Home = () => {
     return (
       <>
         <Header />
+        
         <div className="mt-24"></div>
         {location.pathname !== "/profile" && <BreadcrumbNav />}
         <main className="container mx-auto ">
@@ -195,7 +233,7 @@ const Home = () => {
                       <FilterAdvanced onFilter={handleFilterProducts} onClickFilter={handleClickFilter} products={products} />
                     </div>
                   </div>
-
+                  
                   {((filteredProducts.length === 0 && onClickFilter) || productList.length === 0) ? (
                     <div className="lg:col-start-4 lg:col-span-9 md:col-start-5 md:col-span-8 bg-white shadow-md mt-10 ">
                       <p className="text-center text-lg font-bold text-gray-500 ">
@@ -204,7 +242,8 @@ const Home = () => {
                     </div>
                   ) : (
                     <div className="lg:col-start-4 lg:col-span-9 md:col-start-5 md:col-span-8  col-span-12">
-                      <ListProduct products={productList} />
+                  
+                      <ListProduct products={productList} onSortChange={onSortChange} />
                     </div>
                   )}
                 </div>
@@ -214,7 +253,7 @@ const Home = () => {
               </div>
               <div className="lg:col-start-4 lg:col-span-9 md:col-start-5 md:col-span-8  col-span-12">
                 <ProductSlider productList={bestSellingProducts} title={'Sản phẩm bán chạy'} />
-              </div> 
+              </div>
             </>
           )}
           <section className=" mb-8">

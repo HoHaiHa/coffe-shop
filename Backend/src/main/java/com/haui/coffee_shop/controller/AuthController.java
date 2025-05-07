@@ -65,7 +65,6 @@ public class AuthController {
     }
 
     @RequestMapping(value = "/password", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<String> changePassword(@RequestBody ChangePasswordDTO changePasswordDTO) {
         try {
             RespMessage response = authService.changePassword(changePasswordDTO);

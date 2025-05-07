@@ -2,8 +2,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import ProductCard from "../layout/ProductCard";
 import { useRef } from "react";
 import { Pagination } from "antd";
+import SortProduct from "../layout/SortProduct";
 
-const ListProduct = ({ products: initialProducts, title }) => {
+const ListProduct = ({ products: initialProducts, title, onSortChange }) => {
   const titleRef = useRef();
   const [products, setProducts] = useState(initialProducts || []);
 
@@ -22,18 +23,22 @@ const ListProduct = ({ products: initialProducts, title }) => {
   }, [initialProducts]);
 
   const handlePageChange = (page) => {
-    setCurrentPage(page); 
-    if(titleRef.current) {
+    setCurrentPage(page);
+    if (titleRef.current) {
       const elementPosition = titleRef.current.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({
-        top: elementPosition - 150, 
+        top: elementPosition - 150,
         behavior: "smooth",
       });
     }
-  } 
+  }
 
   return (
     <div className="container bg-white shadow-md p-3 mx-auto mt-10 rounded-lg">
+      <div className="flex justify-end items-end w-full">
+        <SortProduct onSelect={onSortChange} />
+      </div>
+
       {title && (
         <div>
           <h2 ref={titleRef} className="font-bold text-base ">
@@ -47,6 +52,7 @@ const ListProduct = ({ products: initialProducts, title }) => {
         </div>
       ) : (
         <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-2 lg:gap-6 md:gap-3 gap-2 mt-5 ">
+
           {currentProducts.map((product, index) => (
             <ProductCard product={product} key={index} />
           ))}
@@ -57,7 +63,7 @@ const ListProduct = ({ products: initialProducts, title }) => {
         <Pagination
           current={currentPage}
           total={productList.length}
-          onChange={ handlePageChange}
+          onChange={handlePageChange}
           pageSize={itemsPerPage}
           showSizeChanger={false}
         />

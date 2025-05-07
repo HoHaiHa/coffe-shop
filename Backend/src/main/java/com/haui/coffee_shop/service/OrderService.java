@@ -185,9 +185,19 @@ public class OrderService {
             Order order = orderOptional.get();
             if (order.getStatus().equals(OrderStatus.Processing)) {
                 order.setStatus(OrderStatus.Cancelled);
+
+                // ✅ Cộng lại số lượng vào kho
+                List<OrderItem> orderItems = orderItemRepository.findByOrderId(orderId);
+                for (OrderItem orderItem : orderItems) {
+                    ProductItem productItem = orderItem.getProductItem();
+                    productItem.setStock(productItem.getStock() + orderItem.getAmount());
+                    productItemRepository.save(productItem);
+                }
+
             } else {
                 throw new CoffeeShopException(Constant.UNDEFINED, new Object[]{order}, "Order can not be cancelled");
             }
+
             String paymentMethod = order.getPaymentMethod().toString();
             if (paymentMethod.equals(PaymentMethod.VNPay.toString())) {
                 Transaction transaction1 = new Transaction();
@@ -203,18 +213,20 @@ public class OrderService {
                 } else {
                     throw new CoffeeShopException(Constant.NOT_FOUND, null, "Transaction not found");
                 }
+
                 try {
                     orderRepository.save(order);
                     transactionRepository.save(transaction1);
                     return messageBuilder.buildSuccessMessage(order.getStatus());
-                } catch (CoffeeShopException e){
+                } catch (CoffeeShopException e) {
                     throw new CoffeeShopException(Constant.SYSTEM_ERROR, new Object[]{order}, "Order can not be cancelled");
                 }
+
             } else {
                 try {
                     orderRepository.save(order);
                     return messageBuilder.buildSuccessMessage(order.getStatus());
-                } catch (CoffeeShopException e){
+                } catch (CoffeeShopException e) {
                     throw new CoffeeShopException(Constant.SYSTEM_ERROR, new Object[]{order}, "Order can not be cancelled");
                 }
             }

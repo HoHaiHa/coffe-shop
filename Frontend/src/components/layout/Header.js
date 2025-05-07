@@ -126,7 +126,7 @@ const Header = () => {
         <div className="flex items-center space-x-4">
           <div className="flex items-center py-2 bg-transparent text-black font-semibold rounded cursor-pointer relative z-20 hover:underline" onClick={()=> navigate('/about-we')}>
             <FaMapLocationDot />
-            <label className="cursor-pointer px-2">'Về chúng tôi'</label>
+            <label className="cursor-pointer px-2">Về chúng tôi</label>
           </div>
           <DropdownWithList title='Thương hiệu' Icon={AiOutlineTrademark}>
             <ListBrand />

@@ -17,6 +17,8 @@ const BrandPage = () => {
   const [newProducts, setNewProducts] = useState([]);
   const [bestSellingProducts, setBestSellingProducts] = useState([])
 
+  const [sortingCriteria , setSortingCriteria] = useState('CreatedAtDesc')
+
   const handleFilterProducts = (filtered) => {
     setFilteredProducts(filtered);
 
@@ -24,9 +26,40 @@ const BrandPage = () => {
   const handleClickFilter = () => {
     setOnClickFilter(true);
   };
+
+
   const productList = useMemo(() => {
-    return filteredProducts.length > 0 ? filteredProducts : products;
-  }, [products, filteredProducts]);
+    const list = filteredProducts.length > 0 ? filteredProducts : products;
+    switch (sortingCriteria) {
+      case 'createdAtAsc':
+        return [...list].sort((a, b) => (new Date(a.createdAt) - new Date(b.createdAt))*-1);
+        break;
+      case 'createdAtDesc':
+        return [...list].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        break;
+      case 'priceAsc':
+        return [...list].sort((a, b) => new Date(a.minPrice) - new Date(b.minPrice));
+        break;
+        case 'priceDesc':
+        return [...list].sort((a, b) => (new Date(a.minPrice) - new Date(b.minPrice))*-1);
+        break;
+      case 'soldAsc':
+        return [...list].sort((a, b) => new Date(a.totalSold) - new Date(b.totalSold));
+        break;
+        case 'soldDesc':
+        return [...list].sort((a, b) => (new Date(a.totalSold) - new Date(b.totalSold))*-1);
+        break;
+      case 'rateAsc':
+        return [...list].sort((a, b) => new Date(a.rating) - new Date(b.rating));
+        break;
+        case 'rateDesc':
+        return [...list].sort((a, b) => (new Date(a.rating) - new Date(b.rating))*-1);
+        break;
+      default:
+        return [...list].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        break;
+    }
+  }, [products, filteredProducts,sortingCriteria]);
 
   useEffect(() => {
     setLoading(true);
@@ -82,6 +115,10 @@ const BrandPage = () => {
     setNewProducts(products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 20))
   }, [products]);
 
+  const onSortChange = (value) => {
+    setSortingCriteria(value);
+  };
+
   return (
     <>
       {products[0]?.brand && (
@@ -114,7 +151,7 @@ const BrandPage = () => {
             </div>
           ) : (
             <div className="lg:col-start-4 lg:col-span-9 md:col-start-5 md:col-span-8  col-span-12">
-              <ListProduct products={productList} title={brandName} />
+              <ListProduct products={productList} title={brandName}  onSortChange={onSortChange}/>
             </div>
           )}
         </div>

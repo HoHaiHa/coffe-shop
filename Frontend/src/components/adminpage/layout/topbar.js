@@ -24,7 +24,7 @@ const Topbar = () => {
     <div className="w-full h-[60px] bg-white sticky top-0 z-[999] shadow-sm">
       <div className="h-full px-5 flex items-center justify-between">
         <div className="font-bold text-2xl text-blue-700 cursor-pointer">
-          shopAdmin
+          HacafeAdmin
         </div>
         <div className="flex items-center space-x-4">
           <Avatar
