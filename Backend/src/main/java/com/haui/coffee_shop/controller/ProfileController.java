@@ -18,7 +18,6 @@ import com.haui.coffee_shop.service.ProfileService;
 
 @RequestMapping("api/profile")
 @RestController
-@PreAuthorize("hasRole('USER')")
 @RequiredArgsConstructor
 public class ProfileController {
     private final ProfileService profileService;

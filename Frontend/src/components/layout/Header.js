@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUser } from "../../store/userSlice";
 import Cookies from "js-cookie";
-import { message } from "antd";
+import { message, Popconfirm } from "antd";
 import { Badge } from "antd";
 import { clearCart } from "../../store/cartSlice";
 import { clearFavorites } from "../../store/favoritesSlice ";
@@ -124,7 +124,7 @@ const Header = () => {
 
         {/* user */}
         <div className="flex items-center space-x-4">
-          <div className="flex items-center py-2 bg-transparent text-black font-semibold rounded cursor-pointer relative z-20 hover:underline" onClick={()=> navigate('/about-we')}>
+          <div className="flex items-center py-2 bg-transparent text-black font-semibold rounded cursor-pointer relative z-20 hover:underline" onClick={() => navigate('/about-we')}>
             <FaMapLocationDot />
             <label className="cursor-pointer px-2">Về chúng tôi</label>
           </div>
@@ -179,13 +179,19 @@ const Header = () => {
           )}
 
           {user?.id && (
-            <button
-              onClick={handleLogout}
-              className="rounded-full px-4 py-1 text-white text-sm shadow-md bg-gradient-to-r from-amber-700 to-stone-500 transition-all duration-300 ease-in-out bg-[length:200%_auto]
-            hover:bg-[position:right_center]"
+            <Popconfirm
+              title="Đăng xuất khỏi hệ thống?"
+              onConfirm={handleLogout} 
+              okText="Đăng xuất"
+              cancelText="Hủy"
             >
-              Logout
-            </button>
+              <button
+                className="rounded-full px-4 py-1 text-white text-sm shadow-md bg-gradient-to-r from-amber-700 to-stone-500 transition-all duration-300 ease-in-out bg-[length:200%_auto]
+      hover:bg-[position:right_center]"
+              >
+                Logout
+              </button>
+            </Popconfirm>
           )}
         </div>
       </div>

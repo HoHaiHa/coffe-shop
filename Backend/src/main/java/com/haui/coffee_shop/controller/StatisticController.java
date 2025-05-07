@@ -26,7 +26,7 @@ public class StatisticController {
     private final StatisticService statisticService;
     private final MessageBuilder messageBuilder;
 
-    @GetMapping("/product/monthly")
+    @GetMapping("/product/best/monthly")
     public ResponseEntity<String> getTopSellingProducts(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate) {
@@ -40,10 +40,35 @@ public class StatisticController {
         }
     }
 
-    @GetMapping("/product")
+    @GetMapping("/product/best")
     public ResponseEntity<String> getTopSellingProducts() {
         try {
             RespMessage respMessage = statisticService.getTop5BestSellingProduct();
+            return new ResponseEntity<>(GsonUtil.getInstance().toJson(respMessage), HttpStatus.OK);
+        } catch (Exception e) {
+            RespMessage respMessage = messageBuilder.buildFailureMessage(Constant.SYSTEM_ERROR, null, e.getMessage());
+            return new ResponseEntity<>(GsonUtil.getInstance().toJson(respMessage), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/product/slow/monthly")
+    public ResponseEntity<String> getTopSlowSellingProducts(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate) {
+
+        try {
+            RespMessage respMessage = statisticService.getTop5MonthlySlowSellingProduct(startDate, endDate);
+            return new ResponseEntity<>(GsonUtil.getInstance().toJson(respMessage), HttpStatus.OK);
+        } catch (Exception e) {
+            RespMessage respMessage = messageBuilder.buildFailureMessage(Constant.SYSTEM_ERROR, null, e.getMessage());
+            return new ResponseEntity<>(GsonUtil.getInstance().toJson(respMessage), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/product/slow")
+    public ResponseEntity<String> getTopSlowSellingProducts() {
+        try {
+            RespMessage respMessage = statisticService.getTop5SlowSellingProduct();
             return new ResponseEntity<>(GsonUtil.getInstance().toJson(respMessage), HttpStatus.OK);
         } catch (Exception e) {
             RespMessage respMessage = messageBuilder.buildFailureMessage(Constant.SYSTEM_ERROR, null, e.getMessage());

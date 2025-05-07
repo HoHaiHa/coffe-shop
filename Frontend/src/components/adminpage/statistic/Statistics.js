@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import RevenueChart from "./RevenueChart";
 import ProductChart from "./ProductChart";
 import UserChart from "./UserChart";
+import ProductSlowChart from "./ProductSlowChart";
 
 const Statistics = () => {
   const [activeTab, setActiveTab] = useState("Thống kê doanh thu");
   const keyTab = [
     "Thống kê doanh thu",
-    "Thống kê sản phẩm",
+    "Thống kê sản phẩm bán chạy",
+    "Thống kê sản phẩm bán chậm",
     "Thống kê người dùng",
   ];
 
@@ -15,8 +17,10 @@ const Statistics = () => {
     switch (activeTab) {
       case "Thống kê doanh thu":
         return <RevenueChart />;
-      case "Thống kê sản phẩm":
+      case "Thống kê sản phẩm bán chạy":
         return <ProductChart />;
+      case "Thống kê sản phẩm bán chậm":
+        return <ProductSlowChart />;
       case "Thống kê người dùng":
         return <UserChart />;
       default:

@@ -65,6 +65,46 @@ public class StatisticService {
         }
     }
 
+    public RespMessage getTop5MonthlySlowSellingProduct(Date startDate, Date endDate) {
+        Pageable pageable = PageRequest.of(0, 5);
+        try {
+            List<Object[]> results = orderItemRepository.findTop5MonthlySlowSellingProducts(startDate,endDate,pageable);
+            List<ProductStatisticResponse> productStatisticResponses = new ArrayList<>();
+            for (Object[] result : results) {
+                Product product = (Product) result[0];
+                Long totalQuantity = (Long) result[1];
+                double totalRevenue = (Double) result[2];
+                ProductStatisticResponse productStatisticResponse = product.toStatisticResponse();
+                productStatisticResponse.setQuantitySold(totalQuantity);
+                productStatisticResponse.setTotalRevenue(totalRevenue);
+                productStatisticResponses.add(productStatisticResponse);
+            }
+            return messageBuilder.buildSuccessMessage(productStatisticResponses);
+        } catch (Exception e){
+            throw new RuntimeException("Error getting top 5 monthly selling products");
+        }
+    }
+
+    public RespMessage getTop5SlowSellingProduct() {
+        Pageable pageable = PageRequest.of(0, 5);
+        try {
+            List<Object[]> results = orderItemRepository.findTop5SlowSellingProducts(pageable);
+            List<ProductStatisticResponse> productStatisticResponses = new ArrayList<>();
+            for (Object[] result : results) {
+                Product product = (Product) result[0];
+                Long totalQuantity = (Long) result[1];
+                double totalRevenue = (Double) result[2];
+                ProductStatisticResponse productStatisticResponse = product.toStatisticResponse();
+                productStatisticResponse.setQuantitySold(totalQuantity);
+                productStatisticResponse.setTotalRevenue(totalRevenue);
+                productStatisticResponses.add(productStatisticResponse);
+            }
+            return messageBuilder.buildSuccessMessage(productStatisticResponses);
+        } catch (Exception e){
+            throw new RuntimeException("Error getting top 5 best selling products");
+        }
+    }
+
     public RespMessage getTop5BestCustomers() {
 //        Pageable pageable = PageRequest.of(0, 5);
         try {

@@ -28,7 +28,7 @@ public class UserService {
     private MessageBuilder messageBuilder;
 
     public RespMessage getAllUsers() {
-        List<User> users = userRepository.getAllUser();
+        List<User> users = userRepository.findAll();
         List<UserDTO> userDTOS = new ArrayList<>();
         for (User user : users) {
             UserDTO userDTO = new UserDTO();
@@ -37,7 +37,7 @@ public class UserService {
             userDTO.setEmail(user.getEmail());
             userDTO.setPhone(user.getPhone());
             userDTO.setProfile_img(userDTO.getProfile_img());
-            userDTO.setRoleName("ROLE_USER");
+            userDTO.setRoleName(user.getRole().toString());
             userDTO.setStatus(user.getStatus().toString());
             userDTOS.add(userDTO);
         }
@@ -56,7 +56,7 @@ public class UserService {
         userDTO.setPhone(user.getPhone());
         userDTO.setProfile_img(user.getProfile_img());
         userDTO.setStatus(user.getStatus().toString());
-        userDTO.setRoleName("ROLE_USER");
+        userDTO.setRoleName(user.getRole().toString());
         return messageBuilder.buildSuccessMessage(userDTO);
     }
 

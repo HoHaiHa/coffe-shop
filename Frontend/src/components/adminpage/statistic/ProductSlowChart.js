@@ -15,7 +15,7 @@ import summaryApi from "../../../common";
 
 const { Option } = Select;
 
-const ProductChart = () => {
+const ProductSlowChart = () => {
   const [view, setView] = useState("overview");
   const [data, setData] = useState([]);
   const [detailedData, setDetailedData] = useState([]);
@@ -28,9 +28,9 @@ const ProductChart = () => {
         let response;
         if (view === "overview") {
           response = await fetchWithAuth(
-            summaryApi.getTop5BestSellingProduct.url,
+            summaryApi.getTop5SlowSellingProduct.url,
             {
-              method: summaryApi.getTop5BestSellingProduct.method,
+              method: summaryApi.getTop5SlowSellingProduct.method,
             }
           );
         } else {
@@ -44,9 +44,9 @@ const ProductChart = () => {
             .month(selectedMonth)
             .endOf("month")
             .format("YYYY-MM-DD");
-          const url = `${summaryApi.getTop5MonthlySellingProduct.url}?startDate=${startDate}&endDate=${endDate}`;
+          const url = `${summaryApi.getTop5MonthlySlowSellingProduct.url}?startDate=${startDate}&endDate=${endDate}`;
           response = await fetchWithAuth(url, {
-            method: summaryApi.getTop5MonthlySellingProduct.method,
+            method: summaryApi.getTop5MonthlySlowSellingProduct.method,
           });
         }
         const result = await response.json();
@@ -134,7 +134,7 @@ const ProductChart = () => {
   return (
     <div className="flex flex-col items-center space-y-6">
       <div className="w-2/3 flex items-center justify-between ">
-        <h2 className="text-xl font-semibold my-2">Top 5 sản phẩm bán chạy nhất</h2>
+      <h2 className="text-xl font-semibold my-2">Top 5 sản phẩm bán chậm</h2>
         <div className="space-x-4">
           <Select
             defaultValue="overview"
@@ -203,4 +203,4 @@ const ProductChart = () => {
   );
 };
 
-export default ProductChart;
+export default ProductSlowChart;

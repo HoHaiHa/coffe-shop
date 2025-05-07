@@ -36,6 +36,24 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
             "ORDER BY totalQuantity DESC")
     List<Object[]> findTop5BestSellingProducts(Pageable pageable);
 
+    @Query("SELECT oi.productItem.product, SUM(oi.amount) AS totalQuantity, SUM(oi.amount * (oi.price - oi.discount)) AS totalRevenue " +
+            "FROM OrderItem oi " +
+            "JOIN oi.order o " +
+            "WHERE o.status = 'Completed' " +
+            "AND o.orderDate BETWEEN :startDate AND :endDate " +
+            "GROUP BY oi.productItem.product " +
+            "ORDER BY totalQuantity ASC")
+    List<Object[]> findTop5MonthlySlowSellingProducts(@Param("startDate") Date startDate,
+                                               @Param("endDate") Date endDate, Pageable pageable);
+
+    @Query("SELECT oi.productItem.product, SUM(oi.amount) AS totalQuantity, SUM(oi.amount * (oi.price - oi.discount)) AS totalRevenue " +
+            "FROM OrderItem oi " +
+            "JOIN oi.order o " +
+            "WHERE o.status = 'Completed' " +
+            "GROUP BY oi.productItem.product " +
+            "ORDER BY totalQuantity ASC")
+    List<Object[]> findTop5SlowSellingProducts(Pageable pageable);
+
     @Query("SELECT oi.order.shippingAddress.user, SUM(oi.amount * (oi.price - oi.discount)) AS total " +
             "FROM OrderItem oi " +
             "JOIN oi.order o " +

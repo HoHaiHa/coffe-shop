@@ -1,31 +1,27 @@
 import React, { useState } from "react";
-import { Typography, List, Spin, Form, Button, Modal, message } from "antd";
+import { Typography, List, Spin, Form, Button, Modal } from "antd";
 import { UserOutlined, LoadingOutlined, EditOutlined } from "@ant-design/icons";
 import {
-  FiHome,
   FiMail,
-  FiGift,
-  FiAlertCircle,
   FiPhone,
   FiKey,
   FiUser,
+  FiHome
 } from "react-icons/fi";
 import { toast } from "react-toastify";
-import PasswordInput from "../components/validateInputForm/PasswordInput";
-import { TbInfoSquare } from "react-icons/tb";
-import fetchWithAuth from "../helps/fetchWithAuth";
-import summaryApi from "../common";
-import Wishlist from "../components/profile/wishlist";
-import Address from "../components/profile/address";
-import Info from "../components/profile/InforProfile";
-import OrderHistory from "../components/profile/orderHistory";
-import ProfileSection from "../components/profile/ProfileSection";
+
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../store/userSlice";
+import fetchWithAuth from "../../../helps/fetchWithAuth";
+import summaryApi from "../../../common";
+import { setUser } from "../../../store/userSlice";
+import PasswordInput from "../../validateInputForm/PasswordInput";
+import ProfileSection from "../../profile/ProfileSection";
+import Info from "../../profile/InforProfile";
+import ShippingAddress from "../../profile/address";
 
 const { Title, Text } = Typography;
 
-const Profile = () => {
+const AdminProfile = () => {
   const [loading, setLoading] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState("personalInfo");
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -33,8 +29,6 @@ const Profile = () => {
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [passwordForm] = Form.useForm();
-
-  const dispatch = useDispatch();
 
   if (loading || !user) {
     const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
@@ -76,7 +70,7 @@ const Profile = () => {
     const respData = await fetchUpdateProfile(updatedData);
 
     if (respData) {
-      dispatch(setUser(respData));
+      window.location.reload();
     }
     setLoading(false);
   };
@@ -129,6 +123,7 @@ const Profile = () => {
       }
     }
   };
+
 
   const renderContent = () => {
     switch (selectedMenu) {
@@ -190,9 +185,6 @@ const Profile = () => {
 
                 </div>
               </div>
-
-              {/* Lists */}
-              <Wishlist  />
             </section>
             {/* Modal for changing password */}
             <Modal
@@ -213,7 +205,7 @@ const Profile = () => {
                   <PasswordInput
                     placeholder="Nhập mật khẩu hiện tại"
                     name="oldPassword"
-                    setErrors={(value) => passwordForm.setFields([{ name: "oldPassword"}])}
+                    setErrors={(value) => passwordForm.setFields([{ name: "oldPassword" }])}
                     onChange={(e) => passwordForm.setFieldValue("oldPassword", e.target.value)}
                   />
                 </Form.Item>
@@ -227,7 +219,7 @@ const Profile = () => {
                   <PasswordInput
                     placeholder="Nhập mật khẩu mới"
                     name="newPassword"
-                    setErrors={(value) => passwordForm.setFields([{ name: "newPassword" }])}
+                    setErrors={(value) => passwordForm.setFields([{ name: "newPassword"}])}
                     onChange={(e) => passwordForm.setFieldValue("newPassword", e.target.value)}
                   />
                 </Form.Item>
@@ -261,7 +253,7 @@ const Profile = () => {
       case "addresses":
         return (
           <>
-            <Address  />
+            <ShippingAddress />
           </>
         );
       case "communications":
@@ -269,12 +261,6 @@ const Profile = () => {
           <div>
             <Title level={3}>Communications & Privacy</Title>
             <p>Adjust your communication preferences here.</p>
-          </div>
-        );
-      case "orderHistory":
-        return (
-          <div>
-            <OrderHistory />
           </div>
         );
       default:
@@ -304,26 +290,6 @@ const Profile = () => {
           )}
           className="mb-6"
         />
-
-        <Title level={5}>My Orders</Title>
-        <List
-          itemLayout="horizontal"
-          dataSource={[
-            { key: "orderHistory", title: "Order History", icon: <FiGift className="text-2xl" /> },
-          ]}
-          renderItem={(item) => (
-            <List.Item
-              onClick={() => setSelectedMenu(item.key)}
-              className={`cursor-pointer p-2 rounded-lg transition-all duration-300 ${selectedMenu === item.key ? "bg-gray-200" : "bg-white"}`}
-            >
-              <List.Item.Meta avatar={<div className="pl-2">{item.icon}</div>} title={item.title} />
-
-            </List.Item>
-          )}
-          className="mb-6"
-        />
-
-       
       </aside>
 
 
@@ -341,4 +307,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default AdminProfile;

@@ -27,6 +27,7 @@ import BrandsContent from "../components/adminpage/brand/BrandsContent";
 import CategoryContent from "../components/adminpage/category/CategoryContent";
 import BrandPage from "../pages/BrandPage";
 import AboutWe from "../pages/AboutWe";
+import AdminProfile from "../components/adminpage/profile/Profile";
 
 const router = createBrowserRouter([
     {
@@ -182,7 +183,15 @@ const router = createBrowserRouter([
                         path: "*",
                         element: <NotFound />,
 
-                    }
+                    },
+                    {
+                        path: "profile",
+                        element: (
+                            <PrivateRoute>
+                                <AdminProfile />
+                            </PrivateRoute>
+                        ),
+                    },
                 ]
 
             },

@@ -249,11 +249,19 @@ const summaryApi = {
         method : "PUT"
     },
     getTop5MonthlySellingProduct : {
-        url : `${backendDomain}/statistic/product/monthly`,
+        url : `${backendDomain}/statistic/product/best/monthly`,
         method : "GET"
     },
     getTop5BestSellingProduct : {
-        url : `${backendDomain}/statistic/product`,
+        url : `${backendDomain}/statistic/product/best`,
+        method : "GET"
+    },
+    getTop5MonthlySlowSellingProduct : {
+        url : `${backendDomain}/statistic/product/best/monthly`,
+        method : "GET"
+    },
+    getTop5SlowSellingProduct : {
+        url : `${backendDomain}/statistic/product/best`,
         method : "GET"
     },
     getTop5MonthlyUsers : {

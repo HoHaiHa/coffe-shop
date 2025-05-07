@@ -17,8 +17,6 @@ import com.haui.coffee_shop.service.ShippingAddressService;
 @RestController
 @RequestMapping("/api/address")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ROLE_USER')")
-
 public class ShippingAddressController {
     private final ShippingAddressService shippingAddressService;
     private final MessageBuilder messageBuilder;
