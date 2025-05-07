@@ -4,7 +4,9 @@ import { Button, Input, Space, Table, Popconfirm, Select } from 'antd';
 import Highlighter from 'react-highlight-words';
 import fetchWithAuth from '../../../helps/fetchWithAuth';
 import summaryApi from '../../../common';
-import confirm from 'antd/es/modal/confirm';
+import { Modal } from 'antd';
+import { toast } from 'react-toastify';
+const { confirm } = Modal;
 
 const UserTable = ({ userList, setUserList }) => {
     const [searchText, setSearchText] = useState('');
@@ -30,6 +32,7 @@ const UserTable = ({ userList, setUserList }) => {
         )
         const dataResponse = await response.json();
         if (dataResponse.respCode === '000') {
+            toast.success('Khóa thành công');
             const newData = userList.map((item) => {
                 if (item.id === key) {
                     return { ...item, status: 'INACTIVE' };
@@ -38,6 +41,9 @@ const UserTable = ({ userList, setUserList }) => {
                 return item;
             });
             setUserList(newData);
+        }
+        else if (dataResponse.status === 403) {
+            toast.error('Bạn không có quyền');
         }
 
     };
@@ -50,6 +56,7 @@ const UserTable = ({ userList, setUserList }) => {
         )
         const dataResponse =await response.json();
         if (dataResponse.respCode === '000') {
+            toast.success('Mở khóa thành công');
             const newData = userList.map((item) => {
                 if (item.id === key) {
                     return { ...item, status: 'ACTIVE' };
@@ -58,6 +65,29 @@ const UserTable = ({ userList, setUserList }) => {
             });
             setUserList(newData);
         }
+        else if (dataResponse.status === 403) {
+            toast.error('Bạn không có quyền');
+        }
+    };
+
+    const changeRole = async (key , newRole) => {
+        const response = await fetchWithAuth(
+            `${summaryApi.processRoleUser.url + key }?roleName=${newRole}`,
+            {
+                method: summaryApi.processRoleUser.method,
+            }
+        )
+        const dataResponse = await response.json();
+        if (dataResponse.respCode === '000') {
+            toast.success('Thay đổi vai trò thành công');
+        }
+        else if (dataResponse.status === 403) {
+            toast.error('Bạn không có quyền');
+        }
+        else{
+            toast.error('Có lỗi xảy ra');
+        }
+
     };
 
     const getColumnSearchProps = (dataIndex) => ({
@@ -149,22 +179,18 @@ const UserTable = ({ userList, setUserList }) => {
 
     const handleChangeRole =(value, record) =>{
         confirm({
-            title: 'Are you sure you want to change the role?',
-            content: `Are you sure you want to change the role of ${record.key} to ${value}?`,
+            title: 'Đổi vai trò!',
+            content: `Đổi vai trò ${record.name} thành ${value.substring(value.indexOf('_') + 1)}?`,
             onOk() {
-                // Cập nhật vai trò khi người dùng xác nhận
-                console.log(`Role for record ${record.key} changed to ${value}`);
+                changeRole(record.id, value);
             },
             onCancel() {
-                console.log('Role change cancelled');
+                
             },
-            // Đảm bảo có nút Cancel, mặc định có rồi
-            okText: 'Yes', // Tùy chỉnh tên nút "OK" nếu muốn
-            cancelText: 'No', // Tùy chỉnh tên nút "Cancel" nếu muốn
+            okText: 'OK', 
+            cancelText: 'Hủy', 
         });
     };
-
-
 
     const columns = [
         {
@@ -202,9 +228,8 @@ const UserTable = ({ userList, setUserList }) => {
                     className="w-24"
                     onChange={(value) => handleChangeRole(value, record)}
                 >
-                    <Select.Option value="ROLE_USER">User</Select.Option>
-                    <Select.Option value="ROLE_STAFF">Staff</Select.Option>
-                    <Select.Option value="ROLE_ADMIN">Admin</Select.Option>
+                    <Select.Option value="ROLE_USER">USER</Select.Option>
+                    <Select.Option value="ROLE_STAFF">STAFF</Select.Option>
                 </Select>
             ),
         },
@@ -224,14 +249,10 @@ const UserTable = ({ userList, setUserList }) => {
         },
 
     ];
-   
-
-
     return (
         <div>
             <Table
                 className='rounded-lg'
-               
                 columns={columns}
                 dataSource={userList}
                 rowKey="id"

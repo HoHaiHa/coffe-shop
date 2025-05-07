@@ -183,6 +183,10 @@ const summaryApi = {
         url: `${backendDomain}/user/`,
         method: "PUT",
     },
+    processRoleUser: {
+        url: `${backendDomain}/user/role/`,
+        method: "PUT",
+    },
     searchProduct : {
         url : `${backendDomain}/product/search`,
         method : 'GET'

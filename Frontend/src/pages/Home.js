@@ -195,7 +195,7 @@ const Home = () => {
     setSortingCriteria(value);
   };
 
-  if (user?.roleName === "ROLE_ADMIN") {
+  if (user?.roleName === "ROLE_ADMIN" || user?.roleName === "ROLE_STAFF") {
     navigate("/admin");
   } else if (isCartLoading) {
     const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;

@@ -29,16 +29,19 @@ const Topbar = () => {
         </div>
         <div className="flex items-center space-x-4">
           <Link to="/admin/profile">
-            <div className="relative flex cursor-pointer justify-center text-2xl">
-              {user?.profile_img ? (
-                <img
-                  src={user?.profile_img}
-                  alt="Avatar User"
-                  className="w-8 h-8 object-cover rounded-full"
-                />
-              ) : (
-                <PiUserCircle />
-              )}
+            <div className="flex items-center space-x-2 px-2 py-2 bg-transparent text-black font-semibold rounded cursor-pointer relative z-20 hover:underline">
+              <div className="relative flex cursor-pointer justify-center text-2xl">
+                {user?.profile_img ? (
+                  <img
+                    src={user?.profile_img}
+                    alt="Avatar User"
+                    className="w-8 h-8 object-cover rounded-full"
+                  />
+                ) : (
+                  <PiUserCircle />
+                )}
+              </div>
+              <label className="cursor-pointer">Tài khoản</label>
             </div>
           </Link>
 

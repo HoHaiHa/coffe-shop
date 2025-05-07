@@ -6,13 +6,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.haui.coffee_shop.common.Constant;
+import com.haui.coffee_shop.common.enums.RoleEnum;
 import com.haui.coffee_shop.common.enums.Status;
 import com.haui.coffee_shop.config.MessageBuilder;
 import com.haui.coffee_shop.exception.CoffeeShopException;
+import com.haui.coffee_shop.model.Role;
 import com.haui.coffee_shop.model.User;
 import com.haui.coffee_shop.payload.request.UserRequest;
 import com.haui.coffee_shop.payload.response.RespMessage;
 import com.haui.coffee_shop.payload.response.UserDTO;
+import com.haui.coffee_shop.repository.RoleRepository;
 import com.haui.coffee_shop.repository.UserRepository;
 
 import java.util.ArrayList;
@@ -26,20 +29,24 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private MessageBuilder messageBuilder;
+    @Autowired
+    private RoleRepository roleRepository;
 
     public RespMessage getAllUsers() {
         List<User> users = userRepository.findAll();
         List<UserDTO> userDTOS = new ArrayList<>();
         for (User user : users) {
-            UserDTO userDTO = new UserDTO();
-            userDTO.setId(user.getId());
-            userDTO.setName(user.getName());
-            userDTO.setEmail(user.getEmail());
-            userDTO.setPhone(user.getPhone());
-            userDTO.setProfile_img(userDTO.getProfile_img());
-            userDTO.setRoleName(user.getRole().toString());
-            userDTO.setStatus(user.getStatus().toString());
-            userDTOS.add(userDTO);
+            if (!"ROLE_ADMIN".equals(user.getRole().getName().toString())) {
+                UserDTO userDTO = new UserDTO();
+                userDTO.setId(user.getId());
+                userDTO.setName(user.getName());
+                userDTO.setEmail(user.getEmail());
+                userDTO.setPhone(user.getPhone());
+                userDTO.setProfile_img(user.getProfile_img());
+                userDTO.setRoleName(user.getRole().getName().toString());
+                userDTO.setStatus(user.getStatus().toString());
+                userDTOS.add(userDTO);
+            }
         }
         return messageBuilder.buildSuccessMessage(userDTOS);
     }
@@ -48,7 +55,8 @@ public class UserService {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String email = userDetails.getUsername();
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new CoffeeShopException(Constant.FIELD_NOT_FOUND, new Object[]{"User"}, "User not found when change password"));
+                .orElseThrow(() -> new CoffeeShopException(Constant.FIELD_NOT_FOUND, new Object[] { "User" },
+                        "User not found when change password"));
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setName(user.getName());
@@ -56,7 +64,7 @@ public class UserService {
         userDTO.setPhone(user.getPhone());
         userDTO.setProfile_img(user.getProfile_img());
         userDTO.setStatus(user.getStatus().toString());
-        userDTO.setRoleName(user.getRole().toString());
+        userDTO.setRoleName(user.getRole().getName().toString());
         return messageBuilder.buildSuccessMessage(userDTO);
     }
 
@@ -80,7 +88,8 @@ public class UserService {
                 userRepository.save(user);
                 return messageBuilder.buildSuccessMessage(newUserDTO);
             } catch (CoffeeShopException e) {
-                throw new CoffeeShopException(Constant.SYSTEM_ERROR, new Object[]{"user"}, "User could not be banned");
+                throw new CoffeeShopException(Constant.SYSTEM_ERROR, new Object[] { "user" },
+                        "User could not be banned");
             }
         }
         throw new RuntimeException("User not found with ID: " + userId);
@@ -102,7 +111,8 @@ public class UserService {
                 userRepository.save(user);
                 return messageBuilder.buildSuccessMessage(updatedUserDTO);
             } catch (CoffeeShopException e) {
-                throw new CoffeeShopException(Constant.SYSTEM_ERROR, new Object[]{"user"}, "User could not be unbanned");
+                throw new CoffeeShopException(Constant.SYSTEM_ERROR, new Object[] { "user" },
+                        "User could not be unbanned");
             }
         }
         throw new RuntimeException("User not found with ID: " + userId);
@@ -112,7 +122,8 @@ public class UserService {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String email = userDetails.getUsername();
         User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new CoffeeShopException(Constant.FIELD_NOT_FOUND, new Object[]{"User"}, "User not found when change password"));
+                .orElseThrow(() -> new CoffeeShopException(Constant.FIELD_NOT_FOUND, new Object[] { "User" },
+                        "User not found when change password"));
         currentUser.setName(updatedUser.getName());
         currentUser.setPhone(updatedUser.getPhone());
         currentUser.setUpdated_at(new Date());
@@ -121,8 +132,36 @@ public class UserService {
             userRepository.save(currentUser);
             return messageBuilder.buildSuccessMessage(updatedUser);
         } catch (CoffeeShopException e) {
-            throw new CoffeeShopException(Constant.SYSTEM_ERROR, new Object[]{"user"}, "UserInfo could not be updated");
+            throw new CoffeeShopException(Constant.SYSTEM_ERROR, new Object[] { "user" },
+                    "UserInfo could not be updated");
+        }
+    }
+
+    public RespMessage updateUserRole(Long userId, String roleName) {
+        try {
+            Role role = new Role();
+            if("ROLE_ADMIN".equals(roleName)){
+                role = roleRepository.findByName(RoleEnum.ROLE_ADMIN)
+                    .orElseThrow(() -> new CoffeeShopException("Role not found: " + roleName));
+            }
+            else if("ROLE_STAFF".equals(roleName)){
+                role = roleRepository.findByName(RoleEnum.ROLE_STAFF)
+                    .orElseThrow(() -> new CoffeeShopException("Role not found: " + roleName));
+            }
+            else{
+                role = roleRepository.findByName(RoleEnum.ROLE_USER)
+                    .orElseThrow(() -> new CoffeeShopException("Role not found: " + roleName));
+            }
+
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new CoffeeShopException("User not found with ID: " ));
+
+            user.setRole(role);
+            userRepository.save(user);
+            return messageBuilder.buildSuccessMessage(true);
+        } catch (CoffeeShopException e) {
+            throw new CoffeeShopException(Constant.SYSTEM_ERROR, new Object[] { "user" },
+                    "UserInfo could not be updated");
         }
     }
 }
-

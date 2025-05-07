@@ -12,4 +12,8 @@ public class CoffeeShopException extends RuntimeException {
         this.code = code;
         this.objects = objects;
     }
+
+    public CoffeeShopException(String string) {
+        //TODO Auto-generated constructor stub
+    }
 }
