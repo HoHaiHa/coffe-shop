@@ -21,3 +21,4 @@ public class ChatMessage {
     @JoinColumn(name = "conversation_id")
     private Conversation conversation;
 }
+            
