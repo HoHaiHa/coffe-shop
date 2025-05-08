@@ -30,7 +30,7 @@ public class CategoryController {
 
     @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json",
                         consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_STAFF')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> addCategory(@RequestParam("name") String name, @RequestParam("description") String description, @RequestParam("articleTitle") String articleTitle,
     		@RequestParam("article") String article,@RequestParam(value = "image", required = false) MultipartFile imageFile) {
         try {
@@ -67,7 +67,7 @@ public class CategoryController {
 
     @RequestMapping(value = "/{id}" , method = RequestMethod.PUT , produces = "application/json",
                     consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_STAFF')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> updateCategory (@PathVariable Long id,
                                                   @RequestParam("name") String name, @RequestParam("description") String description,String articleTitle, String article,
                                                   @RequestParam(value = "image", required = false) MultipartFile imageFile) {
@@ -81,7 +81,7 @@ public class CategoryController {
     }
 
     @RequestMapping(value = "/{id}" , method = RequestMethod.DELETE , produces = "application/json")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_STAFF')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> deleteCategory (@PathVariable long id) {
         try {
             RespMessage respMessage = categoryService.deleteCategory(id);

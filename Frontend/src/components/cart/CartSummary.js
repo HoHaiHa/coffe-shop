@@ -29,19 +29,19 @@ const CartSummary = () => {
     <Card className="bg-white text-gray-800 shadow-md border border-gray-300">
       <div className="space-y-4">
         <div className=" flex md:text-lg text-base font-semibold justify-between">
-          <h3 className=" text-gray-700">Subtotal (items):</h3>
+          <h3 className=" text-gray-700">Tạm tính (sản phẩm):</h3>
           <p className="text-gray-800">{selectedItems.length}</p>
         </div>
 
         <div className="flex md:text-lg text-base font-semibold justify-between">
-          <h3 className=" text-gray-700">Price (Total):</h3>
+          <h3 className=" text-gray-700">Giá (Tổng cộng):</h3>
           <p className="text-gray-800">
             {Number(subtotal).toLocaleString("vi-VN")}đ
           </p>
         </div>
 
         <div className="flex md:text-lg text-base font-semibold justify-between">
-          <h3 className=" text-gray-700">Discount:</h3>
+          <h3 className=" text-gray-700">Giảm giá:</h3>
           <p className="text-gray-800">
             {Number(discount).toLocaleString("vi-VN")}đ
           </p>
@@ -64,7 +64,7 @@ const CartSummary = () => {
                  : "bg-yellow-300 hover:bg-yellow-400 hover:text-black"
              }`}
         >
-          Continue to checkout
+          Tiếp tục thanh toán
         </button>
       </Link>
     </Card>

@@ -48,7 +48,7 @@ const ListProduct = ({ products: initialProducts, title, onSortChange }) => {
       )}
       {productList.length === 0 ? (
         <div className="text-center text-lg font-bold text-gray-500 mt-5">
-          No results found
+          Không có thông tin hiển thị
         </div>
       ) : (
         <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-2 lg:gap-6 md:gap-3 gap-2 mt-5 ">

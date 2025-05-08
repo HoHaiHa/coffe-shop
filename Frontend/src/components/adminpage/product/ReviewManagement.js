@@ -50,15 +50,15 @@ const ReviewModal = ({ visible, onClose, product }) => {
             );
             const response = await request.json();
             if (response.respCode === "000") {
-                message.success("Review deleted successfully.");
+                message.success("Xóa đánh giá thành công");
                 setReviewList((prev) => prev.filter((review) => review.id !== reviewId));
                 setFilteredReviews((prev) => prev.filter((review) => review.id !== reviewId));
             } else {
-                message.error("Failed to delete review.");
+                message.error("Xóa đánh giá thất bạt!");
                 console.error("Error deleting review:", response);
             }
         } catch (error) {
-            message.error("Error deleting review.");
+            message.error("Lỗi khi xóa đánh giá");
             console.error("Error:", error);
         }
     };
@@ -76,7 +76,7 @@ const ReviewModal = ({ visible, onClose, product }) => {
 
     return (
         <Modal
-            title={`Reviews for ${product?.name}`}
+            title={`Đánh giá cho ${product?.name}`}
             open={visible}
             onCancel={onClose}
             footer={null}
@@ -86,7 +86,7 @@ const ReviewModal = ({ visible, onClose, product }) => {
                     className="w-20"
                     value={ratingFilter}
                     onChange={handleRatingFilterChange}
-                    placeholder="Filter by rating"
+                    placeholder="Lọc theo số sao"
                 >
                     <Select.Option value={null}>Tất cả</Select.Option>
                     <Select.Option value={1}>1 Sao</Select.Option>
@@ -105,15 +105,15 @@ const ReviewModal = ({ visible, onClose, product }) => {
                         className="border-b border-gray-200 pb-4"
                         actions={[
                             <Popconfirm
-                                title="Sure to delete this review ?"
+                                title="Xóa đánh giá này?"
                                 onConfirm={() => handleDeleteReview(review.id)}
-                                okText="Yes"
-                                cancelText="No"
+                                okText="OK"
+                                cancelText="Hủy"
                             >
                                 <Button
                                     danger
                                 >
-                                    Delete
+                                    Xóa
                                 </Button>,
                             </Popconfirm>
 
@@ -141,12 +141,12 @@ const ReviewModal = ({ visible, onClose, product }) => {
 
                                     <div className="flex text-blue-400 items-center justify-between">
                                         <span className="font-medium text-sm">
-                                            {review.userEmail || "Anonymous"}
+                                            {review.userEmail || "Ẩn danh"}
                                         </span>
 
                                     </div>
                                     <p className="text-base text-gray-600">
-                                        {review.comment || "No comment provided."}
+                                        {review.comment || "Không có đánh giá nào"}
                                     </p>
                                     <p className="text-xs text-gray-400">
                                         {review.createAt}

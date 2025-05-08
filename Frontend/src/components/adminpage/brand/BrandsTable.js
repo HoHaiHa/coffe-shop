@@ -6,6 +6,7 @@ import summaryApi from '../../../common';
 import Search from 'antd/es/transfer/search';
 import { toast } from 'react-toastify';
 import TextArea from 'antd/es/input/TextArea';
+import { useSelector } from 'react-redux';
 
 const BrandTable = ({ brands, setBrands }) => {
     // const [brands, setBrands] = useState([]);
@@ -15,6 +16,8 @@ const BrandTable = ({ brands, setBrands }) => {
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const [nameError, setNameError] = useState('');
+    const user = useSelector((state) => state.user.user, (prev, next) => prev === next);
+
 
     const handleAddOrUpdateBrand = (values) => {
         const url = currentBrand ? `${summaryApi.updateBrand.url}/${currentBrand.id}` : summaryApi.addBrand.url;
@@ -137,52 +140,63 @@ const BrandTable = ({ brands, setBrands }) => {
             dataIndex: 'description',
             key: 'description',
         },
-        {
-            title: 'Hành động',
-            key: 'action',
-            render: (_, record) => (
-                <>
-                    <Button
-                        type="link"
-                        onClick={() => {
-                            setCurrentBrand(record);
-                            form.setFieldsValue({ name: record.name, description:record.description, articleTitle: record.articleTitle, article: record.article });
-                            setIsModalVisible(true);
-                        }}
-                    >
-                        Chỉnh sửa
-                    </Button>
-                    <Popconfirm
-                        title="Bạn có chắc chắn muốn xóa nhãn hàng này không?"
-                        onConfirm={() => handleDeleteBrand(record.id)}
-                        okText="Có"
-                        cancelText="Không"
-                    >
-                        <Button type="link" danger>
-                            Xóa
-                        </Button>
-                    </Popconfirm>
-                </>
-            ),
-        },
+        // Ẩn nếu là ROLE_STAFF
+        ...(user?.roleName !== 'ROLE_STAFF'
+            ? [
+                {
+                    title: 'Hành động',
+                    key: 'action',
+                    render: (_, record) => (
+                        <>
+                            <Button
+                                type="link"
+                                onClick={() => {
+                                    setCurrentBrand(record);
+                                    form.setFieldsValue({
+                                        name: record.name,
+                                        description: record.description,
+                                        articleTitle: record.articleTitle,
+                                        article: record.article
+                                    });
+                                    setIsModalVisible(true);
+                                }}
+                            >
+                                Chỉnh sửa
+                            </Button>
+                            <Popconfirm
+                                title="Bạn có chắc chắn muốn xóa nhãn hàng này không?"
+                                onConfirm={() => handleDeleteBrand(record.id)}
+                                okText="Có"
+                                cancelText="Không"
+                            >
+                                <Button type="link" danger>
+                                    Xóa
+                                </Button>
+                            </Popconfirm>
+                        </>
+                    ),
+                },
+            ]
+            : [])
     ];
 
     return (
         <div className="p-6 bg-gray-100 rounded-lg shadow-md">
-            <div className="flex justify-start items-center mb-4">
-                <Button
-                    type="primary"
-                    onClick={() => {
-                        setCurrentBrand(null);
-                        form.resetFields();
-                        setIsModalVisible(true);
-                    }}
-                    className="bg-blue-500 hover:bg-blue-600 text-white"
-                    icon={<PlusOutlined />}
-                >
-                    Thêm nhãn hàng mới
-                </Button>
-            </div>
+            {user?.roleName === 'ROLE_STAFF' ||
+                <div className="flex justify-start items-center mb-4">
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            setCurrentBrand(null);
+                            form.resetFields();
+                            setIsModalVisible(true);
+                        }}
+                        className="bg-blue-500 hover:bg-blue-600 text-white"
+                        icon={<PlusOutlined />}
+                    >
+                        Thêm nhãn hàng mới
+                    </Button>
+                </div>}
             <Table
                 rowKey="id"
                 columns={columns}
@@ -210,10 +224,10 @@ const BrandTable = ({ brands, setBrands }) => {
                     <Form.Item
                         name="description"
                         label="Mô tả"
-                        
+
                     >
                         <TextArea
-                         placeholder="Nhập tên bài viết" className="rounded-md" rows={2}/>
+                            placeholder="Nhập tên bài viết" className="rounded-md" rows={2} />
                     </Form.Item>
                     <Form.Item
                         name="articleTitle"
@@ -227,7 +241,7 @@ const BrandTable = ({ brands, setBrands }) => {
                         label="Bài viết"
 
                     >
-                        <TextArea placeholder="Nhập bài viết" className="rounded-md" rows={4}/>
+                        <TextArea placeholder="Nhập bài viết" className="rounded-md" rows={4} />
                     </Form.Item>
                     <Button
                         type="primary"

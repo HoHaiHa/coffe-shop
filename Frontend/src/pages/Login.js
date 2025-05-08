@@ -61,7 +61,10 @@ const SignIn = () => {
         Cookies.set("token", accessToken);
         Cookies.set("refreshToken", refreshToken);
         fetchUserDetails();
-      } else {
+      }else if(loginResult.data === 'User is disabled'){
+        toast.error("Bạn đã bị khóa khỏi hệ thống!");
+      }
+      else {
         toast.error("Email hoặc mật khẩu không chính xác!");
       }
     } catch (error) {

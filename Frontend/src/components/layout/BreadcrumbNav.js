@@ -46,7 +46,7 @@ const BreadcrumbNav = () => {
 
   const items = [
     {
-      title: <Link to="/" className=" ">Home</Link>,
+      title: <Link to="/" className=" ">Trang chủ</Link>,
       key: 'home',
     },
     ...pathSnippets.map((snippet, index) => {

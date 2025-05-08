@@ -33,7 +33,7 @@ public class ProductController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_STAFF')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> addProduct(@RequestBody ProductRequest request) {
         try {
             RespMessage respMessage = productService.addProduct(request);
@@ -48,7 +48,7 @@ public class ProductController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_STAFF')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> updateProduct(@PathVariable Long id, @RequestBody ProductRequest request) {
         try {
             RespMessage respMessage = productService.updateProduct(id, request);
@@ -63,7 +63,7 @@ public class ProductController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_STAFF')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
         try {
             RespMessage respMessage = productService.deleteProduct(id);
@@ -155,7 +155,7 @@ public class ProductController {
 
 
     @RequestMapping(value = "/{id}/image", method = RequestMethod.POST, produces = "application/json")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_STAFF')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> uploadImage(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
         try {
             RespMessage respMessage = productService.uploadImage(id, file);
@@ -170,7 +170,7 @@ public class ProductController {
     }
 
     @RequestMapping(value = "/image/{id}", method = RequestMethod.DELETE, produces = "application/json")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_STAFF')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> deleteImage(@PathVariable Long id) {
         try {
             RespMessage respMessage = productService.deleteImage(id);

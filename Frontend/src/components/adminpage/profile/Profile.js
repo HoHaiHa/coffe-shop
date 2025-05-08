@@ -111,7 +111,7 @@ const AdminProfile = () => {
           toast.error(changePassResult.data || "Đổi mật khẩu thất bại");
         }
       } else {
-        toast.error("Confirm Password không đúng");
+        toast.error("Nhập lại mật khẩu không đúng");
       }
     } catch (error) {
       if (error.errorFields) {
@@ -136,7 +136,7 @@ const AdminProfile = () => {
                 className="mr-6 mt-2 float-right"
                 onClick={() => setShowPasswordModal(true)}
               >
-                Change Password
+                Đổi mật khẩu
               </Button>
             </div>
             {/* Right Content */}
@@ -145,32 +145,32 @@ const AdminProfile = () => {
 
               <div className="bg-white p-6 rounded-lg shadow-md">
                 <div className="flex mt-4 items-center justify-between">
-                  <Title level={3}>Account info</Title>
+                  <Title level={3}>Thông tin tài khoản</Title>
                   <Button type="link" icon={<EditOutlined />} className="text-gray-500"
                     onClick={() => showEditInfoModal()}
                   >
-                    Edit
+                    Chỉnh sửa
                   </Button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                   <div className="p-4 bg-gray-100 rounded-lg flex items-center">
                     <FiUser className="mr-4 text-xl" />
                     <div>
-                      <Text className="block">Name</Text>
+                      <Text className="block">Tên</Text>
                       <Text>{user.name}</Text>
                     </div>
                   </div>
                   <div className="p-4 bg-gray-100 rounded-lg flex items-center">
                     <FiMail className="mr-4 text-xl" />
                     <div>
-                      <Text className="block">Email Address</Text>
+                      <Text className="block">Email</Text>
                       <Text>{user.email}</Text>
                     </div>
                   </div>
                   <div className="p-4 bg-gray-100 rounded-lg flex items-center">
                     <FiPhone className="mr-4 text-xl" />
                     <div>
-                      <Text className="block">Phone number</Text>
+                      <Text className="block">Số điện thoại</Text>
                       <Text>{user.phone}</Text>
                     </div>
                   </div>
@@ -178,7 +178,7 @@ const AdminProfile = () => {
                   <div className="p-4 bg-gray-100 rounded-lg flex items-center">
                     <FiKey className="mr-4 text-xl" />
                     <div>
-                      <Text className="block">Password</Text>
+                      <Text className="block">Mật khẩu</Text>
                       <Text>•••••••••••••••••••••</Text>
                     </div>
                   </div>
@@ -259,12 +259,12 @@ const AdminProfile = () => {
       case "communications":
         return (
           <div>
-            <Title level={3}>Communications & Privacy</Title>
-            <p>Adjust your communication preferences here.</p>
+            <Title level={3}>Liên lạc và quyền riêng tư</Title>
+            <p>Điều chỉnh tùy chọn liên lạc của bạn tại đây.</p>
           </div>
         );
       default:
-        return <div>Content not found.</div>;
+        return <div>Nội dung không tìm thấy</div>;
     }
   };
 
@@ -272,12 +272,12 @@ const AdminProfile = () => {
     <div className="container mx-auto p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
       <aside className="lg:col-span-1 bg-white p-6 rounded-lg shadow-md">
         <ProfileSection />
-        <Title level={5}>Manage Account</Title>
+        <Title level={5}>Quản lý tài khoản</Title>
         <List
           itemLayout="horizontal"
           dataSource={[
-            { key: "personalInfo", title: "Personal info", icon: <UserOutlined className="text-2xl " /> },
-            { key: "addresses", title: "Addresses", icon: <FiHome className="text-2xl " /> },
+            { key: "personalInfo", title: "Thông tin người dùng", icon: <UserOutlined className="text-2xl " /> },
+            { key: "addresses", title: "Địa chỉ", icon: <FiHome className="text-2xl " /> },
 
           ]}
           renderItem={(item) => (

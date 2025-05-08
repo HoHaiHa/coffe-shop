@@ -48,7 +48,7 @@ const OrderTable = ({ orderList , refreshOrderList }) => {
       sortDirections: ["descend", "ascend"],
     },
     {
-      title: "Order Date",
+      title: "Ngày tạo",
       dataIndex: "orderDate",
       key: "orderDate",
       sorter: (a, b) => new Date(a.orderDate) - new Date(b.orderDate),
@@ -70,7 +70,7 @@ const OrderTable = ({ orderList , refreshOrderList }) => {
     },
 
     {
-      title: "Shipping Address",
+      title: "Địa chỉ giao hàng",
       dataIndex: "shippingAddress",
       key: "shippingAddress",
       render: (shippingAddress) => (
@@ -89,19 +89,19 @@ const OrderTable = ({ orderList , refreshOrderList }) => {
     },
 
     {
-      title: "Payment",
+      title: "Thanh toán",
       dataIndex: "paymentMethod",
       key: "paymentMethod",
     },
     {
-      title: "Total",
+      title: "Tổng đơn hàng",
       dataIndex: "total",
       key: "total",
       sorter: (a, b) => a.total - b.total,
       render: (total) => `${total}`,
     },
     {
-      title: "Status",
+      title: "Trạng thái",
       dataIndex: "orderStatus",
       key: "orderStatus",
       render: (status) => {
@@ -140,7 +140,7 @@ const OrderTable = ({ orderList , refreshOrderList }) => {
             type="default"
             onClick={() => handleViewDetail(record)}
           >
-            View Detail
+            Xem chi tiết
           </Button>
 
           <Popconfirm
@@ -153,7 +153,7 @@ const OrderTable = ({ orderList , refreshOrderList }) => {
               type="primary"
               disabled={record.orderStatus === "Completed" || record.orderStatus === "Cancelled" }
             >
-              Change Status
+              Thay đổi trạng thái
             </Button>
           </Popconfirm>
         </div>
@@ -169,7 +169,7 @@ const OrderTable = ({ orderList , refreshOrderList }) => {
       sortDirections: ["descend", "ascend"],
     },
     {
-      title: "Image",
+      title: "Ảnh",
       dataIndex: "image",
       key: "image",
       render: () => (
@@ -181,27 +181,27 @@ const OrderTable = ({ orderList , refreshOrderList }) => {
       ),
     },
     {
-      title: "Product Name",
+      title: "Tên sản phẩm",
       dataIndex: "productName",
       key: "productName",
     },
     {
-      title: "Product Type",
+      title: "Loại",
       dataIndex: "productType",
       key: "productType",
     },
     {
-      title: "Amount",
+      title: "Số lượng",
       dataIndex: "amount",
       key: "amount",
     },
     {
-      title: "Price",
+      title: "Giá",
       dataIndex: "price",
       key: "price",
     },
     {
-      title: "Discount",
+      title: "Giảm giá",
       dataIndex: "discount",
       key: "discount",
     },
@@ -219,7 +219,7 @@ const OrderTable = ({ orderList , refreshOrderList }) => {
 
       <Modal
         width="50%"
-        title="Order Detail"
+        title="Chi tiết đơn hàng"
         open={isModalVisible}
         onCancel={handleCancel}
         footer={null}
@@ -227,15 +227,15 @@ const OrderTable = ({ orderList , refreshOrderList }) => {
         {orderDetail ? (
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <strong className="w-1/5">Order ID:</strong>
+              <strong className="w-1/5">ID đơn hàng:</strong>
               <p className="w-4/5">{orderDetail.orderId}</p>
             </div>
             <div className="flex justify-between items-center">
-              <strong className="w-1/5">Status:</strong>
+              <strong className="w-1/5">Trạng thái:</strong>
               <p className="w-4/5">{orderDetail.orderStatus} </p>
             </div>
             <div className="flex justify-between items-center">
-              <strong className="w-1/5">Customer Name:</strong>
+              <strong className="w-1/5">Tên người dùng:</strong>
 
               <p className="w-4/5">
                 {" "}
@@ -243,22 +243,22 @@ const OrderTable = ({ orderList , refreshOrderList }) => {
               </p>
             </div>
             <div className="flex justify-between items-center">
-              <strong className="w-1/5">Shipping Address:</strong>
+              <strong className="w-1/5">Địa chỉ giao hàng:</strong>
 
               <p className="w-4/5"> {orderDetail.shippingAddress.location} </p>
             </div>
             <div className="flex justify-between items-center">
-              <strong className="w-1/5">Shipping Fee:</strong>
+              <strong className="w-1/5">Phí ship:</strong>
 
               <p className="w-4/5"> {"10000 đ"} </p>
             </div>
             <div className="flex justify-between items-center">
-              <strong className="w-1/5">Total Amount:</strong>
+              <strong className="w-1/5">Tổng số lượng:</strong>
               <p className="w-4/5">{orderDetail.total} đ </p>
             </div>
 
             <div>
-              <p className="mb-8 font-bold">List Order Item:</p>
+              <p className="mb-8 font-bold">Danh sách sản phẩm:</p>
               {orderDetail.orderItems.length > 0 ? (
                 <Table
                   columns={orderItemsColumns}
@@ -268,12 +268,12 @@ const OrderTable = ({ orderList , refreshOrderList }) => {
                   bordered
                 />
               ) : (
-                <li>No items available</li>
+                <li>Chưa có sản phẩm nào</li>
               )}
             </div>
           </div>
         ) : (
-          <p>Loading...</p>
+          <p>Đang tải...</p>
         )}
       </Modal>
     </div>

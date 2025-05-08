@@ -69,7 +69,7 @@ const FilterBrand = ({ onFilter, products, onClickFilter }) => {
                 marginBottom: "1rem",
               }}
             >
-              Price
+              Giá
             </Typography>
             <Slider
               value={value}
@@ -133,7 +133,7 @@ const FilterBrand = ({ onFilter, products, onClickFilter }) => {
 
         {/* Lọc theo danh muc */}
         <div className="">
-          <p className="text-xl font-semibold mb-4">Category</p>
+          <p className="text-xl font-semibold mb-4">Danh mục</p>
           <div className="grid grid-cols-2 gap-3 mt-2">
             {categories.map((category, index) => (
               <button

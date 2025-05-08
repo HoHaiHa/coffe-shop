@@ -6,12 +6,15 @@ import fetchWithAuth from '../../../helps/fetchWithAuth';
 import summaryApi from '../../../common';
 import { Modal } from 'antd';
 import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux';
 const { confirm } = Modal;
+
 
 const UserTable = ({ userList, setUserList }) => {
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
+    const user = useSelector((state) => state.user.user, (prev, next) => prev === next);
 
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
         confirm();
@@ -120,7 +123,7 @@ const UserTable = ({ userList, setUserList }) => {
                             width: 90,
                         }}
                     >
-                        Search
+                        Tìm kiếm
                     </Button>
                     <Button
                         onClick={() => clearFilters && handleReset(clearFilters, confirm)}
@@ -129,7 +132,7 @@ const UserTable = ({ userList, setUserList }) => {
                             width: 90,
                         }}
                     >
-                        Reset
+                        Đặt lại
                     </Button>
 
                     <Button
@@ -139,7 +142,7 @@ const UserTable = ({ userList, setUserList }) => {
                             close();
                         }}
                     >
-                        close
+                        Đóng
                     </Button>
                 </Space>
             </div>
@@ -180,12 +183,11 @@ const UserTable = ({ userList, setUserList }) => {
     const handleChangeRole =(value, record) =>{
         confirm({
             title: 'Đổi vai trò!',
-            content: `Đổi vai trò ${record.name} thành ${value.substring(value.indexOf('_') + 1)}?`,
+            content: `Đổi vai trò thành ${value=='ROLE_USER' ? 'người dùng' : 'nhân viên'}?`,
             onOk() {
                 changeRole(record.id, value);
             },
             onCancel() {
-                
             },
             okText: 'OK', 
             cancelText: 'Hủy', 
@@ -207,43 +209,44 @@ const UserTable = ({ userList, setUserList }) => {
             ...getColumnSearchProps('email'),
         },
         {
-            title: 'Name',
+            title: 'Tên',
             dataIndex: 'name',
             key: 'name',
             ...getColumnSearchProps('name'),
         },
         {
-            title: 'Phone',
+            title: 'Điện thoại',
             dataIndex: 'phone',
             key: 'phone',
             ...getColumnSearchProps('phone'),
         },
         {
-            title: 'Role',
+            title: 'Vai trò',
             dataIndex: 'roleName',
             key: 'roleName', 
             render: (roleName, record) => (
                 <Select
                     defaultValue={roleName}
-                    className="w-24"
+                    className="w-32"
                     onChange={(value) => handleChangeRole(value, record)}
+                    disabled={user?.roleName==='ROLE_STAFF'}
                 >
-                    <Select.Option value="ROLE_USER">USER</Select.Option>
-                    <Select.Option value="ROLE_STAFF">STAFF</Select.Option>
+                    <Select.Option value="ROLE_USER">Người dùng</Select.Option>
+                    <Select.Option value="ROLE_STAFF">Nhân viên</Select.Option>
                 </Select>
             ),
         },
         {
-            title: 'Status',
+            title: 'Trạng thái',
             dataIndex: 'status',
             render: (_, record) =>
                 userList.length >= 1 ? (
                     record.status === 'ACTIVE' ?
                         <Popconfirm title="Sure to ban this user?" onConfirm={() => handleBan(record.id)}>
-                            <p className=' text-green-600 cursor-pointer' >Active</p>
+                            <p className=' text-green-600 cursor-pointer' >Khóa người dùng</p>
                         </Popconfirm>
                         : <Popconfirm title="Sure to unban this user?" onConfirm={() => handleUnBan(record.id)}>
-                            <p className='text-red-600 cursor-pointer' >Inactive</p>
+                            <p className='text-red-600 cursor-pointer' >Mở khóa</p>
                         </Popconfirm>
                 ) : null,
         },

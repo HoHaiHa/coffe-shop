@@ -3,6 +3,7 @@ import { Modal, Table, Button, Form, Input, InputNumber, Select, Upload, message
 import fetchWithAuth from '../../../helps/fetchWithAuth';
 import summaryApi from '../../../common';
 import { PlusOutlined, CloseOutlined } from "@ant-design/icons";
+import { toast } from 'react-toastify';
 
 
 const AddItemModal = ({ visible, onClose, onSave, types, onAddType, editingItem }) => {
@@ -43,6 +44,8 @@ const AddItemModal = ({ visible, onClose, onSave, types, onAddType, editingItem 
                     onAddType(result.data);
                     setNewTypeName('');
                     setIsAddingType(false);
+                } else if (result.status === 403) {
+                    toast.error('Bạn không có quyền');
                 } else {
                     console.error('Failed to add type:', result.message || 'Unknown error');
                 }
@@ -66,28 +69,28 @@ const AddItemModal = ({ visible, onClose, onSave, types, onAddType, editingItem 
         >
             <Form form={form} layout="vertical">
                 <Form.Item
-                    label="Price"
+                    label="Giá"
                     name="price"
                     rules={[{ required: true, message: 'Vui lòng nhập giá' }]}
                 >
                     <InputNumber min={0} style={{ width: '100%' }} />
                 </Form.Item>
                 <Form.Item
-                    label="Stock"
+                    label="Tồn kho"
                     name="stock"
                     rules={[{ required: true, message: 'Vui lòng nhập số lượng' }]}
                 >
                     <InputNumber min={0} style={{ width: '100%' }} />
                 </Form.Item>
                 <Form.Item
-                    label="Discount"
+                    label="Giảm giá"
                     name="discount"
                     rules={[{ required: true, message: 'Vui lòng nhập giảm giá' }]}
                 >
-                    <InputNumber min={0}   style={{ width: '100%' }} />
+                    <InputNumber min={0} style={{ width: '100%' }} />
                 </Form.Item>
                 <Form.Item
-                    label="Type"
+                    label="Loại"
                     name="type"
                     rules={[{ required: true, message: 'Vui lòng chọn loại' }]}
                 >
@@ -248,8 +251,8 @@ const ProductItemsModal = ({ product, setProduct, visible, onClose, setProductLi
             return;
         }
 
-        if(discount >  price) {
-            message.error("Discount không hợp lệ ")
+        if (discount > price) {
+            message.error("Giảm giá không hợp lệ ")
             return;
         }
 
@@ -284,8 +287,8 @@ const ProductItemsModal = ({ product, setProduct, visible, onClose, setProductLi
     const handleSaveItem = (item, itemId) => {
         if (itemId) {
             // Update existing item
-            if(item.discount >  item.price) {
-                message.error("Discount không hợp lệ ")
+            if (item.discount > item.price) {
+                message.error("Giảm giá không hợp lệ ")
                 return;
             }
 
@@ -359,27 +362,27 @@ const ProductItemsModal = ({ product, setProduct, visible, onClose, setProductLi
             key: 'id',
         },
         {
-            title: 'Price',
+            title: 'Gía',
             dataIndex: 'price',
             key: 'price',
         },
         {
-            title: 'Stock',
+            title: 'Tồn kho',
             dataIndex: 'stock',
             key: 'stock',
         },
         {
-            title: 'Discount',
+            title: 'Giảm giá',
             dataIndex: 'discount',
             key: 'discount',
         },
         {
-            title: 'Type',
+            title: 'Loại',
             dataIndex: ['type', 'name'],
             key: 'type',
         },
         {
-            title: 'Action',
+            title: 'Hành động',
             key: 'action',
             render: (text, record) => (
                 <>
@@ -392,18 +395,18 @@ const ProductItemsModal = ({ product, setProduct, visible, onClose, setProductLi
                         }}
                         className='mr-2'
                     >
-                        Update
+                        Cập nhật
                     </Button>
 
 
                     <Popconfirm
-                        title="Sure to delete this item ?"
+                        title="Xóa sản phẩm này ?"
                         onConfirm={() => handleDeleteItem(record)}
-                        okText="Yes"
-                        cancelText="No"
+                        okText="OK"
+                        cancelText="Hủy"
                     >
-                        <Button  danger>
-                            Delete
+                        <Button danger>
+                            Xóa
                         </Button>
                     </Popconfirm>
                 </>
@@ -419,7 +422,7 @@ const ProductItemsModal = ({ product, setProduct, visible, onClose, setProductLi
                 onCancel={onClose}
                 footer={[
                     <Button icon={<PlusOutlined />} key="add" type="primary" onClick={() => setIsAdding(true)}>
-                        Thêm mới item
+                        Thêm mới phiên bản
                     </Button>,
 
                 ]}

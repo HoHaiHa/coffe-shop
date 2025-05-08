@@ -25,7 +25,7 @@ const Topbar = () => {
     <div className="w-full h-[60px] bg-white sticky top-0 z-[999] shadow-sm">
       <div className="h-full px-5 flex items-center justify-between">
         <div className="font-bold text-2xl text-blue-700 cursor-pointer">
-          HacafeAdmin
+          {user?.roleName === 'ROLE_ADMIN' ? 'HacafeAdmin' : 'HacafeStaff'}
         </div>
         <div className="flex items-center space-x-4">
           <Link to="/admin/profile">
@@ -56,7 +56,7 @@ const Topbar = () => {
                 className="rounded-full px-5 py-1 text-white text-lg shadow-lg bg-gradient-to-r from-amber-700 to-stone-500 transition-all duration-500 ease-in-out bg-[length:200%_auto]
                 hover:bg-[position:right_center]"
               >
-                Logout
+                Đăng xuất
               </button>
             </Popconfirm>
           </div>

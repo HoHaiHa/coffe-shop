@@ -81,26 +81,26 @@ const CheckoutSummary = ({ selectedAddress }) => {
     <Card className="bg-white text-gray-800 shadow-md border border-gray-300">
       <div className="space-y-4">
         <div className=" flex text-lg font-semibold justify-between">
-          <h3 className=" text-gray-700">Subtotal (items):</h3>
+          <h3 className=" text-gray-700">Tạm tính (sản phẩm):</h3>
           <p className="text-gray-800">{selectedItems.length}</p>
         </div>
 
         <div className="flex text-lg font-semibold justify-between">
-          <h3 className=" text-gray-700">Price (Total):</h3>
+          <h3 className=" text-gray-700">Giá (Tổng cộng):</h3>
           <p className="text-gray-800">
             {Number(subtotal).toLocaleString("vi-VN")}đ
           </p>
         </div>
 
         <div className="flex text-lg font-semibold justify-between">
-          <h3 className=" text-gray-700">Shipping:</h3>
+          <h3 className=" text-gray-700">Giao hàng:</h3>
           <p className="text-gray-800">
             {Number(shipping).toLocaleString("vi-VN")}đ
           </p>
         </div>
 
         <div className="flex md:text-lg text-base font-semibold justify-between">
-          <h3 className=" text-gray-700">Discount:</h3>
+          <h3 className=" text-gray-700">Giảm giá:</h3>
           <p className="text-gray-800">
             {Number(discount).toLocaleString("vi-VN")}đ
           </p>
@@ -114,14 +114,14 @@ const CheckoutSummary = ({ selectedAddress }) => {
       </div>
 
       <div className="mb-4">
-        <h3 className="text-gray-700 font-bold text-lg">Payment Method:</h3>
+        <h3 className="text-gray-700 font-bold text-lg">Phương thức thanh toán:</h3>
         <Radio.Group
           onChange={(e) => setPaymentMethod(e.target.value)}
           value={paymentMethod}
           className="flex flex-col mt-2 space-y-2"
         >
-          <Radio value="COD">Cash on Delivery</Radio>
-          <Radio value="VNPay">Online Payment (VNPay)</Radio>
+          <Radio value="COD">Thanh toán khi nhận hàng</Radio>
+          <Radio value="VNPay">Thanh toán online (VNPay)</Radio>
         </Radio.Group>
       </div>
 
@@ -135,7 +135,7 @@ const CheckoutSummary = ({ selectedAddress }) => {
           }`}
         onClick={handleCheckout}
       >
-        Complete Checkout
+        Tiếp tục thanh toán
       </button>
     </Card>
   );

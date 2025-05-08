@@ -117,7 +117,7 @@ const ChatWidget = () => {
       {isChatOpen && user && (
         <div className="bg-white shadow-lg rounded-lg p-4 w-72 sm:w-96 max-w-full">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-bold">Chat with Admin</h3>
+            <h3 className="text-lg font-bold">Nhắn tin với cửa hàng</h3>
             <CloseOutlined
               className="cursor-pointer"
               onClick={() => setIsChatOpen(false)}
@@ -128,7 +128,7 @@ const ChatWidget = () => {
               <p key={msg?.id} className="text-sm">
                 {msg.senderId === user.id ? (
                   <>
-                    <strong className="text-blue-600">You:</strong> {msg.content}
+                    <strong className="text-blue-600">bạn:</strong> {msg.content}
                   </>
                 ) : (
                   <>

@@ -37,7 +37,7 @@ const CartItems = ({ cartItems, isCheckingOut }) => {
           dispatch(addToCart(updatedItem));
         } else console.log("update false");
       } catch (error) {
-        toast.error("Error updating cart item");
+        toast.error("Lỗi khi cập nhật sản phẩm");
       }
     }
   };
@@ -56,8 +56,8 @@ const CartItems = ({ cartItems, isCheckingOut }) => {
         return true;
       }
     } catch (error) {
-      toast.error("Error updating cart item");
-      console.error("Error updating cart item:", error);
+      toast.error("Lỗi khi cập nhật sản phẩm");
+      console.error("Lỗi khi cập nhật sản phẩm:", error);
     }
     return false;
   };
@@ -77,11 +77,11 @@ const CartItems = ({ cartItems, isCheckingOut }) => {
       );
       const result = await response.json();
       if (result.respCode === "000") {
-        message.success("Delete cart item successfully");
+        message.success("Xóa sản phẩm thành công");
         dispatch(removeFromCart(itemId));
       }
     } catch (error) {
-      message.error(" Error delete cart item");
+      message.error("Lỗi khi xóa sản phẩm");
       console.error("Error delete cart item:", error);
     }
   };
@@ -182,10 +182,10 @@ const CartItems = ({ cartItems, isCheckingOut }) => {
                         {item.productItemResponse.productResponse.name}
                       </h2>
                       <p className="text-xs sm:text-sm text-gray-600">
-                        Type: {item.productItemResponse.type.name}
+                        Loại: {item.productItemResponse.type.name}
                       </p>
                       <p className="text-xs sm:text-sm text-gray-600 hidden sm:block  ">
-                        Category:
+                        Danh mục:
                         {item.productItemResponse.productResponse.category.name}
                       </p>
                     </div>

@@ -21,6 +21,8 @@ import summaryApi from '../../../common';
 import ProductItemModal from './ProductItemModal';
 import ReviewModal from './ReviewManagement';
 import TextArea from 'antd/es/input/TextArea';
+import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux';
 
 const { Option } = Select;
 
@@ -33,6 +35,7 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
     const [newCategoryName, setNewCategoryName] = useState('');
     const [newBrandName, setNewBrandName] = useState('');
     const searchInput = useRef(null);
+    const user = useSelector((state) => state.user.user, (prev, next) => prev === next);
 
     const [currentProduct, setCurrentProduct] = useState(null);
 
@@ -126,6 +129,8 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
         const data = await response.json();
         if (data.respCode === '000') {
             setProducts(products.filter((product) => product.id !== id));
+        } else if (data.status === 403) {
+            toast.error('Bạn không có quyền');
         } else {
             console.log(data);
         }
@@ -187,6 +192,8 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
                 });
                 setProducts(updatedProducts);
                 closeModel();
+            } else if (data.status === 403) {
+                toast.error('Bạn không có quyền');
             } else {
                 console.log(data);
             }
@@ -236,6 +243,8 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
             if (data.respCode === '000' && data.data) {
                 setProducts([...products, data.data]);
                 closeModel();
+            } else if (data.status === 403) {
+                toast.error('Bạn không có quyền');
             } else {
                 console.log(data);
             }
@@ -308,7 +317,7 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
             ...getColumnSearchProps('id'),
         },
         {
-            title: 'Default Image',
+            title: 'Ảnh',
             key: 'productImage',
             render: (_, record) => (
                 record.images && record.images.length > 0 ? (
@@ -323,92 +332,94 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
             ),
         },
         {
-            title: 'Product Name',
+            title: 'Tên sản phẩm',
             dataIndex: 'name',
             key: 'name',
-
             ...getColumnSearchProps('name'),
         },
         {
-            title: 'Category',
+            title: 'Danh mục',
             dataIndex: ['category', 'name'],
             key: 'categoryName',
             render: (text, record) => record.category?.name || 'N/A',
         },
         {
-            title: 'Brand',
+            title: 'Hãng',
             dataIndex: ['brand', 'name'],
             key: 'brandName',
             render: (text, record) => record.brand?.name || 'N/A',
         },
         {
-            title: 'Description',
+            title: 'Mô tả',
             dataIndex: ['description'],
             key: 'descriptionName',
             render: (text, record) => record.description || 'N/A',
         },
-
-
-        {
-            title: 'Action',
-            key: 'action',
-            render: (_, record) => (
-                <div className="grid grid-cols-2 gap-4">
-                    {/* Hàng 1 */}
-                    <button
-                        type="link"
-                        onClick={() => showProductItemsModal(record)}
-                        className="text-green-500 hover:text-green-400 flex items-center"
-                    >
-                        <AiOutlineBars className="mr-1 text-xl" /> Thông tin
-                    </button>
-
-                    <button
-                        type="link"
-                        className="text-blue-500 hover:text-blue-400 flex items-center"
-                        onClick={() => showModal(record)}
-                    >
-                        <RiEditLine className="mr-1 text-xl" /> Chỉnh sửa
-                    </button>
-
-                    {/* Hàng 2 */}
-                    <button
-                        type="link"
-                        className="text-yellow-500 hover:text-yellow-400 flex items-center"
-                        onClick={() => showReviewModal(record)}
-                    >
-                        <PiListStarBold className="mr-1 text-xl" /> Xem đánh giá
-                    </button>
-
-                    <Popconfirm
-                        title="Sure to delete this product ?"
-                        onConfirm={() => handleDelete(record.id)}
-                        okText="Yes"
-                        cancelText="No"
-                    >
-                        <button
-                            type="link"
-                            className="text-red-500 hover:text-red-400 flex items-center"
-                        >
-                            <RiDeleteBinLine className="mr-1 text-xl" /> Xoá
-                        </button>
-                    </Popconfirm>
-                </div>
-
-            ),
-        },
+    
+        // Thêm cột Action nếu KHÔNG phải STAFF
+        ...(user?.roleName !== 'ROLE_STAFF'
+            ? [
+                {
+                    title: 'Hành động',
+                    key: 'action',
+                    render: (_, record) => (
+                        <div className="grid grid-cols-2 gap-4">
+                            <button
+                                type="link"
+                                onClick={() => showProductItemsModal(record)}
+                                className="text-green-500 hover:text-green-400 flex items-center"
+                            >
+                                <AiOutlineBars className="mr-1 text-xl" /> Thông tin
+                            </button>
+    
+                            <button
+                                type="link"
+                                className="text-blue-500 hover:text-blue-400 flex items-center"
+                                onClick={() => showModal(record)}
+                            >
+                                <RiEditLine className="mr-1 text-xl" /> Chỉnh sửa
+                            </button>
+    
+                            <button
+                                type="link"
+                                className="text-yellow-500 hover:text-yellow-400 flex items-center"
+                                onClick={() => showReviewModal(record)}
+                            >
+                                <PiListStarBold className="mr-1 text-xl" /> Xem đánh giá
+                            </button>
+    
+                            <Popconfirm
+                                title="Sure to delete this product ?"
+                                onConfirm={() => handleDelete(record.id)}
+                                okText="Yes"
+                                cancelText="No"
+                            >
+                                <button
+                                    type="link"
+                                    className="text-red-500 hover:text-red-400 flex items-center"
+                                >
+                                    <RiDeleteBinLine className="mr-1 text-xl" /> Xoá
+                                </button>
+                            </Popconfirm>
+                        </div>
+                    ),
+                },
+            ]
+            : []),
     ];
+    
 
     return (
         <div className="p-4">
-            <Button
+            {user?.roleName==='ROLE_STAFF' || <Button
                 type="primary"
                 icon={<PlusOutlined />}
                 onClick={() => showModal(null)}
                 className="mb-4"
             >
-                Add New Product
-            </Button>
+                Thêm sản phẩm
+            </Button>}
+            
             <Table rowKey="id" columns={columns} dataSource={products.slice().reverse()} />
 
             <ReviewModal visible={isReviewModalVisible}
@@ -426,7 +437,7 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
             />
 
             <Modal
-                title={currentProduct ? "Update Product" : "Add New Product"}
+                title={currentProduct ? "Cập nhật sản phẩm" : "Thêm sản phẩm"}
                 open={isModalVisible}
                 onCancel={() => closeModel()}
                 footer={null}
@@ -434,29 +445,29 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
                 <Form form={form} onFinish={currentProduct ? handleUpdateProduct : handleAddProduct} layout="vertical">
                     <Form.Item
                         name="name"
-                        label="Product Name"
-                        rules={[{ required: true, message: 'Please enter the product name!' }]}
+                        label="Tên sản phẩm"
+                        rules={[{ required: true, message: 'Thêm tên sản phẩm!' }]}
                         initialValue={currentProduct?.name}
                     >
-                        <Input placeholder="Enter product name" />
+                        <Input placeholder="Thêm tên sản phẩm" />
                     </Form.Item>
                     <Form.Item
                         name="description"
-                        label="Product Description"
+                        label="Mô tả"
                         initialValue={currentProduct?.description}
 
                     >
-                        <Input placeholder="Enter product description" />
+                        <Input placeholder="Thêm mô tả" />
                     </Form.Item>
                     <Form.Item
                         name="category"
-                        label="Category"
-                        rules={[{ required: true, message: 'Please select a category!' }]}
+                        label="Danh mục"
+                        rules={[{ required: true, message: 'Chọn danh mục!' }]}
                         initialValue={currentProduct?.category?.id}
 
                     >
                         <Select
-                            placeholder="Select a category"
+                            placeholder="Chọn danh mục"
                             dropdownRender={(menu) => (
                                 <>
                                     {menu}
@@ -479,12 +490,12 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
                     </Form.Item>
                     <Form.Item
                         name="brand"
-                        label="Brand"
-                        rules={[{ required: true, message: 'Please select a brand!' }]}
+                        label="Hãng"
+                        rules={[{ required: true, message: 'Chọn hãng!' }]}
                         initialValue={currentProduct?.brand?.id}
                     >
                         <Select
-                            placeholder="Select a brand"
+                            placeholder="Chọn hãng"
                             dropdownRender={(menu) => (
                                 <>
                                     {menu}
@@ -508,12 +519,12 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
 
                     <Form.Item
                         name="netWeight"
-                        label="Product net weight"
+                        label="Khối lượng tịnh"
                         initialValue={currentProduct?.netWeight}
 
                     >
                         <AutoComplete
-                            placeholder="Enter product net weight"
+                            placeholder="Thêm Khối lượng tịnh"
                             options={[
                                 { value: '500-1000-1500gr' },
                                 { value: '500-1000-2000gr' },
@@ -523,12 +534,12 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
                     </Form.Item>
                     <Form.Item
                         name="beanType"
-                        label="Product bean type"
+                        label="Loại hạt"
                         initialValue={currentProduct?.beanType}
 
                     >
                         <Select
-                            placeholder="Select a bean type"
+                            placeholder="Chọn loại hạt"
                             dropdownRender={(menu) => (
                                 <>
                                     {menu}
@@ -551,11 +562,11 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
                     </Form.Item>
                     <Form.Item
                         name="origin"
-                        label="Product origin"
+                        label="Xuất xứ sản phẩm"
                         initialValue={currentProduct?.origin}
                     >
                         <AutoComplete
-                            placeholder="Enter product origin"
+                            placeholder="Thêm xuất xứ"
                             options={[
                                 { value: 'Vietnam' },
                                 { value: 'USA' },
@@ -575,11 +586,11 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
 
                     <Form.Item
                         name="roadLevel"
-                        label="Product road level"
+                        label="Độ rang của sản phẩm"
                         initialValue={currentProduct?.roadLevel}
                     >
                         <AutoComplete
-                            placeholder="Enter product road level"
+                            placeholder="Thêm độ rang sản phẩm"
                             options={[
                                 { value: 'Light Roast (Rang nhạt) 180°C – 205°C' },
                                 { value: 'Medium-Light Roast (Rang vừa nhạt) 205°C – 210°C' },
@@ -595,11 +606,11 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
 
                     <Form.Item
                         name="flavoNotes"
-                        label="Product flavo notes"
+                        label="Hương vị sản phẩm"
                         initialValue={currentProduct?.flavoNotes}
                     >
                         <AutoComplete
-                            placeholder="Nhập flavo notes"
+                            placeholder="Thêm hương vị"
                             options={[
                                 { value: 'Chocolate (Sô-cô-la)' },
                                 { value: 'Fruity (Trái cây)' },
@@ -619,7 +630,7 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
 
                     <Form.Item
                         name="caffeineContents"
-                        label="Product caffeine contents"
+                        label="Nhập hàm lượng caffeine"
                         initialValue={currentProduct?.caffeineContents}
                     >
                         <AutoComplete
@@ -641,11 +652,11 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
 
                     <Form.Item
                         name="cafeForm"
-                        label="Product cafe form"
+                        label="Nhập hình thức cà phê"
                         initialValue={currentProduct?.cafeForm}
                     >
                         <AutoComplete
-                            placeholder="Chọn hoặc nhập hình thức cà phê"
+                            placeholder="Nhập hình thức cà phê"
                             options={[
                                 { value: 'Whole Bean Coffee (Cà phê nguyên hạt)' },
                                 { value: 'Ground Coffee (Cà phê xay)' },
@@ -665,19 +676,19 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
 
                     <Form.Item
                         name="articleTitle"
-                        label="Product article title"
+                        label="Tiêu đề bài viết"
                         initialValue={currentProduct?.articleTitle}
 
                     >
-                        <Input placeholder="Enter product article title" />
+                        <Input placeholder="Thêm tiêu đề bài viết" />
                     </Form.Item>
                     <Form.Item
                         name="article"
-                        label="Product article"
+                        label="Bài viết"
                         initialValue={currentProduct?.article}
 
                     >
-                        <TextArea placeholder="Enter product article" />
+                        <TextArea placeholder="Thêm bài viết" />
                     </Form.Item>
 
                     <Button type="primary" htmlType="submit" className="w-full">
@@ -688,13 +699,13 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
 
             {/* Modal for adding category */}
             <Modal
-                title="Add New Category"
+                title="Thêm sản phẩm"
                 open={isCategoryModalVisible}
                 onCancel={() => setIsCategoryModalVisible(false)}
                 footer={null}
             >
                 <Input
-                    placeholder="Enter category name"
+                    placeholder="Thêm danh mục"
                     value={newCategoryName}
                     onChange={(e) => setNewCategoryName(e.target.value)}
                 />
@@ -704,7 +715,7 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
                     className="mt-2"
                     disabled={!newCategoryName.trim()}
                 >
-                    Add Category
+                    Thêm danh mục
                 </Button>
             </Modal>
 

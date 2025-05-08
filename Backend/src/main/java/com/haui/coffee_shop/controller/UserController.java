@@ -24,7 +24,7 @@ public class UserController {
     @Autowired
     private MessageBuilder messageBuilder;
     @GetMapping("/all")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_STAFF')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> getAllUsers() {
         try
         {

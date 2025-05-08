@@ -134,7 +134,7 @@ const ChatContent = () => {
     <div className="flex -mt-5 h-[calc(100vh-60px)]">
       {/* Sidebar */}
       <div className="w-1/4 border-r pt-4 pr-4">
-        <Text className="text-xl font-semibold mb-4 block">Conversations</Text>
+        <Text className="text-xl font-semibold mb-4 block">Cuộc trò chuyện</Text>
         <List
           itemLayout="horizontal"
           dataSource={paginatedData}
@@ -195,7 +195,7 @@ const ChatContent = () => {
             ))
           ) : (
             <div className="text-gray-500 text-center mt-20">
-              <p>No conversation selected</p>
+              <p>Không có cuộc trò chuyện nào được chọn</p>
             </div>
           )}
           <div ref={messagesEndRef} />
@@ -225,7 +225,7 @@ const ChatContent = () => {
               onClick={() => handleSendMessage(selectedConversationId)}
               className="pt-2 pb-2"
             >
-              Send
+              Gửi
             </Button>
           </div>
         )}

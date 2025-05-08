@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Input, Upload, Image, Popconfirm, Spin  } from 'antd';
+import { Table, Button, Modal, Form, Input, Upload, Image, Popconfirm, Spin } from 'antd';
 import { PlusOutlined, SearchOutlined, CloseOutlined } from '@ant-design/icons';
 import fetchWithAuth from '../../../helps/fetchWithAuth';
 import summaryApi from '../../../common';
 import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux';
 
 const CategoryTable = () => {
     const [categories, setCategories] = useState([]);
@@ -14,10 +15,12 @@ const CategoryTable = () => {
     const [searchedColumn, setSearchedColumn] = useState('');
     const [loading, setLoading] = useState(false);
     const [nameError, setNameError] = useState('');
+    const user = useSelector((state) => state.user.user, (prev, next) => prev === next);
+
 
     useEffect(() => {
         const fetchCategories = async () => {
-            
+
             const response = await fetchWithAuth(summaryApi.allCategory.url, {
                 method: summaryApi.allCategory.method,
             });
@@ -59,7 +62,7 @@ const CategoryTable = () => {
                     setNameError('')
                     currentCategory ? toast.success('Chỉnh sửa danh mục thành công!') : toast.success('Thêm danh mục thành công!')
                     if (currentCategory) {
-                        setCategories(categories.map(category => 
+                        setCategories(categories.map(category =>
                             category.id === currentCategory.id ? data.data : category
                         ));
                     } else {
@@ -69,15 +72,15 @@ const CategoryTable = () => {
                     form.resetFields();
                     setCurrentCategory(null);
                 }
-                if(data.respCode === '100'){
+                if (data.respCode === '100') {
                     setNameError('Tên danh mục không được để trống!')
                 }
-                if(data.respCode === '102'){
+                if (data.respCode === '102') {
                     setNameError('Danh mục đã tồn tại!')
                 }
             } catch (error) {
                 console.error('Error:', error);
-                currentCategory? toast.error('Chỉnh sửa danh mục không thành công!') : toast.error('Thêm danh mục không thành công! Vui lòng thử lại sau!')
+                currentCategory ? toast.error('Chỉnh sửa danh mục không thành công!') : toast.error('Thêm danh mục không thành công! Vui lòng thử lại sau!')
             }
             setLoading(false)
         };
@@ -100,7 +103,7 @@ const CategoryTable = () => {
             setLoading(false)
         };
         fetchDeleteCategory();
-        
+
     };
 
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -183,67 +186,69 @@ const CategoryTable = () => {
             dataIndex: 'description',
             key: 'description',
         },
-        {
-            title: 'Hành động',
-            key: 'action',
-            render: (_, record) => (
-                <>
-                    <Button
-                        type="link"
-                        onClick={() => {
-                            setCurrentCategory(record);
-                            form.setFieldsValue({
-                                name: record.name,
-                                description: record.description,
-                                articleTitle : record.articleTitle,
-                                article:record.article,
-                                image: record.defaultImageUrl
-                                    ? [
-                                        {
+        ...(user?.roleName !== 'ROLE_STAFF'
+            ? [{
+                title: 'Hành động',
+                key: 'action',
+                render: (_, record) => (
+                    <>
+                        <Button
+                            type="link"
+                            onClick={() => {
+                                setCurrentCategory(record);
+                                form.setFieldsValue({
+                                    name: record.name,
+                                    description: record.description,
+                                    articleTitle: record.articleTitle,
+                                    article: record.article,
+                                    image: record.defaultImageUrl
+                                        ? [{
                                             uid: '-1',
                                             name: 'image.png',
                                             status: 'done',
                                             url: record.defaultImageUrl,
-                                        },
-                                    ]
-                                    : [],
-                            });
-                            setIsModalVisible(true);
-                        }}
-                    >
-                        Chỉnh sửa
-                    </Button>
-                    <Popconfirm
-                        title="Bạn có chắc chắn muốn xóa danh mục này không?"
-                        onConfirm={() => handleDeleteCategory(record.id)}
-                        okText="Có"
-                        cancelText="Không"
-                    >
-                        <Button type="link" danger>
-                            Xóa
+                                        }]
+                                        : [],
+                                });
+                                setIsModalVisible(true);
+                            }}
+                        >
+                            Chỉnh sửa
                         </Button>
-                    </Popconfirm>
-                </>
-            ),
-        },
+                        <Popconfirm
+                            title="Bạn có chắc chắn muốn xóa danh mục này không?"
+                            onConfirm={() => handleDeleteCategory(record.id)}
+                            okText="Có"
+                            cancelText="Không"
+                        >
+                            <Button type="link" danger>
+                                Xóa
+                            </Button>
+                        </Popconfirm>
+                    </>
+                ),
+            }]
+            : [])
+
     ];
 
     return (
         <div className="p-6 bg-gray-100 rounded-lg shadow-md">
-            <div className="flex justify-start items-center mb-4">
-                <Button
-                    type="primary"
-                    onClick={() => {
-                        setCurrentCategory(null);
-                        form.resetFields();
-                        setIsModalVisible(true);
-                    }}
-                    className="bg-blue-500 hover:bg-blue-600 text-white"
-                    icon={<PlusOutlined />}
-                >
-                    Thêm danh mục mới
-                </Button>
-            </div>
+            {user?.roleName === 'ROLE_STAFF' ||
+                <div className="flex justify-start items-center mb-4">
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            setCurrentCategory(null);
+                            form.resetFields();
+                            setIsModalVisible(true);
+                        }}
+                        className="bg-blue-500 hover:bg-blue-600 text-white"
+                        icon={<PlusOutlined />}
+                    >
+                        Thêm danh mục mới
+                    </Button>
+                </div>}
             <Table
                 rowKey="id"
                 columns={columns}
@@ -285,13 +290,13 @@ const CategoryTable = () => {
                     </Form.Item>
                     <Form.Item
                         name="articleTitle"
-                        label="Tên bài viết"            
+                        label="Tên bài viết"
                     >
                         <Input placeholder="Nhập tên bài viết" className="rounded-md" />
                     </Form.Item>
                     <Form.Item
                         name="article"
-                        label="Bài viết"            
+                        label="Bài viết"
                     >
                         <Input.TextArea placeholder="Nhập tên bài viết" className="rounded-md" rows={4} />
                     </Form.Item>
@@ -307,15 +312,15 @@ const CategoryTable = () => {
                             return e?.fileList;
                         }}
                     >
-                                <Upload
-                                listType="picture-card"
-                                maxCount={1}
-                                beforeUpload={() => false}
-                                >
-                                <div>
-                                <PlusOutlined className="text-gray-400"/>
+                        <Upload
+                            listType="picture-card"
+                            maxCount={1}
+                            beforeUpload={() => false}
+                        >
+                            <div>
+                                <PlusOutlined className="text-gray-400" />
                                 <div style={{ marginTop: 8 }}>Tải ảnh lên</div>
-                                </div>
+                            </div>
                         </Upload>
                     </Form.Item>
                     <Button
