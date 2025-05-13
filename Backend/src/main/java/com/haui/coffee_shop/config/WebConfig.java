@@ -15,7 +15,7 @@ import java.util.Map;
 
 @Configuration
 public class WebConfig {
-    @Bean("com.ptit.coffee_shop.config.messageSource")
+    @Bean("com.haui.coffee_shop.config.messageSource")
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
         messageSource.setBasename("classpath:i18n/messages_vn");

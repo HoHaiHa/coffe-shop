@@ -14,7 +14,7 @@ public class MessageBuilder {
     private final MessageSource messageSource;
 
     @Autowired()
-    public MessageBuilder(final @Qualifier("com.ptit.coffee_shop.config.messageSource") MessageSource messageSource) {
+    public MessageBuilder(final @Qualifier("com.haui.coffee_shop.config.messageSource") MessageSource messageSource) {
         this.messageSource = messageSource;
     }
 
