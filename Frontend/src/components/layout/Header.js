@@ -176,7 +176,7 @@ const Header = () => {
               <button className="rounded-full px-4 py-1 text-white text-sm shadow-md
           bg-gradient-to-r from-amber-700 to-stone-500 transition-all duration-300 
           ease-in-out bg-[length:200%_auto] hover:bg-[position:right_center]">
-                Sign In
+                Đăng nhập
               </button>
             </Link>
           )}
@@ -192,7 +192,7 @@ const Header = () => {
                 className="rounded-full px-4 py-1 text-white text-sm shadow-md bg-gradient-to-r from-amber-700 to-stone-500 transition-all duration-300 ease-in-out bg-[length:200%_auto]
       hover:bg-[position:right_center]"
               >
-                Logout
+                Đăng xuất
               </button>
             </Popconfirm>
           )}

@@ -66,7 +66,7 @@ const Wishlist = () => {
   return (
     <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
       <Title level={3} className="text-lg sm:text-xl font-semibold">
-        Wish List
+        Danh sách yêu
       </Title>
       <div className="mt-4 space-y-4">
         {favorites.length === 0 ? (
@@ -94,7 +94,7 @@ const Wishlist = () => {
                   </Text>
                   <Text className="text-sm sm:text-base text-gray-600">
                     <span className="font-medium text-gray-700">
-                      Category:{" "}
+                      Danh mục:{" "}
                     </span>
                     {item.category.name}
                   </Text>
@@ -110,7 +110,7 @@ const Wishlist = () => {
                   handleRemoveFavorite(item);
                 }}
               >
-                Remove
+                Xóa
               </Button>
             </div>
           ))

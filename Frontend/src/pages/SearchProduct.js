@@ -79,7 +79,7 @@ const SearchProduct = () => {
           productList.length === 0 ? (
             <div className="lg:col-start-4 lg:col-span-9 md:col-start-5 md:col-span-8 bg-white shadow-md mt-10 ">
               <p className="text-center text-lg font-bold text-gray-500 ">
-                No results found
+                Không tìm thấy nội dung
               </p>
             </div>
           ) : (

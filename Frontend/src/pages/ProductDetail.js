@@ -291,7 +291,7 @@ const ProductDetail = () => {
 
   const renderContent = (product) => {
     if (!product || !product.brand || !product.category) {
-      return <p>Loading...</p>;
+      return <p>Đang tải...</p>;
     }
     switch (activeTab) {
       case "Description":
@@ -479,7 +479,7 @@ const ProductDetail = () => {
             {/* Discount */}
             <div className="lg:mt-8 mt-5 flex items-baseline justify-start space-x-10">
               <div className="lg:w-1/6 w-1/5">
-                <h2 className="lg:text-xl md:text-lg text-base">Discount</h2>
+                <h2 className="lg:text-xl md:text-lg text-base">Giảm giá</h2>
               </div>
               <div className="flex gap-x-4 gap-y-3 flex-wrap">
                 {selectedDiscount > 0 ? (

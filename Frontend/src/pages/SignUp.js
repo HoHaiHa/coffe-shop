@@ -92,10 +92,10 @@ const SignUp = () => {
         setIsLoading(false);
       }
     } else {
-      toast.error("Password and Confirm Password not match", {
+      toast.error("Mật khẩu và xác nhận mật khẩu không đúng", {
         autoClose: 1000,
       });
-      setError("Password and Confirm Password not match");
+      setError("Mật khẩu và xác nhận mật khẩu không đúng");
     }
   };
 
@@ -112,23 +112,22 @@ const SignUp = () => {
         </div>
 
         <div>
-          <h1 className="text-3xl font-bold mt-8 text-center">Sign Up</h1>
+          <h1 className="text-3xl font-bold mt-8 text-center">Đăng ký</h1>
           <p className="mt-3 mb-10 text-gray-600 text-center text-sm">
-            Let’s create your account and shop like a pro and save money.
-          </p>
+            Hãy tạo tài khoản của bạn để mua sắm như chuyên gia và tiết kiệm tiền.</p>
         </div>
 
         <form className="space-y-5" onSubmit={handleSubmit}>
           <EmailInput onEmailChange={handleOnchange} setErrors={setEmailError} />
           <PasswordInput
-            label={"Password"}
+            label={"Mật khẩu"}
             placeholder={"Enter password"}
             name={"password"}
             onChange={handleOnchange}
             setErrors={setPasswordError}
           />
           <PasswordInput
-            label={"Confirm Password"}
+            label={"Xác nhận mật khẩu"}
             placeholder={"Enter confirmPassword"}
             name={"confirmPassword"}
             onChange={handleOnchange}
@@ -139,28 +138,28 @@ const SignUp = () => {
           <button
             type="submit"
             className={`w-full py-2 px-4 text-white font-semibold rounded-md shadow focus:outline-none focus:ring-2 focus:ring-offset-2 ${isLoading
-                ? "bg-gray-300 cursor-wait"
-                : passwordError || emailError
-                  ? "bg-gray-300 cursor-not-allowed"
-                  : "bg-gradient-to-r from-amber-700 to-stone-500 transition-all duration-500 ease-in-out bg-[length:200%_auto] hover:bg-[position:right_center]"
+              ? "bg-gray-300 cursor-wait"
+              : passwordError || emailError
+                ? "bg-gray-300 cursor-not-allowed"
+                : "bg-gradient-to-r from-amber-700 to-stone-500 transition-all duration-500 ease-in-out bg-[length:200%_auto] hover:bg-[position:right_center]"
               }`}
             disabled={isLoading || passwordError || emailError}
           >
             {isLoading ? (
               <div className="flex items-center justify-center">
                 <LoadingOutlined className="text-black animate-spin text-lg" />
-                <span className="ml-2">Loading...</span>
+                <span className="ml-2">Đang tải...</span>
               </div>
             ) : (
-              "Sign Up"
+              "Đăng ký"
             )}
           </button>
         </form>
 
         <div className="flex items-center mt-5 space-x-2 justify-center">
-          <span className="text-gray-600 text-sm">Already have an account?</span>
+          <span className="text-gray-600 text-sm">Bạn đã có tài khoản?</span>
           <Link to="/login">
-            <span className="text-blue-600 hover:underline text-sm">Sign In</span>
+            <span className="text-blue-600 hover:underline text-sm">Đăng nhập</span>
           </Link>
         </div>
       </div>

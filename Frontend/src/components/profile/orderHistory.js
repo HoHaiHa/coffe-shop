@@ -93,13 +93,13 @@ const OrderHistory = React.memo(() => {
       render: (_, __, index) => index + 1,
     },
     {
-      title: "Order Date",
+      title: "Ngày tạo đơn",
       dataIndex: "orderDate",
       key: "orderDate",
       render: (date) => new Date(date).toLocaleDateString(),
     },
     {
-      title: "Status",
+      title: "Trạng thái",
       dataIndex: "orderStatus",
       key: "orderStatus",
       render: (status) => (
@@ -117,13 +117,13 @@ const OrderHistory = React.memo(() => {
       ),
     },
     {
-      title: "Payment Method",
+      title: "Phương thức thanh toán",
       dataIndex: "paymentMethod",
       key: "paymentMethod",
       render: (method) => <Tag color="blue">{method}</Tag>,
     },
     {
-      title: "Actions",
+      title: "Hành động",
       key: "actions",
       render: (_, record) => (
         <div className="flex flex-wrap gap-2">
@@ -142,10 +142,10 @@ const OrderHistory = React.memo(() => {
             <Popconfirm
               title="Bạn có chắc muốn hủy đơn hàng này?"
               onConfirm={() => handleCancelOrder(record)}
-              okText="Yes"
-              cancelText="No"
+              okText="OK"
+              cancelText="Hủy"
             >
-              Cancel Order
+              Hủy đơn hàng
             </Popconfirm>
           </Button>
         </div>
@@ -156,7 +156,7 @@ const OrderHistory = React.memo(() => {
   return (
     <div className="max-w-full mx-auto px-4 sm:px-6">
       <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">
-        Order History
+        Lịch sử mua hàng
       </h1>
       <Table
         columns={columns}

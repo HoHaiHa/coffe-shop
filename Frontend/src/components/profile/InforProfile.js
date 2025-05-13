@@ -35,33 +35,33 @@ const Info = ({ visible, data, onClose, onSave }) => {
     <>
       <Modal
         open={visible}
-        title="Edit Account Info"
+        title="Chỉnh sửa thông tin"
         onCancel={onClose}
         onOk={handleSave}
-        okText="Save"
+        okText="Lưu"
       >
         <Form form={form} layout="vertical">
           <Form.Item
-            label="Your Name"
+            label="Tên"
             name="name"
             rules={[
-              { required: true, message: "Please enter your name" },
+              { required: true, message: "Hãy nhập tên của bạn" },
             ]}
           >
-            <Input placeholder="Full Name" />
+            <Input placeholder="Tên đầy đủ" />
           </Form.Item>
           <Form.Item
-            label="Phone Number"
+            label="Số điện thoại"
             name="phone"
             rules={[
               { required: true, message: "Please enter your phone number" },
               {
-                pattern: /^[0-9]{10,11}$/, 
-                message: "Phone number must be 10-11 digits",
+                pattern: /^\+?[1-9]\d{7,14}$/,
+                message: "Số điện thoại không đúng định dạng",
               },
             ]}
           >
-            <Input placeholder="Phone Number" />
+            <Input placeholder="Số điện thoại" />
           </Form.Item>
 
         </Form>

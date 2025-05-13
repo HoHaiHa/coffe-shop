@@ -64,9 +64,9 @@ function ForgotPassword() {
             <IoKeyOutline />
           </div>
 
-          <h2 className="text-2xl font-bold">Forgot password?</h2>
+          <h2 className="text-2xl font-bold">Quên mật khẩu?</h2>
 
-          <p className="text-sm text-gray-400 mt-3">Please enter your email!</p>
+          <p className="text-sm text-gray-400 mt-3">Hãy thêm mật khẩu!</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-3">
@@ -84,14 +84,14 @@ function ForgotPassword() {
             }`}
             disabled={emailError}
           >
-            Sent Email
+            Gửi email
           </button>
         </form>
 
         <div className="mt-6 text-center">
           <Link to="/login">
             <p className="text-indigo-600 hover:underline mt-2">
-              ← Back to log in
+              ← Đăng nhập
             </p>
           </Link>
         </div>

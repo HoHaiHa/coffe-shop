@@ -31,7 +31,7 @@ const ProductRating = ({ product }) => {
           <FaRegStar key={index} />
         ))}
       </div>
-      <span className="ml-2 text-gray-700">({product.totalReview} reviews)</span>
+      <span className="ml-2 text-gray-700">({product.totalReview} đánh giá)</span>
     </div>
   );
 };

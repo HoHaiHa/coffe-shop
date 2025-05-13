@@ -61,7 +61,7 @@ const SignIn = () => {
         Cookies.set("token", accessToken);
         Cookies.set("refreshToken", refreshToken);
         fetchUserDetails();
-      }else if(loginResult.data === 'User is disabled'){
+      } else if (loginResult.data === 'User is disabled') {
         toast.error("Bạn đã bị khóa khỏi hệ thống!");
       }
       else {
@@ -86,11 +86,10 @@ const SignIn = () => {
           </Link>
         </div>
 
-        <h1 className="text-3xl font-bold mt-8 text-center">Hello Again!</h1>
+        <h1 className="text-3xl font-bold mt-8 text-center">Xin chào!</h1>
 
         <p className="mt-3 mb-10 text-gray-600 text-center text-sm">
-          Welcome back to sign in. As a returning customer, you have access to
-          your previously saved all information.
+          Chào mừng bạn quay lại với Hacafe, Chúc bạn có một buổi mua sắm vui vẻ
         </p>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
@@ -108,7 +107,7 @@ const SignIn = () => {
           <div className="text-right">
             <Link to="/forgot-password">
               <span className="text-sm text-blue-600 font-medium hover:underline">
-                Forgot Password
+                Quên mật khẩu
               </span>
             </Link>
           </div>
@@ -116,17 +115,17 @@ const SignIn = () => {
           <button
             type="submit"
             className={`w-full py-2 px-4 text-white font-semibold rounded-md shadow focus:outline-none focus:ring-2 focus:ring-offset-2 ${isLoading
-                ? "bg-gray-300 cursor-wait"
-                : passwordError || emailError || errors
-                  ? "bg-gray-300 cursor-not-allowed"
-                  : "bg-gradient-to-r from-amber-700 to-stone-500 transition-all duration-500 ease-in-out bg-[length:200%_auto] hover:bg-[position:right_center]"
+              ? "bg-gray-300 cursor-wait"
+              : passwordError || emailError || errors
+                ? "bg-gray-300 cursor-not-allowed"
+                : "bg-gradient-to-r from-amber-700 to-stone-500 transition-all duration-500 ease-in-out bg-[length:200%_auto] hover:bg-[position:right_center]"
               }`}
             disabled={isLoading || passwordError || emailError || errors}
           >
             {isLoading ? (
               <div className="flex items-center justify-center">
                 <LoadingOutlined className="text-black animate-spin text-lg" />
-                <span className="ml-2">Signing in...</span>
+                <span className="ml-2">Đang đăng nhập...</span>
               </div>
             ) : (
               "Sign in"
@@ -136,10 +135,10 @@ const SignIn = () => {
 
         <div className="flex items-center mt-6 space-x-3 justify-center">
           <span className=" text-center text-gray-500">
-            Don’t have an account yet?
+            Bạn chưa có tài khoản?
           </span>
           <Link to="/sign-up">
-            <span className="text-blue-600 hover:underline">Sign Up</span>.
+            <span className="text-blue-600 hover:underline">Đăng ký</span>.
           </Link>
         </div>
       </div>

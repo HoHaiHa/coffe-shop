@@ -64,7 +64,7 @@ function ChangePassword() {
         console.log("Error", error);
       }
     }else {
-      setError("Confirm Password không đúng");
+      setError("Xác nhận mật khẩu không đúng");
     }
   };
 
@@ -75,15 +75,15 @@ function ChangePassword() {
           <div className="p-5 bg-gray-150 rounded-xl ">
             <VscLock />
           </div>
-          <h2 className="text-2xl font-bold mb-4">Set New Password</h2>
+          <h2 className="text-2xl font-bold mb-4">Thêm mật khẩu mới</h2>
           <p className="mb-8 text-center w-full max-w-[80%] text-gray-400 ">
-            Your new password must be different from previously used passwords.
+            Mật khẩu mới của bạn phải khác mật khẩu cũ
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <PasswordInput
-            label={"Password"}
+            label={"Mật khẩu"}
             placeholder={"Enter password"}
             name={"password"}
             onChange={handleOnchange}
@@ -91,7 +91,7 @@ function ChangePassword() {
           />
 
           <PasswordInput
-            label={"Confirm Password"}
+            label={"Xác nhận mật khẩu"}
             placeholder={"Enter confirmPassword"}
             name={"repeatPassword"}
             onChange={handleOnchange}
@@ -122,14 +122,14 @@ function ChangePassword() {
             }`}
             disabled={passwordError}
           >
-            Reset password
+            Lấy lại mật khẩu
           </button>
         </form>
 
         <div className="mt-6 text-center">
           <Link to="/login">
             <p className="text-indigo-600 hover:underline mt-2">
-              ← Back to log in
+              ← Đăng nhập
             </p>
           </Link>
         </div>

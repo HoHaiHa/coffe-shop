@@ -65,7 +65,7 @@ const ProductCard = ({ product }) => {
           </>
         ) : (
           <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-            <p className="text-gray-500">No image available</p>
+            <p className="text-gray-500">Chưa có ảnh</p>
           </div>
         )}
       </div>

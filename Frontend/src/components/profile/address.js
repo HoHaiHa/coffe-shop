@@ -91,9 +91,9 @@ const ShippingAddress = () => {
     const { receiverName, receiverPhone, location } = editingAddress;
     const newErrors = {};
 
-    if (!receiverName) newErrors.receiverName = "Receiver Name is required";
-    if (!receiverPhone) newErrors.receiverPhone = "Receiver Phone is required";
-    if (!location) newErrors.location = "Location is required";
+    if (!receiverName) newErrors.receiverName = "Người nhận không được để trống";
+    if (!receiverPhone) newErrors.receiverPhone = "Số điện thoại người nhận không được để trống";
+    if (!location) newErrors.location = "Ví trí không được để trống";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -122,10 +122,10 @@ const ShippingAddress = () => {
           if (responseData.respCode === "000") {
             return responseData.data;
           } else {
-            message.error("Failed to process address.", responseData);
+            message.error("Xử lý địa chỉ thất bại.", responseData);
           }
         } catch (error) {
-          message.error("Error when process address:", error);
+          message.error("Có lỗi khi xử lý địa chỉ:", error);
         } finally {
           setLoading(false);
         }
@@ -137,7 +137,7 @@ const ShippingAddress = () => {
         );
         if (updatedAddress) {
           dispatch(updateAddress(updatedAddress));
-          message.success("Address updated successfully!");
+          message.success("Cập nhật địa chỉ thành công!");
         }
       } else {
         const newAddress = await fetchUpdateAddress(
@@ -145,7 +145,7 @@ const ShippingAddress = () => {
         );
         if (newAddress) {
           dispatch(addAddress(newAddress));
-          message.success("Address added successfully!");
+          message.success("Thêm địa chỉ thành công!");
         }
       }
 
@@ -153,8 +153,8 @@ const ShippingAddress = () => {
       setEditingAddress({});
       setErrors({});
     } catch (error) {
-      console.error("Error saving address:", error);
-      message.error("Failed to save address.");
+      console.error("Lỗi khi lưu địa chỉ:", error);
+      message.error("Lưu địa chỉ thất bại");
     }
   };
 
@@ -181,7 +181,7 @@ const ShippingAddress = () => {
             setCurrentPage(Math.max(1, totalPages));
           }
           dispatch(deleteAddress(responseData.data));
-          message.success("Address deleted successfully!");
+          message.success("Xóa địa chỉ thành công!");
         } else {
           console.error("Failed to process address:", responseData);
         }
@@ -200,21 +200,21 @@ const ShippingAddress = () => {
 
   return (
     <div className="p-6 bg-white rounded-md shadow-md">
-      <h2 className="text-xl font-semibold mb-4">Your address list</h2>
+      <h2 className="text-xl font-semibold mb-4">Danh sách địa chỉ</h2>
       <div className="flex justify-between items-center mb-4">
         <div className="mb-4">
           {addresses.length !== 0 ? (
             isProfilePage ? (
               <p className="text-sm text-gray-600">
-                Manage your addresses here!
+                Quản lý địa chỉ!
               </p>
             ) : (
               <p className="text-sm text-gray-600">
-                Select the address you want to receive the product
+                Chọn địa chỉ để nhận sản phẩm
               </p>
             )
           ) : (
-            <p> Do you want to add new address?</p>
+            <p> Bạn có muốn thêm địa chỉ mới?</p>
           )}
         </div>
         <Button
@@ -223,7 +223,7 @@ const ShippingAddress = () => {
           onClick={handleAddingAddress}
           className="w-full sm:w-auto"
         >
-          Add a new address
+          Thêm địa chỉ nhận hàng
         </Button>
       </div>
 
@@ -250,18 +250,18 @@ const ShippingAddress = () => {
              
               <div className="flex flex-col lg:flex-row items-baseline justify-between">
                 <p className="lg:w-[60%] w-full">
-                  <span className="font-semibold">Name: </span>
+                  <span className="font-semibold">Tên: </span>
                   {address.receiverName}
                 </p>
 
                 <p className="lg:w-[40%] w-full">
-                  <span className="font-semibold">Phone: </span>
+                  <span className="font-semibold">Số điện thoại: </span>
                   {address.receiverPhone}
                 </p>
               </div>
 
               <p>
-                <span className="font-semibold">Location: </span>
+                <span className="font-semibold">Địa chỉ: </span>
                 {address.location}
               </p>
             </div>
@@ -272,20 +272,20 @@ const ShippingAddress = () => {
                 className="text-gray-500"
                 onClick={() => showModal(address)}
               >
-                Edit
+                Chỉnh sửa
               </Button>
               <Popconfirm
-                title="Are you sure to delete this address?"
+                title="Xóa địa chỉ này?"
                 onConfirm={() => handleDeleteAddress(address.id)}
-                okText="Yes"
-                cancelText="No"
+                okText="OK"
+                cancelText="Hủy"
               >
                 <Button
                   type="link"
                   icon={<DeleteOutlined />}
                   className="text-red-500"
                 >
-                  Delete
+                  Xóa
                 </Button>
               </Popconfirm>
             </div>
@@ -304,26 +304,26 @@ const ShippingAddress = () => {
       </div>
 
       <Modal
-        title={editingAddress?.id ? "Edit Address" : "Add New Address"}
+        title={editingAddress?.id ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ mới"}
         open={isModalVisible}
         onOk={handleSaveAddress}
         onCancel={handleCancel}
         footer={[
           <Button key="back" onClick={handleCancel}>
-            Cancel
+            Hủy
           </Button>,
           <Button key="submit" type="primary" onClick={handleSaveAddress}>
-            Save
+            Xóa
           </Button>,
         ]}
       >
         <h3 className="mt-3 font-semibold ">
-          Receiver name: <span className="text-red-500">*</span>{" "}
+          Tên người nhận: <span className="text-red-500">*</span>{" "}
         </h3>
         <Input
           maxLength={60}
           required
-          placeholder="Receiver Name"
+          placeholder="Tên người nhận"
           value={editingAddress?.receiverName || ""}
           onChange={(e) => {
             const value = e.target.value;
@@ -340,7 +340,7 @@ const ShippingAddress = () => {
             if (e.target.value.trim().length === 0) {
               setErrors((prevErrors) => ({
                 ...prevErrors,
-                receiverName: "Receiver Name is required",
+                receiverName: "Tên người nhận không được bỏ trống",
               }));
             }
           }}
@@ -351,12 +351,12 @@ const ShippingAddress = () => {
         )}
 
         <h3 className="mt-3 font-semibold ">
-          Receiver phone: <span className="text-red-500">*</span>{" "}
+          Số điện thoại người nhận: <span className="text-red-500">*</span>{" "}
         </h3>
         <Input
           maxLength={12}
           required
-          placeholder="Receiver Phone "
+          placeholder="Số điện thoại người nhận "
           value={editingAddress?.receiverPhone || ""}
           onChange={(e) => {
             const value = e.target.value;
@@ -386,11 +386,11 @@ const ShippingAddress = () => {
         )}
 
         <h3 className="mt-3 font-semibold ">
-          Location: <span className="text-red-500">*</span>{" "}
+          Địa chỉ: <span className="text-red-500">*</span>{" "}
         </h3>
         <Input.TextArea
           maxLength={100}
-          placeholder="Location (Area and street)"
+          placeholder="Địa chỉ(Khu vực và đường)"
           value={editingAddress?.location || ""}
           onChange={(e) => {
             const value = e.target.value;
@@ -404,7 +404,7 @@ const ShippingAddress = () => {
             if (e.target.value.trim().length === 0) {
               setErrors((prevErrors) => ({
                 ...prevErrors,
-                location: "Location is required",
+                location: "Vị trí không được để trống",
               }));
             }
           }}

@@ -71,9 +71,9 @@ function OtpAuthentication() {
           <div className="p-5 bg-gray-150 rounded-xl ">
             <CiMail />
           </div>
-          <h2 className="text-2xl font-bold mb-4">verify OTP</h2>
+          <h2 className="text-2xl font-bold mb-4">Xác thực OTP</h2>
           <p className="text-gray-600 mb-6 max-w-[80%]">
-            Enter the otp code that has been sent to your email.
+            Nhập mã OTP xác thực được gửi về email của bạn
           </p>
         </div>
 
@@ -98,7 +98,7 @@ function OtpAuthentication() {
             type="submit"
             className="w-full py-2 px-4 mb-4 bg-indigo-600 text-white font-semibold rounded-md shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            VERIFY OTP
+            Xác thực OTP
           </button>
         </form>
 
@@ -106,13 +106,13 @@ function OtpAuthentication() {
           onClick={openEmailApp}
           className=" mt-5 w-full py-2 px-4 bg-gray-200 text-indigo-600 font-semibold rounded-md shadow hover:bg-gray-300 focus:outline-none"
         >
-          Open Mail App
+          Mở EMAIL
         </button>
 
         <div className="mt-6 text-center">
           <Link to="/login">
             <p className="text-indigo-600 hover:underline mt-2">
-              ← Back to log in
+              ← Đăng nhập
             </p>
           </Link>
         </div>

@@ -55,7 +55,7 @@ const ProfileSection = () => {
             className="absolute rounded-full top-0 left-0 w-full h-full bg-transparent text-white flex items-center justify-center   hover:bg-black  transition duration-300 "
             icon={<EditOutlined />}
           >
-            Edit
+            Chỉnh sửa
           </Button>
         </Upload>
       </div>
@@ -64,7 +64,7 @@ const ProfileSection = () => {
       </Title>
       {user.name && user.created_at && (
         <Text type="secondary">
-          Registered:
+          Đã đăng ký:
           {new Date(user.created_at).toLocaleDateString("vi-VN", {
             day: "2-digit",
             month: "2-digit",

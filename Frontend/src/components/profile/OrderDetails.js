@@ -63,7 +63,7 @@ const OrderDetails = ({ orderId, onClose }) => {
 
   const handleSubmitReview = async () => {
     if (rating === 0) {
-      message.error("Please provide a rating before submitting.");
+      message.error("Cảm ơn bạn! Vui lòng đánh giá trước khi gửi.");
       return;
     }
 
@@ -79,7 +79,7 @@ const OrderDetails = ({ orderId, onClose }) => {
       });
       const data = await response.json();
       if (data.respCode === "000") {
-        message.success("Review submitted successfully");
+        message.success("Đánh giá thành công");
 
         setOrderDetail((prevOrderDetail) => {
           const updatedOrderItems = prevOrderDetail.orderItems.map((item) =>
@@ -92,11 +92,11 @@ const OrderDetails = ({ orderId, onClose }) => {
 
         setIsReviewModalVisible(false);
       } else {
-        message.error("Error submitting review");
+        message.error("Lỗi khi gửi đánh giá");
       }
     } catch (error) {
       console.error("Error submitting review:", error);
-      message.error("There was an error submitting your review.");
+      message.error("Lỗi khi gửi đánh giá");
     } finally {
       setLoading(false);
     }
@@ -109,59 +109,59 @@ const OrderDetails = ({ orderId, onClose }) => {
       render: (_, __, index) => index + 1,
     },
     {
-      title: "Image",
+      title: "Ảnh",
       dataIndex: "productImage",
       key: "productImage",
       render: (url) => (
         <img
           src={url || image1}
-          alt="Product"
+          alt="Sản phẩm"
           style={{ width: 50, height: 50 }}
         />
       ),
     },
     {
-      title: "Product Name",
+      title: "Tên sản phẩm",
       dataIndex: "productName",
       key: "productName",
     },
     {
-      title: "Product Type",
+      title: "Loại",
       dataIndex: "productType",
       key: "productType",
     },
     {
-      title: "Amount",
+      title: "Số lượng",
       dataIndex: "amount",
       key: "amount",
     },
     {
-      title: "Price",
+      title: "Giá",
       dataIndex: "price",
       key: "price",
     },
     {
-      title: "Discount",
+      title: "Giảm giá",
       dataIndex: "discount",
       key: "discount",
     },
     {
-      title: "Review",
+      title: "Đánh giá",
       key: "review",
       render: (_, record) =>
         orderDetail.orderStatus === "Completed" ? (
           record.isReviewed ? (
             <Tag color="green" className="px-3 py-1">
-              Reviewed
+              Đã đánh giá
             </Tag>
           ) : (
             <Button type="primary" onClick={() => handleRateProduct(record)}>
-              Review Product
+              Đánh giá sản phẩm
             </Button>
           )
         ) : (
           <Tag color="gray" className="px-3 py-1">
-            Not Available
+            Không tồn tại
           </Tag>
         ),
     },
@@ -174,7 +174,7 @@ const OrderDetails = ({ orderId, onClose }) => {
       onCancel={onClose}
       footer={[
         <Button key="close" onClick={onClose}>
-          Close
+          Đóng
         </Button>,
       ]}
       width="60%" 
@@ -183,7 +183,7 @@ const OrderDetails = ({ orderId, onClose }) => {
       className="max-w-full"
     >
       {loading ? (
-        <p>Loading...</p>
+        <p>Đang tải...</p>
       ) : orderDetail ? (
         <>
           <Descriptions
@@ -192,50 +192,50 @@ const OrderDetails = ({ orderId, onClose }) => {
             style={{ fontSize: "14px", padding: "4px" }} 
           >
             <Descriptions.Item
-              label={<span style={{ fontWeight: "bold" }}>Order ID</span>}
+              label={<span style={{ fontWeight: "bold" }}>ID đơn hàng</span>}
               style={{ padding: "8px" }}
             >
               {orderDetail.orderId}
             </Descriptions.Item>
             <Descriptions.Item
-              label={<span style={{ fontWeight: "bold" }}>Status</span>}
+              label={<span style={{ fontWeight: "bold" }}>Trạng thái</span>}
               style={{ padding: "8px" }}
             >
               {orderDetail.orderStatus}
             </Descriptions.Item>
             <Descriptions.Item
-              label={<span style={{ fontWeight: "bold" }}>Customer Name</span>}
+              label={<span style={{ fontWeight: "bold" }}>Tên Khánh hàng</span>}
               style={{ padding: "8px" }}
             >
               {orderDetail.shippingAddress.receiverName}
             </Descriptions.Item>
             <Descriptions.Item
-              label={<span style={{ fontWeight: "bold" }}>Phone Number</span>}
+              label={<span style={{ fontWeight: "bold" }}>Số điện thoại</span>}
               style={{ padding: "8px" }}
             >
               {orderDetail.shippingAddress.receiverPhone}
             </Descriptions.Item>
             <Descriptions.Item
-              label={<span style={{ fontWeight: "bold" }}>Shipping Addr</span>}
+              label={<span style={{ fontWeight: "bold" }}>Địa chỉ nhận hàng</span>}
               style={{ padding: "8px" }}
             >
               {orderDetail.shippingAddress.location}
             </Descriptions.Item>
             <Descriptions.Item
-              label={<span style={{ fontWeight: "bold" }}>Shipping Fee</span>}
+              label={<span style={{ fontWeight: "bold" }}>Phí ship</span>}
               style={{ padding: "8px" }}
             >
               {"10000 đ"}
             </Descriptions.Item>
             <Descriptions.Item
-              label={<span style={{ fontWeight: "bold" }}>Total Amount</span>}
+              label={<span style={{ fontWeight: "bold" }}>Tổng số lượng</span>}
               style={{ padding: "8px" }}
             >
               {orderDetail.total} đ
             </Descriptions.Item>
           </Descriptions>
 
-          <h3 className="mt-4 mb-2 text-lg font-semibold">List Order Items:</h3>
+          <h3 className="mt-4 mb-2 text-lg font-semibold">Danh sách sản phẩm</h3>
           <Table
             dataSource={orderDetail.orderItems.map((item, index) => ({
               ...item,
@@ -250,7 +250,7 @@ const OrderDetails = ({ orderId, onClose }) => {
           />
         </>
       ) : (
-        <p>No order details available.</p>
+        <p>Không tồn tại đơn hàng nào.</p>
       )}
 
       <Modal
@@ -259,7 +259,7 @@ const OrderDetails = ({ orderId, onClose }) => {
         onCancel={() => setIsReviewModalVisible(false)}
         footer={[
           <Button key="cancel" onClick={() => setIsReviewModalVisible(false)}>
-            Cancel
+            Hủy
           </Button>,
           <Button
             key="submit"
@@ -267,22 +267,22 @@ const OrderDetails = ({ orderId, onClose }) => {
             onClick={handleSubmitReview}
             loading={loading}
           >
-            Submit Review
+            Gửi đánh giá
           </Button>,
         ]}
         width="60%" // Giảm độ rộng modal trên thiết bị di động
         centered
       >
         <div>
-          <h4 className="text-lg">Rating</h4>
+          <h4 className="text-lg">Sao</h4>
           <Rate value={rating} onChange={handleRatingChange} />
 
-          <h4 className="text-lg mt-4">Comment</h4>
+          <h4 className="text-lg mt-4">Nhận xét</h4>
           <Input.TextArea
             rows={4}
             value={comment}
             onChange={handleCommentChange}
-            placeholder="Write your comment here..."
+            placeholder="Viết nhận xét của bạn..."
           />
         </div>
       </Modal>

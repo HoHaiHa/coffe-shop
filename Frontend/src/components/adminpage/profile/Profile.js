@@ -111,7 +111,7 @@ const AdminProfile = () => {
           toast.error(changePassResult.data || "Đổi mật khẩu thất bại");
         }
       } else {
-        toast.error("Nhập lại mật khẩu không đúng");
+        toast.error("Xác nhận mật khẩu không đúng");
       }
     } catch (error) {
       if (error.errorFields) {
