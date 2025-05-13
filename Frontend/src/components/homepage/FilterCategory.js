@@ -133,7 +133,7 @@ const FilterCategory = ({ onFilter, products, onClickFilter }) => {
 
         {/* Lọc theo thương hiệu */}
         <div className="">
-          <p className="text-xl font-semibold mb-4">Hãng</p>
+          <p className="text-xl font-semibold mb-4">Thương hiệu</p>
           <div className="grid grid-cols-2 gap-3 mt-2">
             {brands.map((brand, index) => (
               <button

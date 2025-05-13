@@ -344,7 +344,7 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
             render: (text, record) => record.category?.name || 'N/A',
         },
         {
-            title: 'Hãng',
+            title: 'Thương hiệu',
             dataIndex: ['brand', 'name'],
             key: 'brandName',
             render: (text, record) => record.brand?.name || 'N/A',
@@ -490,12 +490,12 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
                     </Form.Item>
                     <Form.Item
                         name="brand"
-                        label="Hãng"
-                        rules={[{ required: true, message: 'Chọn hãng!' }]}
+                        label="Thương hiệu"
+                        rules={[{ required: true, message: 'Chọn thương hiệu!' }]}
                         initialValue={currentProduct?.brand?.id}
                     >
                         <Select
-                            placeholder="Chọn hãng"
+                            placeholder="Chọn thương hiệu"
                             dropdownRender={(menu) => (
                                 <>
                                     {menu}

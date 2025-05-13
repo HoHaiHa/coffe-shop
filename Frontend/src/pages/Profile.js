@@ -150,7 +150,7 @@ const Profile = () => {
 
               <div className="bg-white p-6 rounded-lg shadow-md">
                 <div className="flex mt-4 items-center justify-between">
-                  <Title level={3}>Account info</Title>
+                  <Title level={3}>Thông tin tài khoản</Title>
                   <Button type="link" icon={<EditOutlined />} className="text-gray-500"
                     onClick={() => showEditInfoModal()}
                   >
