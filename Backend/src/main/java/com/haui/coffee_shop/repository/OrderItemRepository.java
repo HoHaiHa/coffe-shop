@@ -18,41 +18,57 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     @Query("SELECT oi FROM OrderItem oi WHERE oi.order.id = :orderId")
     List<OrderItem> findByOrderId(@Param("orderId") long orderId);
 
-    @Query("SELECT oi.productItem.product, SUM(oi.amount) AS totalQuantity, SUM(oi.amount * (oi.price - oi.discount)) AS totalRevenue " +
-            "FROM OrderItem oi " +
-            "JOIN oi.order o " +
-            "WHERE o.status = 'Completed' " +
-            "AND o.orderDate BETWEEN :startDate AND :endDate " +
-            "GROUP BY oi.productItem.product " +
-            "ORDER BY totalQuantity DESC")
-    List<Object[]> findTop5MonthlySellingProducts(@Param("startDate") Date startDate,
-                                               @Param("endDate") Date endDate, Pageable pageable);
+    @Query("SELECT oi.productItem.product, " +
+    	       "SUM(oi.amount) AS totalQuantity, " +
+    	       "SUM(oi.amount * (oi.price - oi.discount)) AS totalRevenue " +
+    	       "FROM OrderItem oi " +
+    	       "JOIN oi.order o " +
+    	       "WHERE o.status = 'Completed' " +
+    	       "AND oi.productItem.product.status = 'ACTIVE' " +
+    	       "AND o.orderDate BETWEEN :startDate AND :endDate " +
+    	       "GROUP BY oi.productItem.product " +
+    	       "ORDER BY totalQuantity DESC")
+    	List<Object[]> findTop5MonthlySellingProducts(@Param("startDate") Date startDate,
+    	                                              @Param("endDate") Date endDate,
+    	                                              Pageable pageable);
 
-    @Query("SELECT oi.productItem.product, SUM(oi.amount) AS totalQuantity, SUM(oi.amount * (oi.price - oi.discount)) AS totalRevenue " +
-            "FROM OrderItem oi " +
-            "JOIN oi.order o " +
-            "WHERE o.status = 'Completed' " +
-            "GROUP BY oi.productItem.product " +
-            "ORDER BY totalQuantity DESC")
-    List<Object[]> findTop5BestSellingProducts(Pageable pageable);
+    	@Query("SELECT oi.productItem.product, " +
+    	       "SUM(oi.amount) AS totalQuantity, " +
+    	       "SUM(oi.amount * (oi.price - oi.discount)) AS totalRevenue " +
+    	       "FROM OrderItem oi " +
+    	       "JOIN oi.order o " +
+    	       "WHERE o.status = 'Completed' " +
+    	       "AND oi.productItem.product.status = 'ACTIVE' " +
+    	       "GROUP BY oi.productItem.product " +
+    	       "ORDER BY totalQuantity DESC")
+    	List<Object[]> findTop5BestSellingProducts(Pageable pageable);
 
-    @Query("SELECT oi.productItem.product, SUM(oi.amount) AS totalQuantity, SUM(oi.amount * (oi.price - oi.discount)) AS totalRevenue " +
-            "FROM OrderItem oi " +
-            "JOIN oi.order o " +
-            "WHERE o.status = 'Completed' " +
-            "AND o.orderDate BETWEEN :startDate AND :endDate " +
-            "GROUP BY oi.productItem.product " +
-            "ORDER BY totalQuantity ASC")
-    List<Object[]> findTop5MonthlySlowSellingProducts(@Param("startDate") Date startDate,
-                                               @Param("endDate") Date endDate, Pageable pageable);
 
-    @Query("SELECT oi.productItem.product, SUM(oi.amount) AS totalQuantity, SUM(oi.amount * (oi.price - oi.discount)) AS totalRevenue " +
-            "FROM OrderItem oi " +
-            "JOIN oi.order o " +
-            "WHERE o.status = 'Completed' " +
-            "GROUP BY oi.productItem.product " +
-            "ORDER BY totalQuantity ASC")
-    List<Object[]> findTop5SlowSellingProducts(Pageable pageable);
+    @Query("SELECT p, COALESCE(SUM(oi.amount), 0) AS totalQuantity, " +
+    	       "COALESCE(SUM(oi.amount * (oi.price - oi.discount)), 0) AS totalRevenue " +
+    	       "FROM Product p " +
+    	       "LEFT JOIN ProductItem pi ON pi.product = p " +
+    	       "LEFT JOIN OrderItem oi ON oi.productItem = pi " +
+    	       "LEFT JOIN oi.order o " +
+    	       "WHERE p.status = 'ACTIVE' AND (o IS NULL OR o.status = 'Completed') " +
+    	       "GROUP BY p " +
+    	       "ORDER BY totalQuantity ASC")
+    	List<Object[]> findTop5SlowSellingProducts(Pageable pageable);
+
+    	@Query("SELECT p, COALESCE(SUM(oi.amount), 0) AS totalQuantity, " +
+    		       "COALESCE(SUM(oi.amount * (oi.price - oi.discount)), 0) AS totalRevenue " +
+    		       "FROM Product p " +
+    		       "LEFT JOIN ProductItem pi ON pi.product = p " +
+    		       "LEFT JOIN OrderItem oi ON oi.productItem = pi " +
+    		       "LEFT JOIN oi.order o " +
+    		       "WHERE p.status = 'ACTIVE' AND (o IS NULL OR (o.status = 'Completed' AND o.orderDate BETWEEN :startDate AND :endDate)) " +
+    		       "GROUP BY p " +
+    		       "ORDER BY totalQuantity ASC")
+    		List<Object[]> findTop5MonthlySlowSellingProducts(
+    		        @Param("startDate") Date startDate,
+    		        @Param("endDate") Date endDate,
+    		        Pageable pageable);
+
 
     @Query("SELECT oi.order.shippingAddress.user, SUM(oi.amount * (oi.price - oi.discount)) AS total " +
             "FROM OrderItem oi " +

@@ -215,7 +215,7 @@ const Home = () => {
         <Header />
         
         <div className="mt-24"></div>
-        {location.pathname !== "/profile" && <BreadcrumbNav />}
+        {/* {location.pathname !== "/profile" && <BreadcrumbNav />} */}
         <main className="container mx-auto ">
           {location.pathname === "/" && (
             <>

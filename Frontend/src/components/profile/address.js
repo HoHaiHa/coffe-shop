@@ -313,7 +313,7 @@ const ShippingAddress = () => {
             Hủy
           </Button>,
           <Button key="submit" type="primary" onClick={handleSaveAddress}>
-            Xóa
+            OK
           </Button>,
         ]}
       >

@@ -13,35 +13,35 @@ const Sidebar = () => {
   const user = useSelector((state) => state.user.user, (prev, next) => prev === next);
 
   return (
-    <div className="flex-1 bg-white shadow-md h-[calc(100vh-60px)] shadow-gray-400 sticky w-[254.663px]">
-      <div className="p-5 text-gray-600">
-
+    <div className="flex-1 bg-white h-[calc(100vh-60px)] sticky w-[254.663px] border-r border-gray-100">
+      <div className="p-6 text-gray-600">
         {/* Quick Menu */}
-        <div className="mb-3">
-          <h3 className="text-sm text-gray-400">Trang quản trị</h3>
-          <ul className="list-none p-1">
-              <NavLink
-                to="users"
-                className={({ isActive }) =>
-                  isActive
-                    ? "flex items-center p-2 mb-1 rounded-lg bg-indigo-100 transition-all duration-300 ease-in-out transform scale-105"
-                    : "flex items-center p-2 mb-1 rounded-lg hover:bg-indigo-100 cursor-pointer transition-all duration-300 ease-in-out"
-                }
-              >
-                <MdPermIdentity className="mr-2 text-lg" />
-                Người dùng
-              </NavLink>
-            
-           
+        <div className="mb-8">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-[#596ecd] mb-4 px-3">
+            Trang quản trị
+          </h3>
+          <ul className="space-y-1">
+            <NavLink
+              to="users"
+              className={({ isActive }) =>
+                isActive
+                  ? "flex items-center px-3 py-2.5 rounded-lg bg-[#596ecd] text-white font-medium transition-all duration-200"
+                  : "flex items-center px-3 py-2.5 rounded-lg hover:bg-[#596ecd]/10 text-gray-600 hover:text-[#596ecd] font-medium transition-all duration-200"
+              }
+            >
+              <MdPermIdentity className="text-xl mr-3" />
+              Người dùng
+            </NavLink>
+
             <NavLink
               to="products"
               className={({ isActive }) =>
                 isActive
-                  ? "flex items-center p-2 mb-1 rounded-lg bg-indigo-100 transition-all duration-300 ease-in-out transform scale-105"
-                  : "flex items-center p-2 mb-1 rounded-lg hover:bg-indigo-100 cursor-pointer transition-all duration-300 ease-in-out"
+                  ? "flex items-center px-3 py-2.5 rounded-lg bg-[#596ecd] text-white font-medium transition-all duration-200"
+                  : "flex items-center px-3 py-2.5 rounded-lg hover:bg-[#596ecd]/10 text-gray-600 hover:text-[#596ecd] font-medium transition-all duration-200"
               }
             >
-              <MdStore className="mr-2 text-lg" />
+              <MdStore className="text-xl mr-3" />
               Sản phẩm
             </NavLink>
 
@@ -49,11 +49,11 @@ const Sidebar = () => {
               to="brands"
               className={({ isActive }) =>
                 isActive
-                  ? "flex items-center p-2 mb-1 rounded-lg bg-indigo-100 transition-all duration-300 ease-in-out transform scale-105"
-                  : "flex items-center p-2 mb-1 rounded-lg hover:bg-indigo-100 cursor-pointer transition-all duration-300 ease-in-out"
+                  ? "flex items-center px-3 py-2.5 rounded-lg bg-[#596ecd] text-white font-medium transition-all duration-200"
+                  : "flex items-center px-3 py-2.5 rounded-lg hover:bg-[#596ecd]/10 text-gray-600 hover:text-[#596ecd] font-medium transition-all duration-200"
               }
             >
-              <MdStore className="mr-2 text-lg" />
+              <MdStore className="text-xl mr-3" />
               Nhãn hàng
             </NavLink>
 
@@ -61,11 +61,11 @@ const Sidebar = () => {
               to="categories"
               className={({ isActive }) =>
                 isActive
-                  ? "flex items-center p-2 mb-1 rounded-lg bg-indigo-100 transition-all duration-300 ease-in-out transform scale-105"
-                  : "flex items-center p-2 mb-1 rounded-lg hover:bg-indigo-100 cursor-pointer transition-all duration-300 ease-in-out"
+                  ? "flex items-center px-3 py-2.5 rounded-lg bg-[#596ecd] text-white font-medium transition-all duration-200"
+                  : "flex items-center px-3 py-2.5 rounded-lg hover:bg-[#596ecd]/10 text-gray-600 hover:text-[#596ecd] font-medium transition-all duration-200"
               }
             >
-              <MdStore className="mr-2 text-lg" />
+              <MdStore className="text-xl mr-3" />
               Danh mục
             </NavLink>
 
@@ -73,11 +73,11 @@ const Sidebar = () => {
               to="orders"
               className={({ isActive }) =>
                 isActive
-                  ? "flex items-center p-2 mb-1 rounded-lg bg-indigo-100 transition-all duration-300 ease-in-out transform scale-105"
-                  : "flex items-center p-2 mb-1 rounded-lg hover:bg-indigo-100 cursor-pointer transition-all duration-300 ease-in-out"
+                  ? "flex items-center px-3 py-2.5 rounded-lg bg-[#596ecd] text-white font-medium transition-all duration-200"
+                  : "flex items-center px-3 py-2.5 rounded-lg hover:bg-[#596ecd]/10 text-gray-600 hover:text-[#596ecd] font-medium transition-all duration-200"
               }
             >
-              <LiaClipboardListSolid className="mr-2 text-lg" />
+              <LiaClipboardListSolid className="text-xl mr-3" />
               Đơn hàng
             </NavLink>
 
@@ -86,39 +86,38 @@ const Sidebar = () => {
               to="statistics"
               className={({ isActive }) =>
                 isActive
-                  ? "flex items-center p-2 mb-1 rounded-lg bg-indigo-100 transition-all duration-300 ease-in-out transform scale-105"
-                  : "flex items-center p-2 mb-1 rounded-lg hover:bg-indigo-100 cursor-pointer transition-all duration-300 ease-in-out"
+                  ? "flex items-center px-3 py-2.5 rounded-lg bg-[#596ecd] text-white font-medium transition-all duration-200"
+                  : "flex items-center px-3 py-2.5 rounded-lg hover:bg-[#596ecd]/10 text-gray-600 hover:text-[#596ecd] font-medium transition-all duration-200"
               }
             >
-              <MdBarChart className="mr-2 text-lg" />
+              <MdBarChart className="text-xl mr-3" />
               Thống kê
             </NavLink>}
           </ul>
         </div>
 
         {/* Notifications */}
-        <div className="mb-3">
-          <h3 className="text-sm text-gray-400">Thông báo</h3>
-          <ul className="list-none p-1">
-
+        <div>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-[#596ecd] mb-4 px-3">
+            Thông báo
+          </h3>
+          <ul className="space-y-1">
             <NavLink
               to="messages"
               className={({ isActive }) =>
                 isActive
-                  ? "flex items-center p-2 mb-1 rounded-lg bg-indigo-100 transition-all duration-300 ease-in-out transform scale-105"
-                  : "flex items-center p-2 mb-1 rounded-lg hover:bg-indigo-100 cursor-pointer transition-all duration-300 ease-in-out"
+                  ? "flex items-center px-3 py-2.5 rounded-lg bg-[#596ecd] text-white font-medium transition-all duration-200"
+                  : "flex items-center px-3 py-2.5 rounded-lg hover:bg-[#596ecd]/10 text-gray-600 hover:text-[#596ecd] font-medium transition-all duration-200"
               }
             >
-              <MdChatBubbleOutline className="mr-2 text-lg" />
+              <MdChatBubbleOutline className="text-xl mr-3" />
               Tin nhắn
             </NavLink>
           </ul>
         </div>
-
-
       </div>
     </div>
   );
 };
 
-export default Sidebar;
+export default Sidebar; 

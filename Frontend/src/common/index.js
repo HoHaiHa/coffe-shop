@@ -261,11 +261,11 @@ const summaryApi = {
         method : "GET"
     },
     getTop5MonthlySlowSellingProduct : {
-        url : `${backendDomain}/statistic/product/best/monthly`,
+        url : `${backendDomain}/statistic/product/slow/monthly`,
         method : "GET"
     },
     getTop5SlowSellingProduct : {
-        url : `${backendDomain}/statistic/product/best`,
+        url : `${backendDomain}/statistic/product/slow`,
         method : "GET"
     },
     getTop5MonthlyUsers : {

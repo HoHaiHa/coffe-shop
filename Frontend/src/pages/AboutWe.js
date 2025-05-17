@@ -12,6 +12,7 @@ import cafe_img from '../../src/assets/img/slide2.jpg';
 import khach0_img from '../../src/assets/img/khach0.png';
 import khach1_img from '../../src/assets/img/khach1.png';
 import khach2_img from '../../src/assets/img/khach2.png';
+import trungnguyen_img from '../../src/assets/img/trungnguyen.jpg';
 import ProductCard from '../components/layout/ProductCard';
 import summaryApi from '../common';
 
@@ -72,6 +73,35 @@ const AboutWe = () => {
         </div>
       </section>
 
+      <section className="partner-section py-12 mb-10 bg-white rounded-2xl">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center gap-10">
+          {/* Ảnh */}
+          <div className="md:w-1/2">
+            <img
+              src={trungnguyen_img}
+              alt="Trung Nguyên Legend"
+              className="w-full rounded-xl shadow-md object-cover"
+            />
+          </div>
+
+          {/* Nội dung bài viết */}
+          <div className="md:w-1/2">
+            <h2 className="text-xl font-semibold text-primary">
+              Thương hiệu đồng hành với Hacafe:
+            </h2>
+            <h2 className="text-4xl font-semibold text-primary mb-6">
+              Trung Nguyên Legend
+            </h2>
+            <p className="text-base text-gray-700 leading-relaxed">
+              Hacafe tự hào là đối tác lớn của Trung Nguyên Legend – thương hiệu cà phê hàng đầu Việt Nam với hơn 25 năm phát triển và danh tiếng. Sự đồng hành này đã góp phần làm nên thành công của Hacafe, khi chúng tôi chuyên cung cấp các dòng sản phẩm cà phê đặc biệt, chất lượng cao từ Trung Nguyên Legend. Qua đó, chúng tôi không chỉ nâng cao trải nghiệm thưởng thức cà phê cho khách hàng mà còn lan tỏa tinh thần văn hóa cà phê Việt đến rộng rãi trong và ngoài nước. Trung Nguyên Legend không chỉ nổi tiếng với hương vị cà phê thơm ngon mà còn là biểu tượng của sự sáng tạo và đổi mới trong ngành cà phê
+            </p>
+            <p className="mt-4 italic text-gray-500">
+              “Cùng nhau kiến tạo giá trị, góp phần phát triển văn hóa cà phê Việt Nam.”
+            </p>
+          </div>
+        </div>
+      </section>
+
 
       {/* Phần 2: Hành trình phát triển */}
       <section className="mb-20 bg-amber-50 rounded-2xl p-8">
@@ -99,8 +129,8 @@ const AboutWe = () => {
               },
               {
                 "year": "2021",
-                "event": "Đạt giải thưởng hội cà phê cấp thành phố",
-                "detail": "Hacafe vinh dự nhận giải thưởng tại Hội Cà phê cấp thành phố, công nhận những nỗ lực không ngừng trong việc phát triển sản phẩm và nâng cao chất lượng cà phê, khẳng định vị thế vững mạnh trong ngành."
+                "event": "Chính thức trở thành đối tác lớn của cafe Trung Nguyên",
+                "detail": "Hacafe chính thức trở thành đối tác lớn của Trung Nguyên, tập trung phát triển và phân phối các dòng cà phê đặc trưng của thương hiệu này. Đồng thời, công ty cũng mở rộng danh mục sản phẩm với các loại cà phê nổi tiếng trên thế giới như Illy, Lavazza, và Starbucks, nhằm mang đến sự đa dạng và chất lượng vượt trội cho người tiêu dùng."
               },
               {
                 "year": "2024",
@@ -238,7 +268,7 @@ const AboutWe = () => {
           </div>
         </section>
       )}
-      
+
       {/* Phần 7: Nhận xét từ khách hàng */}
       <section className="mb-20">
         <h2 className="text-3xl font-bold text-amber-900 mb-12 text-center">Khách hàng nói về chúng tôi</h2>

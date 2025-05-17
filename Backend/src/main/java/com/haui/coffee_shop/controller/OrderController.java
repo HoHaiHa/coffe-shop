@@ -50,7 +50,6 @@ public class OrderController {
     }
 
     @PostMapping("")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_STAFF')")
     public ResponseEntity<String> addOrder(@RequestBody OrderRequest orderRequest) {
         try {
             RespMessage respMessage = orderService.addOrder(orderRequest);

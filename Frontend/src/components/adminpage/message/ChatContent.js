@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { List, Avatar, Input, Spin, Button, Typography, Pagination } from "antd";
+import { List, Avatar, Input, Spin, Button, Typography, Pagination, Badge } from "antd";
 import { LoadingOutlined, SendOutlined, UserOutlined } from "@ant-design/icons";
 import { Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
@@ -15,9 +15,10 @@ const ChatContent = () => {
   const [newMessage, setNewMessage] = useState("");
   const [conversationList, setConversationList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5); // Số mục hiển thị trên mỗi trang
+  const [pageSize, setPageSize] = useState(5);
   const stompClient = useRef(null);
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   const user = useSelector((state) => state?.user?.user);
 
@@ -97,10 +98,10 @@ const ChatContent = () => {
         JSON.stringify(chatMessage)
       );
       setNewMessage("");
+      inputRef.current?.focus();
     }
   };
 
-  // Hook để cuộn tới cuối mỗi khi tin nhắn mới được thêm vào
   useEffect(() => {
     if (messagesEndRef?.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -108,15 +109,12 @@ const ChatContent = () => {
   }, [conversationList]);
 
   if (loading || !user) {
-    const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
-
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-100">
-        <Spin indicator={antIcon} />
+      <div className="flex justify-center items-center h-screen bg-gray-50">
+        <Spin indicator={<LoadingOutlined style={{ fontSize: 32, color: '#596ecd' }} spin />} />
       </div>
     );
   }
-
 
   const handlePageChange = (page, size) => {
     setCurrentPage(page);
@@ -125,108 +123,149 @@ const ChatContent = () => {
 
   const paginatedData = conversationList
     .sort((a, b) => a.hostId - b.hostId)
-    .slice(
-      (currentPage - 1) * pageSize,
-      currentPage * pageSize
-    );
+    .slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  const getLastMessage = (conversation) => {
+    const messages = conversation.messageList || [];
+    return messages[messages.length - 1]?.content || '';
+  };
+
+  const getUnreadCount = (conversation) => {
+    return (conversation.messageList || []).filter(msg => !msg.read && msg.senderId !== user.id).length;
+  };
 
   return (
-    <div className="flex -mt-5 h-[calc(100vh-60px)]">
+    <div className="flex -mt-5 h-[calc(100vh-60px)] bg-gray-50">
       {/* Sidebar */}
-      <div className="w-1/4 border-r pt-4 pr-4">
-        <Text className="text-xl font-semibold mb-4 block">Cuộc trò chuyện</Text>
-        <List
-          itemLayout="horizontal"
-          dataSource={paginatedData}
-          renderItem={(conversation) => (
-            <List.Item
-              key={conversation.id}
-              className={`cursor-pointer rounded-lg ${selectedConversationId === conversation.id
-                ? "bg-blue-100"
-                : "hover:bg-gray-50"
+      <div className="w-1/4 bg-white shadow-lg z-10">
+        <div className="p-6 border-b">
+          <Text className="text-xl font-semibold text-gray-800">Cuộc trò chuyện</Text>
+        </div>
+        <div className="overflow-y-auto h-[calc(100%-140px)]">
+          <List
+            itemLayout="horizontal"
+            dataSource={paginatedData}
+            className="px-2"
+            renderItem={(conversation) => (
+              <List.Item
+                key={conversation.id}
+                className={`cursor-pointer rounded-xl transition-all duration-200 my-2 hover:bg-gray-50 ${
+                  selectedConversationId === conversation.id
+                    ? "bg-[#596ecd]/10 border-[#596ecd] shadow-sm"
+                    : "border-transparent"
                 }`}
-              onClick={() => setselectedConversationId(conversation.id)}
-            >
-              <List.Item.Meta
-                avatar={
-                  <Avatar
-                    size={40}
-                    src={conversation.hostAvatar || null}
-                    icon={<UserOutlined />}
-                    className="bg-transparent text-gray-500 ml-2"
-                  />
-                }
-                title={<Text>{conversation.hostName}</Text>}
-              />
-            </List.Item>
-          )}
-        />
-        <Pagination
-          className="mt-4"
-          current={currentPage}
-          pageSize={pageSize}
-          total={conversationList.length}
-          onChange={handlePageChange}
-        />
+                onClick={() => setselectedConversationId(conversation.id)}
+              >
+                <div className="flex items-center w-full p-3">
+                  <Badge count={getUnreadCount(conversation)} offset={[-2, 2]}>
+                    <Avatar
+                      size={48}
+                      src={conversation.hostAvatar}
+                      icon={<UserOutlined />}
+                      className="bg-[#596ecd]/10 text-[#596ecd]"
+                    />
+                  </Badge>
+                  <div className="ml-3 flex-1 min-w-0">
+                    <Text className="font-medium text-gray-900 block" ellipsis>
+                      {conversation.hostName}
+                    </Text>
+                    <Text className="text-gray-500 text-sm block" ellipsis>
+                      {getLastMessage(conversation)}
+                    </Text>
+                  </div>
+                </div>
+              </List.Item>
+            )}
+          />
+        </div>
+        <div className="border-t p-4 bg-white">
+          <Pagination
+            size="small"
+            current={currentPage}
+            pageSize={pageSize}
+            total={conversationList.length}
+            onChange={handlePageChange}
+          />
+        </div>
       </div>
 
-
       {/* Chat Area */}
-      <div className="flex-1 max-h-full flex flex-col">
-        {/* Khu vực hiển thị tin nhắn */}
-        <div className="flex-1 overflow-y-auto p-4 bg-white">
-          {selectedConversationId ? (
-            (conversationList.find(
-              (c) => c.id === selectedConversationId
-            )?.messageList || []).map((msg) => (
-              <div
-                key={msg.id}
-                className={`mb-3 ${msg.senderId === user.id ? "text-right" : "text-left"}`}
-              >
-                <div
-                  className={`inline-block max-w-[75%] px-3 py-2 rounded-xl ${msg.senderId === user.id
-                    ? "bg-blue-500 text-white rounded-br-none"
-                    : "bg-gray-200 text-black rounded-bl-none"
-                    }`}
-                >
-                  {msg.content}
-                </div>
+      <div className="flex-1 flex flex-col bg-white ml-5 rounded-l-3xl shadow-lg">
+        {selectedConversationId ? (
+          <>
+            {/* Chat Header */}
+            <div className="p-6 border-b">
+              <div className="flex items-center">
+                <Avatar
+                  size={40}
+                  src={conversationList.find(c => c.id === selectedConversationId)?.hostAvatar}
+                  icon={<UserOutlined />}
+                  className="bg-[#596ecd]/10 text-[#596ecd]"
+                />
+                <Text className="ml-3 text-lg font-medium">
+                  {conversationList.find(c => c.id === selectedConversationId)?.hostName}
+                </Text>
               </div>
-            ))
-          ) : (
-            <div className="text-gray-500 text-center mt-20">
-              <p>Không có cuộc trò chuyện nào được chọn</p>
             </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
 
-        {/* Thanh nhập tin nhắn */}
-        {selectedConversationId && (
-          <div className="p-4 bg-gray-50 border-t flex items-center">
-            <Input.TextArea
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              rows={1}
-              placeholder="Type your message..."
-              className="flex-1 mr-2 p-2 resize-none"
-              autoSize={{ minRows: 1, maxRows: 5 }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSendMessage(selectedConversationId);
-                }
-              }}
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              {(conversationList.find(c => c.id === selectedConversationId)?.messageList || [])
+                .map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`flex ${msg.senderId === user.id ? "justify-end" : "justify-start"}`}
+                  >
+                    <div
+                      className={`max-w-[70%] px-4 py-3 rounded-2xl ${
+                        msg.senderId === user.id
+                          ? "bg-[#596ecd] text-white"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {msg.content}
+                    </div>
+                  </div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
 
-            />
-            <Button
-              type="primary"
-              icon={<SendOutlined />}
-              onClick={() => handleSendMessage(selectedConversationId)}
-              className="pt-2 pb-2"
-            >
-              Gửi
-            </Button>
+            {/* Input Area */}
+            <div className="p-4 border-t bg-white">
+              <div className="flex items-center space-x-4">
+                <Input.TextArea
+                  ref={inputRef}
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  placeholder="Nhập tin nhắn..."
+                  autoSize={{ minRows: 1, maxRows: 4 }}
+                  className="flex-1 rounded-xl border-gray-200 focus:border-[#596ecd] focus:shadow-none"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendMessage(selectedConversationId);
+                    }
+                  }}
+                />
+                <Button
+                  type="primary"
+                  icon={<SendOutlined />}
+                  onClick={() => handleSendMessage(selectedConversationId)}
+                  className="bg-[#596ecd] hover:bg-[#596ecd]/90 rounded-xl h-[40px] px-6"
+                >
+                  Gửi
+                </Button>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-gray-400 mb-2">
+                <UserOutlined style={{ fontSize: '48px' }} />
+              </div>
+              <Text className="text-gray-500">Chọn một cuộc trò chuyện để bắt đầu</Text>
+            </div>
           </div>
         )}
       </div>
@@ -234,4 +273,4 @@ const ChatContent = () => {
   );
 };
 
-export default ChatContent;
+export default ChatContent; 

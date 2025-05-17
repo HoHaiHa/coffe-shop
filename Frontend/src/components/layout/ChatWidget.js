@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { MessageOutlined, CloseOutlined } from "@ant-design/icons";
-import { Input, Button } from "antd";
+import { MessageOutlined, CloseOutlined, SendOutlined } from "@ant-design/icons";
+import { Input, Button, Spin } from "antd";
 import { Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { useSelector } from "react-redux";
@@ -13,24 +13,28 @@ const ChatWidget = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [conversation, setConversation] = useState(null);
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const user = useSelector((state) => state?.user?.user);
   const stompClient = useRef(null);
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     if (!user) {
       setIsChatOpen(false);
-    };
+    }
   }, [user]);
+
   useEffect(() => {
     if (!user && isChatOpen) {
       navigate("/login");
-    };
+    }
   });
 
   useEffect(() => {
     const fetchConversation = async () => {
       try {
+        setIsLoading(true);
         const response = await fetchWithAuth(
           summaryApi.getConversationOfUser.url + user?.id,
           {
@@ -42,20 +46,19 @@ const ChatWidget = () => {
           const conversationData = data.data;
           if (!conversationData) {
             console.log(" error conversationData is null");
-          }
-          else {
+          } else {
             setConversation(conversationData);
           }
-        }
-        else {
+        } else {
           console.error("Error fetching conversation list:", data);
         }
       } catch (error) {
         console.error("Error fetching messages:", error);
+      } finally {
+        setIsLoading(false);
       }
-    }
+    };
     if (user && isChatOpen) fetchConversation();
-
   }, [user, isChatOpen]);
 
   useEffect(() => {
@@ -66,13 +69,16 @@ const ChatWidget = () => {
         {},
         () => {
           console.log("Connected to WebSocket");
-          stompClient.current.subscribe(`/topic/conversation/${conversation.id}`, (data) => {
-            const response = JSON.parse(data.body);
-            if (response.respCode === "000") {
-              const conv = response.data;
-              setConversation(conv);
+          stompClient.current.subscribe(
+            `/topic/conversation/${conversation?.id}`,
+            (data) => {
+              const response = JSON.parse(data.body);
+              if (response.respCode === "000") {
+                const conv = response.data;
+                setConversation(conv);
+              }
             }
-          });
+          );
         },
         (error) => console.error("WebSocket connection error:", error)
       );
@@ -88,8 +94,7 @@ const ChatWidget = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [conversation]); // Mỗi khi conversation thay đổi (có tin nhắn mới)
-
+  }, [conversation]);
 
   const handleSendMessage = () => {
     if (message.trim() && stompClient.current) {
@@ -98,64 +103,108 @@ const ChatWidget = () => {
         content: message,
         conversationId: conversation.id,
       };
-      stompClient.current.send(`/app/chat/${conversation.id}`, {}, JSON.stringify(chatMessage));
-
+      stompClient.current.send(
+        `/app/chat/${conversation.id}`,
+        {},
+        JSON.stringify(chatMessage)
+      );
       setMessage("");
+      inputRef.current?.focus();
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
     }
   };
 
   return (
-    <div className="fixed bottom-10 right-4 sm:right-10 z-10">
+    <div className="fixed bottom-6 right-6 z-50">
+      {/* Chat Button */}
       {!isChatOpen && (
-        <div
-          className="w-14 h-14 bg-blue-600 text-white rounded-full flex items-center justify-center cursor-pointer shadow-lg"
+        <button
           onClick={() => setIsChatOpen(true)}
+          className="w-14 h-14 bg-[#596ecd] hover:bg-[#596ecd]/90 text-white rounded-full flex items-center justify-center 
+                     shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200"
         >
-          <MessageOutlined style={{ fontSize: "24px" }} />
-        </div>
+          <MessageOutlined className="text-2xl" />
+        </button>
       )}
+
+      {/* Chat Window */}
       {isChatOpen && user && (
-        <div className="bg-white shadow-lg rounded-lg p-4 w-72 sm:w-96 max-w-full">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-bold">Nhắn tin với cửa hàng</h3>
-            <CloseOutlined
-              className="cursor-pointer"
+        <div className="bg-white rounded-2xl shadow-2xl w-[340px] sm:w-[380px] overflow-hidden">
+          {/* Header */}
+          <div className="bg-[#596ecd] text-white px-4 py-3 flex items-center justify-between">
+            <div>
+              <h3 className="font-medium">Hỗ trợ khách hàng</h3>
+              <p className="text-xs text-white/80">Hacafe luôn sẵn sàng hỗ trợ bạn</p>
+            </div>
+            <button
               onClick={() => setIsChatOpen(false)}
-            />
+              className="p-1 hover:bg-white/20 rounded-full transition-colors duration-200"
+            >
+              <CloseOutlined className="text-lg" />
+            </button>
           </div>
-          <div className="mb-4 h-60 bg-gray-100 rounded p-2 overflow-y-auto">
-            {conversation?.messageList?.map((msg) => (
-              <p key={msg?.id} className="text-sm">
-                {msg.senderId === user.id ? (
-                  <>
-                    <strong className="text-blue-600">bạn:</strong> {msg.content}
-                  </>
-                ) : (
-                  <>
-                    <strong className="text-red-600">Admin:</strong> {msg.content}
-                  </>
-                )}
-              </p>
-            ))}
-            <div ref={messagesEndRef} />
+
+          {/* Messages Area */}
+          <div className="h-[400px] p-4 overflow-y-auto bg-gray-50">
+            {isLoading ? (
+              <div className="flex justify-center items-center h-full">
+                <Spin size="large" />
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {conversation?.messageList?.map((msg) => (
+                  <div
+                    key={msg?.id}
+                    className={`flex ${
+                      msg.senderId === user.id ? "justify-end" : "justify-start"
+                    }`}
+                  >
+                    <div
+                      className={`max-w-[80%] px-4 py-2 rounded-2xl ${
+                        msg.senderId === user.id
+                          ? "bg-[#596ecd] text-white"
+                          : "bg-white shadow-sm"
+                      }`}
+                    >
+                      <p className="text-sm">{msg.content}</p>
+                    </div>
+                  </div>
+                ))}
+                <div ref={messagesEndRef} />
+              </div>
+            )}
           </div>
-          <Input.TextArea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            rows={3}
-            placeholder="Enter your message"
-            className="mb-2"
-            style={{ maxHeight: "100px",  overflowY: "auto" }}
-          />
-          <Button type="primary" className="w-full" onClick={handleSendMessage}>
-            Send
-          </Button>
+
+          {/* Input Area */}
+          <div className="p-4 bg-white border-t">
+            <div className="flex space-x-2">
+              <Input.TextArea
+                ref={inputRef}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={handleKeyPress}
+                placeholder="Nhập tin nhắn của bạn..."
+                autoSize={{ minRows: 1, maxRows: 4 }}
+                className="flex-1 resize-none rounded-xl"
+              />
+              <Button
+                type="primary"
+                onClick={handleSendMessage}
+                className="bg-[#596ecd] hover:bg-[#596ecd]/90 flex items-center justify-center"
+                icon={<SendOutlined />}
+              />
+            </div>
+          </div>
         </div>
       )}
     </div>
-
   );
 };
 
-
-export default ChatWidget;
+export default ChatWidget; 
