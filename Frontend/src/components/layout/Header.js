@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Logo from "./Logo";
 import { GrSearch } from "react-icons/gr";
 import { GiCoffeeCup } from "react-icons/gi";
 import { MdOutlineShoppingCart, MdLogout } from "react-icons/md";
 import { PiUserCircle } from "react-icons/pi";
 import { AiOutlineTrademark } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUser } from "../../store/userSlice";
 import Cookies from "js-cookie";
-import { message, Popconfirm, Tooltip } from "antd";
-import { Badge } from "antd";
+import { message, Popconfirm, Tooltip, Badge } from "antd";
 import { clearCart } from "../../store/cartSlice";
 import { clearFavorites } from "../../store/favoritesSlice ";
 import CartTab from "../cart/CartTab";
@@ -23,6 +21,7 @@ import { FaMapLocationDot } from "react-icons/fa6";
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const user = useSelector((state) => state?.user?.user);
   const carts = useSelector((store) => store.cart.items);
@@ -49,13 +48,8 @@ const Header = () => {
   };
 
   const handleSearch = () => {
-    if (searchTerm) {
       const query = encodeURIComponent(searchTerm);
       navigate(`/search?q=${query}`);
-      setSearchTerm("");
-    } else {
-      navigate("/search");
-    }
   };
 
   const handleKeyDown = (e) => {
@@ -69,6 +63,13 @@ const Header = () => {
     setTotalQuantity(total);
   }, [carts, user]);
 
+  // Lấy giá trị q từ URL và đồng bộ với input search
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const query = params.get("q") || "";
+    setSearchTerm(query);
+  }, [location.search]);
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -78,12 +79,12 @@ const Header = () => {
   }
 
   return (
-    <header className="bg-white shadow-sm fixed top-0 w-full z-20">
-      <div className="container mx-auto px-4 py-3">
+    <header className="bg-white shadow-md fixed top-0 w-full z-20 backdrop-blur-sm bg-white/90">
+      <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Left Section: Logo */}
           <div className="flex items-center space-x-8">
-            <Link to="/" className="flex-shrink-0">
+            <Link to="/" className="flex-shrink-0 transform hover:scale-105 transition-transform duration-200">
               <Logo />
             </Link>
 
@@ -92,7 +93,7 @@ const Header = () => {
               <DropdownWithList 
                 title='Danh mục' 
                 Icon={GiCoffeeCup}
-                className="group flex items-center space-x-2 text-gray-700 hover:text-[#596ecd] transition-colors duration-200"
+                className="group flex items-center space-x-2 text-gray-700 hover:text-amber-600 transition-all duration-200 font-medium"
               >
                 <ListCategory />
               </DropdownWithList>
@@ -100,7 +101,7 @@ const Header = () => {
               <DropdownWithList 
                 title='Thương hiệu' 
                 Icon={AiOutlineTrademark}
-                className="group flex items-center space-x-2 text-gray-700 hover:text-[#596ecd] transition-colors duration-200"
+                className="group flex items-center space-x-2 text-gray-700 hover:text-amber-600 transition-all duration-200 font-medium"
               >
                 <ListBrand />
               </DropdownWithList>
@@ -113,14 +114,14 @@ const Header = () => {
               <input
                 type="text"
                 placeholder="Tìm kiếm sản phẩm..."
-                className="w-full h-10 pl-4 pr-12 rounded-xl border border-gray-200 focus:border-amber-700 focus:outline-none focus:ring-1 focus:ring-amber-700 transition-all duration-200"
+                className="w-full h-11 pl-5 pr-12 rounded-full border-2 border-gray-100 focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all duration-200 bg-gray-50/50"
                 value={searchTerm}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}
               />
               <button
                 onClick={handleSearch}
-                className="absolute right-0 top-0 h-full px-4 flex items-center justify-center text-gray-500 hover:text-amber-700 transition-colors duration-200"
+                className="absolute right-0 top-0 h-full px-5 flex items-center justify-center text-gray-400 hover:text-amber-600 transition-colors duration-200"
               >
                 <GrSearch className="text-lg" />
               </button>
@@ -133,16 +134,16 @@ const Header = () => {
             <Tooltip title="Về chúng tôi">
               <Link 
                 to="/about-we"
-                className="hidden md:flex items-center space-x-2 text-gray-700 hover:text-amber-700 transition-colors duration-200"
+                className="hidden md:flex items-center space-x-2 text-gray-600 hover:text-amber-600 transition-all duration-200 group"
               >
-                <FaMapLocationDot className="text-lg" />
+                <FaMapLocationDot className="text-lg group-hover:scale-110 transition-transform duration-200" />
                 <span className="text-sm font-medium">Về chúng tôi</span>
               </Link>
             </Tooltip>
 
             {/* Cart */}
             <div
-              className="relative"
+              className="relative transform hover:scale-105 transition-transform duration-200"
               onMouseEnter={() => setShowCartTab(true)}
               onMouseLeave={() => setShowCartTab(false)}
             >
@@ -151,8 +152,9 @@ const Header = () => {
                   count={totalQuantity} 
                   size="small"
                   className="cursor-pointer"
+                  style={{ backgroundColor: '#c2410c' }}
                 >
-                  <MdOutlineShoppingCart className="text-2xl text-gray-700 hover:text-amber-700 transition-colors duration-200" />
+                  <MdOutlineShoppingCart className="text-2xl text-gray-600 hover:text-amber-600 transition-colors duration-200" />
                 </Badge>
               </Link>
               {showCartTab && (
@@ -164,21 +166,20 @@ const Header = () => {
 
             {/* User Menu */}
             <div className="flex items-center space-x-4">
-              {/* About Us */}
               {user?.id ? (
                 <>
                   <Link 
                     to="/profile"
-                    className="flex items-center space-x-2 py-1 px-3 rounded-lg hover:bg-gray-50 transition-all duration-200"
+                    className="flex items-center space-x-2 py-1.5 px-4 rounded-full hover:bg-gray-50/80 transition-all duration-200 group"
                   >
                     {user?.profile_img ? (
                       <img
                         src={user.profile_img}
                         alt="Avatar"
-                        className="w-8 h-8 rounded-full border-2 border-amber-700/20"
+                        className="w-8 h-8 rounded-full border-2 border-amber-500/20 group-hover:border-amber-500/40 transition-colors duration-200"
                       />
                     ) : (
-                      <PiUserCircle className="text-2xl text-gray-700" />
+                      <PiUserCircle className="text-2xl text-gray-600" />
                     )}
                     <span className="text-sm font-medium text-gray-700">Tài khoản</span>
                   </Link>
@@ -190,10 +191,10 @@ const Header = () => {
                     okText="Đăng xuất"
                     cancelText="Hủy"
                     okButtonProps={{
-                      className: 'bg-gradient-to-r from-amber-700 to-stone-500 border-none'
+                      className: 'bg-gradient-to-r from-amber-600 to-amber-700 border-none hover:opacity-90'
                     }}
                   >
-                    <button className="flex items-center space-x-2 px-4 py-2 rounded-xl text-white bg-gradient-to-r from-amber-700 to-stone-500 hover:opacity-90 transition-all duration-300 shadow-sm hover:shadow">
+                    <button className="flex items-center space-x-2 px-5 py-2.5 rounded-full text-white bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-600 hover:to-amber-800 transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105">
                       <MdLogout className="text-lg" />
                       <span className="text-sm font-medium">Đăng xuất</span>
                     </button>
@@ -201,7 +202,7 @@ const Header = () => {
                 </>
               ) : (
                 <Link to="/login">
-                  <button className="px-5 py-2 rounded-xl text-white text-sm font-medium bg-gradient-to-r from-amber-700 to-stone-500 hover:opacity-90 transition-all duration-300 shadow-sm hover:shadow">
+                  <button className="px-6 py-2.5 rounded-full text-white text-sm font-medium bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-600 hover:to-amber-800 transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105">
                     Đăng nhập
                   </button>
                 </Link>
@@ -214,4 +215,4 @@ const Header = () => {
   );
 };
 
-export default Header; 
+export default Header;

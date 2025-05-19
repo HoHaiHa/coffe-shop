@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import summaryApi from "../../common";
-import { Slider, Box, Typography } from "@mui/material";
+import { Slider, Box } from "@mui/material";
+import { motion } from "framer-motion";
+import { BiCategory } from "react-icons/bi";
+import { FaRegMoneyBillAlt } from "react-icons/fa";
+import { HiOutlineFilter } from "react-icons/hi";
 
 const FilterBrand = ({ onFilter, products, onClickFilter }) => {
   const min = 0;
@@ -57,20 +61,26 @@ const FilterBrand = ({ onFilter, products, onClickFilter }) => {
   };
 
   return (
-    <div className="relative p-6 w-full bg-white rounded-lg shadow-xl ">
-      <div className="w-full grid grid-cols-1 justify-between items-start gap-y-8">
-        <div>
-          <Box margin="0 auto">
-            <Typography
-              gutterBottom
-              sx={{
-                fontSize: "1.25rem",
-                fontWeight: "600",
-                marginBottom: "1rem",
-              }}
-            >
-              Giá
-            </Typography>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="relative p-8 w-full bg-white rounded-2xl shadow-lg border border-gray-100"
+    >
+      <div className="w-full space-y-8">
+        {/* Filter Header */}
+        <div className="flex items-center space-x-2 pb-4 border-b border-gray-100">
+          <HiOutlineFilter className="text-2xl text-amber-600" />
+          <h2 className="text-xl font-bold text-gray-800">Bộ lọc theo thương hiệu</h2>
+        </div>
+
+        {/* Price Range Section */}
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <FaRegMoneyBillAlt className="text-xl text-amber-600" />
+            <h3 className="text-lg font-semibold text-gray-800">Khoảng giá</h3>
+          </div>
+          <Box className="px-2">
             <Slider
               value={value}
               onChange={handleChange}
@@ -82,85 +92,81 @@ const FilterBrand = ({ onFilter, products, onClickFilter }) => {
               sx={{
                 width: "100%",
                 "& .MuiSlider-thumb": {
-                  width: 12,
-                  height: 12,
-                  backgroundColor: "#8B4513", // nâu đất (SaddleBrown)
+                  width: 16,
+                  height: 16,
+                  backgroundColor: "#d97706",
                   "&:hover, &.Mui-focusVisible": {
-                    boxShadow: "0px 0px 0px 8px rgba(139, 69, 19, 0.16)",
+                    boxShadow: "0px 0px 0px 8px rgba(217, 119, 6, 0.16)",
                   },
                 },
                 "& .MuiSlider-track": {
                   height: 6,
-                  backgroundColor: "#D2B48C", // be vàng sáng (Tan)
+                  backgroundColor: "#d97706",
                 },
                 "& .MuiSlider-rail": {
                   height: 6,
-                  backgroundColor: "#EDEDED", // màu rail nhẹ
+                  backgroundColor: "#f3f4f6",
                 },
                 "& .MuiSlider-valueLabel": {
-                  backgroundColor: "#8B4513", // label nâu
+                  backgroundColor: "#d97706",
                 },
               }}
             />
 
-
-            <div className="grid grid-cols-2 gap-6 justify-between ">
-              <Box
-                sx={{
-                  border: "1px solid #ccc",
-                  padding: "4px 8px",
-                  borderRadius: "4px",
-                  fontWeight: "bold",
-                  fontSize: "14px",
-                }}
-              >
-                {value[0]}
-              </Box>
-              <Box
-                sx={{
-                  border: "1px solid #ccc",
-                  padding: "4px 8px",
-                  borderRadius: "4px",
-                  fontWeight: "bold",
-                  fontSize: "14px",
-                }}
-              >
-                {value[1]}
-              </Box>
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="p-3 rounded-xl bg-gray-50 text-center">
+                <p className="text-xs text-gray-500 mb-1">Từ</p>
+                <p className="font-medium text-amber-600">
+                  {value[0].toLocaleString('vi-VN')}đ
+                </p>
+              </div>
+              <div className="p-3 rounded-xl bg-gray-50 text-center">
+                <p className="text-xs text-gray-500 mb-1">Đến</p>
+                <p className="font-medium text-amber-600">
+                  {value[1].toLocaleString('vi-VN')}đ
+                </p>
+              </div>
             </div>
           </Box>
         </div>
 
-        {/* Lọc theo danh muc */}
-        <div className="">
-          <p className="text-xl font-semibold mb-4">Danh mục</p>
-          <div className="grid grid-cols-2 gap-3 mt-2">
+        {/* Categories Section */}
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <BiCategory className="text-xl text-amber-600" />
+            <h3 className="text-lg font-semibold text-gray-800">Danh mục</h3>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
             {categories.map((category, index) => (
-              <button
+              <motion.button
                 key={index}
-                className={`border rounded p-2 text-nowrap text-sm line-clamp-1 ${selectCategories.includes(category.name) ? "bg-yellow-500 text-white" : ""
+                whileTap={{ scale: 0.95 }}
+                className={`px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200
+                  ${selectCategories.includes(category.name)
+                    ? "bg-amber-500 text-white shadow-md hover:bg-amber-600"
+                    : "bg-gray-50 text-gray-700 hover:bg-gray-100"
                   }`}
                 onClick={() => handleSelectCategory(category)}
               >
                 {category.name}
-              </button>
+              </motion.button>
             ))}
           </div>
         </div>
-      </div>
 
-      <div className=" mt-10">
-        <button
+        {/* Apply Button */}
+        <motion.button
+          whileTap={{ scale: 0.95 }}
           onClick={handleClickFilter}
-
-          className="w-full p-2 text-white uppercase rounded-lg shadow-lg
-           bg-gradient-to-r from-amber-700 to-stone-500 transition-all 
-           duration-500 ease-in-out bg-[length:200%_auto] hover:bg-[position:right_center]"
+          className="w-full py-4 px-6 mt-6 rounded-xl text-white font-medium
+            bg-gradient-to-r from-amber-500 to-amber-700 
+            hover:from-amber-600 hover:to-amber-800
+            transition-all duration-300 transform hover:shadow-lg"
         >
-          Áp dụng
-        </button>
+          Áp dụng bộ lọc
+        </motion.button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

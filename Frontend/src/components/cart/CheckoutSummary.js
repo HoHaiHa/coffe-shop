@@ -6,6 +6,10 @@ import { useState } from "react";
 import summaryApi from "../../common";
 import fetchWithAuth from "../../helps/fetchWithAuth";
 import { Radio } from "antd";
+import { HiOutlineShoppingBag, HiOutlineTruck } from "react-icons/hi";
+import { BsTag } from "react-icons/bs";
+import { FaRegMoneyBillAlt } from "react-icons/fa";
+import { MdPayment } from "react-icons/md";
 
 const CheckoutSummary = ({ selectedAddress }) => {
   const cartItems = useSelector((store) => store.cart.items);
@@ -41,7 +45,6 @@ const CheckoutSummary = ({ selectedAddress }) => {
 
   const total = subtotal + shipping - discount;
 
-  // Thuc lam tu day
   const handleCheckout = async () => {
     const order = {
       OrderItems: selectedItems.map((item) => ({
@@ -78,65 +81,130 @@ const CheckoutSummary = ({ selectedAddress }) => {
   };
 
   return (
-    <Card className="bg-white text-gray-800 shadow-md border border-gray-300">
-      <div className="space-y-4">
-        <div className=" flex text-lg font-semibold justify-between">
-          <h3 className=" text-gray-700">Tạm tính (sản phẩm):</h3>
-          <p className="text-gray-800">{selectedItems.length}</p>
+    <Card className="bg-white rounded-2xl shadow-lg border-0">
+      <div className="space-y-6">
+        <div className="flex items-center justify-between text-base sm:text-lg">
+          <div className="flex items-center space-x-2 text-gray-700">
+            <HiOutlineShoppingBag className="text-amber-500 text-xl" />
+            <h3 className="font-medium">Tạm tính:</h3>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="font-medium text-gray-800">{selectedItems.length}</span>
+            <span className="text-sm text-gray-500">sản phẩm</span>
+          </div>
         </div>
 
-        <div className="flex text-lg font-semibold justify-between">
-          <h3 className=" text-gray-700">Giá (Tổng cộng):</h3>
-          <p className="text-gray-800">
+        <div className="flex items-center justify-between text-base sm:text-lg">
+          <div className="flex items-center space-x-2 text-gray-700">
+            <FaRegMoneyBillAlt className="text-amber-500 text-xl" />
+            <h3 className="font-medium">Giá tổng cộng:</h3>
+          </div>
+          <p className="font-medium text-gray-800">
             {Number(subtotal).toLocaleString("vi-VN")}đ
           </p>
         </div>
 
-        <div className="flex text-lg font-semibold justify-between">
-          <h3 className=" text-gray-700">Giao hàng:</h3>
-          <p className="text-gray-800">
+        <div className="flex items-center justify-between text-base sm:text-lg">
+          <div className="flex items-center space-x-2 text-gray-700">
+            <HiOutlineTruck className="text-amber-500 text-xl" />
+            <h3 className="font-medium">Phí giao hàng:</h3>
+          </div>
+          <p className="font-medium text-gray-800">
             {Number(shipping).toLocaleString("vi-VN")}đ
           </p>
         </div>
 
-        <div className="flex md:text-lg text-base font-semibold justify-between">
-          <h3 className=" text-gray-700">Giảm giá:</h3>
-          <p className="text-gray-800">
-            {Number(discount).toLocaleString("vi-VN")}đ
+        <div className="flex items-center justify-between text-base sm:text-lg">
+          <div className="flex items-center space-x-2 text-gray-700">
+            <BsTag className="text-amber-500 text-xl" />
+            <h3 className="font-medium">Giảm giá:</h3>
+          </div>
+          <p className="font-medium text-green-600">
+            - {Number(discount).toLocaleString("vi-VN")}đ
           </p>
         </div>
-      </div>
-      <hr className="border-t border-gray-300 mt-6"></hr>
 
-      <div className="my-6 flex justify-between text-lg font-bold text-gray-800">
-        <h3>Total:</h3>
-        <p>{Number(total).toLocaleString("vi-VN")} đ</p>
+        <div className="border-t border-dashed border-gray-200 pt-6">
+          <div className="flex justify-between items-center mb-8">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-800">Tổng cộng:</h3>
+            <p className="text-lg sm:text-xl font-bold text-amber-600">
+              {Number(total).toLocaleString("vi-VN")}đ
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2 text-gray-800">
+              <MdPayment className="text-amber-500 text-xl" />
+              <h3 className="font-bold">Phương thức thanh toán:</h3>
+            </div>
+            
+            <Radio.Group
+              onChange={(e) => setPaymentMethod(e.target.value)}
+              value={paymentMethod}
+              className="flex flex-col space-y-3"
+            >
+              <Radio value="COD" className="payment-radio">
+                <div className="ml-2">
+                  <p className="font-medium text-gray-800">Thanh toán khi nhận hàng</p>
+                  <p className="text-sm text-gray-500">Thanh toán bằng tiền mặt khi nhận hàng</p>
+                </div>
+              </Radio>
+              <Radio value="VNPay" className="payment-radio">
+                <div className="ml-2">
+                  <p className="font-medium text-gray-800">Thanh toán online (VNPay)</p>
+                  <p className="text-sm text-gray-500">Thanh toán an toàn qua cổng VNPay</p>
+                </div>
+              </Radio>
+            </Radio.Group>
+          </div>
+
+          <div className="mt-8">
+            <button
+              disabled={subtotal <= 0 || !selectedAddress}
+              className={`w-full py-4 px-6 rounded-full text-base font-medium transition-all duration-300 transform
+                ${
+                  subtotal <= 0 || !selectedAddress
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white shadow-md hover:shadow-lg hover:scale-[1.02]"
+                }`}
+              onClick={handleCheckout}
+            >
+              {subtotal <= 0 || !selectedAddress ? "Vui lòng chọn địa chỉ giao hàng" : "Tiến hành thanh toán"}
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div className="mb-4">
-        <h3 className="text-gray-700 font-bold text-lg">Phương thức thanh toán:</h3>
-        <Radio.Group
-          onChange={(e) => setPaymentMethod(e.target.value)}
-          value={paymentMethod}
-          className="flex flex-col mt-2 space-y-2"
-        >
-          <Radio value="COD">Thanh toán khi nhận hàng</Radio>
-          <Radio value="VNPay">Thanh toán online (VNPay)</Radio>
-        </Radio.Group>
-      </div>
+      {/* Custom styles for Ant Design components */}
+      <style jsx global>{`
+        .ant-card {
+          border-radius: 1rem;
+        }
+        
+        .ant-card-body {
+          padding: 1.5rem;
+        }
 
-      <button
-        disabled={subtotal <= 0 || !selectedAddress}
-        className={`w-full py-2 text-lg font-semibold rounded-md mt-2  text-black 
-          ${
-            subtotal <= 0 || !selectedAddress
-              ? "bg-yellow-400 cursor-not-allowed opacity-50"
-              : "bg-yellow-300 hover:bg-yellow-400  hover:text-black"
-          }`}
-        onClick={handleCheckout}
-      >
-        Tiếp tục thanh toán
-      </button>
+        .ant-radio-wrapper {
+          margin-right: 0;
+          padding: 0.75rem;
+          border-radius: 0.5rem;
+          transition: all 0.3s ease;
+        }
+
+        .ant-radio-wrapper:hover {
+          background-color: #fef3c7;
+        }
+
+        .ant-radio-checked .ant-radio-inner {
+          border-color: #d97706 !important;
+          background-color: #d97706 !important;
+        }
+
+        .ant-radio:hover .ant-radio-inner {
+          border-color: #d97706 !important;
+        }
+      `}</style>
     </Card>
   );
 };

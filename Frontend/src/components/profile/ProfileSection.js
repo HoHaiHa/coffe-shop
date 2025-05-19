@@ -1,6 +1,7 @@
 import React from "react";
 import { Avatar, Typography, Button, Upload, message } from "antd";
 import { UserOutlined, EditOutlined } from "@ant-design/icons";
+import { motion } from "framer-motion";
 import fetchWithAuth from "../../helps/fetchWithAuth";
 import summaryApi from "../../common";
 import { useDispatch, useSelector } from "react-redux";
@@ -36,12 +37,22 @@ const ProfileSection = () => {
   };
 
   return (
-    <section className="text-center mb-8">
-      <div className="relative inline-block">
+    <motion.section 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="text-center mb-8"
+    >
+      <motion.div 
+        className="relative inline-block"
+        whileHover={{ scale: 1.05 }}
+        transition={{ type: "spring", stiffness: 300 }}
+      >
         <Avatar
-          size={100}
+          size={120}
           src={user.profile_img !== null ? user.profile_img : null}
-          icon={<UserOutlined />}
+          icon={<UserOutlined className="text-4xl" />}
+          className="border-4 border-amber-500/20 shadow-lg"
         />
 
         <Upload
@@ -52,29 +63,39 @@ const ProfileSection = () => {
           }}
         >
           <Button
-            className="absolute rounded-full top-0 left-0 w-full h-full bg-transparent text-white flex items-center justify-center   hover:bg-black  transition duration-300 "
+            className="absolute bottom-0 right-0 rounded-full w-10 h-10 bg-white hover:bg-amber-50 
+                     border-2 border-amber-500/20 hover:border-amber-500/40 
+                     text-amber-600 flex items-center justify-center 
+                     shadow-md hover:shadow-lg transition-all duration-300"
             icon={<EditOutlined />}
-          >
-            Chỉnh sửa
-          </Button>
+          />
         </Upload>
-      </div>
-      <Title level={4} className="mt-4">
-        {user.name}
-      </Title>
-      {user.name && user.created_at && (
-        <Text type="secondary">
-          Đã đăng ký:
-          {new Date(user.created_at).toLocaleDateString("vi-VN", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-          })}
-        </Text>
+      </motion.div>
 
-      )}
-
-    </section>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        <Title level={3} className="mt-6 mb-2 text-gray-800">
+          {user.name}
+        </Title>
+        {user.name && user.created_at && (
+          <div className="flex items-center justify-center space-x-2">
+            <div className="w-2 h-2 rounded-full bg-amber-500/40"></div>
+            <Text className="text-gray-500">
+              Thành viên từ{" "}
+              {new Date(user.created_at).toLocaleDateString("vi-VN", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              })}
+            </Text>
+            <div className="w-2 h-2 rounded-full bg-amber-500/40"></div>
+          </div>
+        )}
+      </motion.div>
+    </motion.section>
   );
 };
 

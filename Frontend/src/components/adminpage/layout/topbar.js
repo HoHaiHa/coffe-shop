@@ -55,7 +55,7 @@ const Topbar = () => {
             </div>
             <div className="flex flex-col">
               <span className="text-sm font-medium text-gray-900">
-                {user?.fullName || 'Admin'}
+                {user?.fullName }
               </span>
               <span className="text-xs text-gray-500">
                 {user?.roleName === 'ROLE_ADMIN' ? 'Quản trị viên' : 'Nhân viên'}

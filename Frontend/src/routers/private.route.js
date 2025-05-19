@@ -23,7 +23,7 @@ const PrivateRoute = (props) => {
     );
   }
 
-  if (!user || !user.id || (location.pathname.startsWith("/admin") && (user.roleName !== "ROLE_ADMIN" && user.roleName !== "ROLE_STAFF"))) {
+  if (!user || !user.id || (location.pathname.startsWith("/admin/messages") && (user.roleName !== "ROLE_ADMIN" && user.roleName !== "ROLE_STAFF"))) {
     return <Navigate to="/login" replace />;
   }
   return <>{props.children}</>;

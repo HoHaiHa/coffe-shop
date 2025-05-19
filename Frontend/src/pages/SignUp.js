@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import img_login from "../assets/img/img-login.png";
 import Logo from "../components/layout/Logo";
 
@@ -13,6 +14,7 @@ import { toast } from "react-toastify";
 import PasswordInput from "../components/validateInputForm/PasswordInput";
 import EmailInput from "../components/validateInputForm/EmailInput";
 import { LoadingOutlined } from "@ant-design/icons";
+import { PasswordLoginInput } from "../components/validateInputForm";
 
 
 const SignUp = () => {
@@ -33,12 +35,10 @@ const SignUp = () => {
   const handleOnchange = (e) => {
     const { name, value } = e.target;
     setError(false);
-    setData((pre) => {
-      return {
-        ...pre,
-        [name]: value,
-      };
-    });
+    setData((pre) => ({
+      ...pre,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -58,7 +58,7 @@ const SignUp = () => {
         const signUpResult = await signUpResponse.json();
 
         if (signUpResult.respCode === "000") {
-          toast.success("Sign Up  Successfully !");
+          toast.success("Sign Up Successfully!");
 
           // auto login
           const loginResponse = await fetch(summaryApi.signIn.url, {
@@ -87,8 +87,7 @@ const SignUp = () => {
         }
       } catch (error) {
         console.log("Error SignUp", error);
-      }
-      finally {
+      } finally {
         setIsLoading(false);
       }
     } else {
@@ -100,72 +99,151 @@ const SignUp = () => {
   };
 
   return (
-    <div
-      className="min-h-screen bg-cover bg-center flex items-center justify-end"
-      style={{ backgroundImage: `url(${img_login})` }}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="min-h-screen w-screen bg-cover bg-center bg-fixed flex items-center justify-end pr-48"
+      style={{ 
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url(${img_login})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }}
     >
-      <div className="w-full max-w-md bg-white bg-opacity-80 backdrop-blur-md rounded-lg shadow-lg p-8 m-6">
-        <div className="flex justify-center">
-          <Link to="/">
-            <Logo />
-          </Link>
-        </div>
+      <motion.div 
+        initial={{ x: 100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-md bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl p-8 mx-4 my-8 relative overflow-hidden"
+      >
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-br from-amber-50/30 to-transparent"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        />
 
-        <div>
-          <h1 className="text-3xl font-bold mt-8 text-center">Đăng ký</h1>
-          <p className="mt-3 mb-10 text-gray-600 text-center text-sm">
-            Hãy tạo tài khoản của bạn để mua sắm như chuyên gia và tiết kiệm tiền.</p>
-        </div>
-
-        <form className="space-y-5" onSubmit={handleSubmit}>
-          <EmailInput onEmailChange={handleOnchange} setErrors={setEmailError} />
-          <PasswordInput
-            label={"Mật khẩu"}
-            placeholder={"Enter password"}
-            name={"password"}
-            onChange={handleOnchange}
-            setErrors={setPasswordError}
-          />
-          <PasswordInput
-            label={"Xác nhận mật khẩu"}
-            placeholder={"Enter confirmPassword"}
-            name={"confirmPassword"}
-            onChange={handleOnchange}
-            setErrors={setPasswordError}
-          />
-          {error && <p className="text-sm text-red-500 my-2">{error}</p>}
-
-          <button
-            type="submit"
-            className={`w-full py-2 px-4 text-white font-semibold rounded-md shadow focus:outline-none focus:ring-2 focus:ring-offset-2 ${isLoading
-              ? "bg-gray-300 cursor-wait"
-              : passwordError || emailError
-                ? "bg-gray-300 cursor-not-allowed"
-                : "bg-gradient-to-r from-amber-700 to-stone-500 transition-all duration-500 ease-in-out bg-[length:200%_auto] hover:bg-[position:right_center]"
-              }`}
-            disabled={isLoading || passwordError || emailError}
+        <div className="relative">
+          <motion.div 
+            className="flex justify-center"
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3 }}
           >
-            {isLoading ? (
-              <div className="flex items-center justify-center">
-                <LoadingOutlined className="text-black animate-spin text-lg" />
-                <span className="ml-2">Đang tải...</span>
-              </div>
-            ) : (
-              "Đăng ký"
-            )}
-          </button>
-        </form>
+            <Link to="/">
+              <Logo />
+            </Link>
+          </motion.div>
 
-        <div className="flex items-center mt-5 space-x-2 justify-center">
-          <span className="text-gray-600 text-sm">Bạn đã có tài khoản?</span>
-          <Link to="/login">
-            <span className="text-blue-600 hover:underline text-sm">Đăng nhập</span>
-          </Link>
+          <motion.h1 
+            className="text-3xl font-bold mt-8 text-center bg-gradient-to-r from-amber-800 to-stone-700 bg-clip-text text-transparent"
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4 }}
+          >
+            Đăng ký
+          </motion.h1>
+
+          <motion.p 
+            className="mt-3 mb-8 text-gray-600 text-center text-sm"
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            Hãy tạo tài khoản của bạn để mua sắm như chuyên gia và tiết kiệm tiền.
+          </motion.p>
+
+          <motion.form 
+            className="space-y-5"
+            onSubmit={handleSubmit}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
+            <EmailInput onEmailChange={handleOnchange} setErrors={setEmailError} />
+            <PasswordInput
+              label={"Mật khẩu"}
+              placeholder={"Nhập password"}
+              name={"password"}
+              onChange={handleOnchange}
+              setErrors={setPasswordError}
+            />
+            <PasswordLoginInput
+              label={"Xác nhận mật khẩu"}
+              placeholder={"Xác nhận mật khẩu"}
+              name={"confirmPassword"}
+              onChange={handleOnchange}
+              setErrors={setPasswordError}
+            />
+
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="bg-red-50 border border-red-100 rounded-lg p-3"
+                >
+                  <p className="text-sm text-red-500">{error}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <motion.button
+              type="submit"
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+              className={`
+                w-full py-3 px-4 text-white font-semibold rounded-lg shadow-lg
+                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500
+                transition-all duration-300 ease-in-out
+                ${isLoading
+                  ? "bg-gray-300 cursor-wait"
+                  : passwordError || emailError
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-gradient-to-r from-amber-600 to-amber-800 hover:from-amber-700 hover:to-amber-900"
+                }
+              `}
+              disabled={isLoading || passwordError || emailError}
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  >
+                    <LoadingOutlined className="text-amber-900 text-lg" />
+                  </motion.div>
+                  <span>Đang tải...</span>
+                </div>
+              ) : (
+                "Đăng ký"
+              )}
+            </motion.button>
+          </motion.form>
+
+          <motion.div 
+            className="flex items-center mt-8 space-x-2 justify-center"
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.7 }}
+          >
+            <span className="text-gray-600 text-sm">
+              Bạn đã có tài khoản?
+            </span>
+            <Link to="/login">
+              <motion.span 
+                className="text-blue-600 hover:text-blue-700 hover:underline transition-colors duration-200 font-medium text-sm"
+                whileHover={{ scale: 1.05 }}
+              >
+                Đăng nhập
+              </motion.span>
+            </Link>
+          </motion.div>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
-
 };
 
 export default SignUp;

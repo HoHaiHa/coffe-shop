@@ -25,6 +25,9 @@ import {
   updateAddress,
 } from "../../store/shippingAddressSlice ";
 import { useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FiUser, FiPhone, FiMapPin } from "react-icons/fi";
+import { FiAlertCircle } from "react-icons/fi";
 
 const ShippingAddress = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -199,222 +202,344 @@ const ShippingAddress = () => {
   };
 
   return (
-    <div className="p-6 bg-white rounded-md shadow-md">
-      <h2 className="text-xl font-semibold mb-4">Danh sách địa chỉ</h2>
-      <div className="flex justify-between items-center mb-4">
-        <div className="mb-4">
-          {addresses.length !== 0 ? (
-            isProfilePage ? (
-              <p className="text-sm text-gray-600">
-                Quản lý địa chỉ!
-              </p>
-            ) : (
-              <p className="text-sm text-gray-600">
-                Chọn địa chỉ để nhận sản phẩm
-              </p>
-            )
-          ) : (
-            <p> Bạn có muốn thêm địa chỉ mới?</p>
-          )}
-        </div>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={handleAddingAddress}
-          className="w-full sm:w-auto"
-        >
-          Thêm địa chỉ nhận hàng
-        </Button>
-      </div>
-
-      <div className="space-y-4">
-        {loading && (
-          <div className="flex justify-center items-center ">
-            <LoadingOutlined style={{ fontSize: 48, color: "red" }} spin />
+    <div className="p-6 bg-white rounded-xl shadow-md">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-2xl font-semibold text-gray-800">Danh sách địa chỉ</h2>
+            <p className="text-sm text-gray-500 mt-1">
+              {addresses.length !== 0
+                ? isProfilePage
+                  ? "Quản lý địa chỉ giao hàng của bạn"
+                  : "Chọn địa chỉ để nhận sản phẩm"
+                : "Bạn chưa có địa chỉ nào, hãy thêm địa chỉ mới"}
+            </p>
           </div>
-        )}
-        {currentAddresses.map((address) => (
-          <div
-            key={address.id}
-            className={`p-4 border rounded-md flex flex-col md:flex-row justify-between items-start `}
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-amber-700 text-white rounded-full
+                     hover:from-amber-600 hover:to-amber-800 transition-all duration-300
+                     shadow-md hover:shadow-lg flex items-center space-x-2"
+            onClick={handleAddingAddress}
           >
-             <Radio.Group
-                onChange={() => handleSelectAddress(address.id)}
-                value={selectedAddressId}
-                className="self-start md:self-center"
-                style={{ display: isProfilePage ? "none" : "block" }}
-              >
-                <Radio value={address.id} />
-              </Radio.Group>
-            <div className="flex-1">
-             
-              <div className="flex flex-col lg:flex-row items-baseline justify-between">
-                <p className="lg:w-[60%] w-full">
-                  <span className="font-semibold">Tên: </span>
-                  {address.receiverName}
-                </p>
+            <PlusOutlined />
+            <span>Thêm địa chỉ</span>
+          </motion.button>
+        </div>
 
-                <p className="lg:w-[40%] w-full">
-                  <span className="font-semibold">Số điện thoại: </span>
-                  {address.receiverPhone}
-                </p>
-              </div>
-
-              <p>
-                <span className="font-semibold">Địa chỉ: </span>
-                {address.location}
-              </p>
-            </div>
-            <div className="flex space-x-2">
-              <Button
-                type="link"
-                icon={<EditOutlined />}
-                className="text-gray-500"
-                onClick={() => showModal(address)}
-              >
-                Chỉnh sửa
-              </Button>
-              <Popconfirm
-                title="Xóa địa chỉ này?"
-                onConfirm={() => handleDeleteAddress(address.id)}
-                okText="OK"
-                cancelText="Hủy"
-              >
-                <Button
-                  type="link"
-                  icon={<DeleteOutlined />}
-                  className="text-red-500"
-                >
-                  Xóa
-                </Button>
-              </Popconfirm>
-            </div>
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <LoadingOutlined style={{ fontSize: 48 }} className="text-amber-500" spin />
           </div>
-        ))}
+        ) : (
+          <motion.div
+            variants={{
+              hidden: { opacity: 0 },
+              show: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.1
+                }
+              }
+            }}
+            initial="hidden"
+            animate="show"
+            className="space-y-4"
+          >
+            {currentAddresses.map((address) => (
+              <motion.div
+                key={address.id}
+                variants={{
+                  hidden: { opacity: 0, x: -20 },
+                  show: { opacity: 1, x: 0 }
+                }}
+                className="p-6 border border-gray-100 rounded-xl hover:shadow-md transition-all duration-300
+                         bg-gradient-to-r from-amber-50/50 to-transparent"
+              >
+                <div className="flex flex-col md:flex-row justify-between items-start space-y-4 md:space-y-0">
+                  <div className="flex-1">
+                    {!isProfilePage && (
+                      <Radio.Group
+                        onChange={() => handleSelectAddress(address.id)}
+                        value={selectedAddressId}
+                        className="mb-4"
+                      >
+                        <Radio value={address.id} />
+                      </Radio.Group>
+                    )}
+                    <div className="space-y-3">
+                      <div className="flex flex-col lg:flex-row lg:items-center lg:space-x-6">
+                        <p className="flex items-center space-x-2">
+                          <span className="text-gray-500">Người nhận:</span>
+                          <span className="font-medium">{address.receiverName}</span>
+                        </p>
+                        <p className="flex items-center space-x-2">
+                          <span className="text-gray-500">Điện thoại:</span>
+                          <span className="font-medium">{address.receiverPhone}</span>
+                        </p>
+                      </div>
+                      <p className="flex items-start space-x-2">
+                        <span className="text-gray-500">Địa chỉ:</span>
+                        <span className="font-medium flex-1">{address.location}</span>
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2 self-end md:self-start">
+                    <Button
+                      type="text"
+                      icon={<EditOutlined />}
+                      onClick={() => showModal(address)}
+                      className="text-amber-600 hover:text-amber-700 hover:bg-amber-50"
+                    >
+                      Sửa
+                    </Button>
+                    <Popconfirm
+                      title="Xóa địa chỉ này?"
+                      description="Bạn có chắc chắn muốn xóa địa chỉ này?"
+                      onConfirm={() => handleDeleteAddress(address.id)}
+                      okText="Xóa"
+                      cancelText="Hủy"
+                      okButtonProps={{
+                        className: 'bg-red-500 hover:bg-red-600'
+                      }}
+                    >
+                      <Button
+                        type="text"
+                        icon={<DeleteOutlined />}
+                        className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                      >
+                        Xóa
+                      </Button>
+                    </Popconfirm>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
 
         {addresses.length > pageSize && (
-          <Pagination
-            current={currentPage}
-            pageSize={pageSize}
-            total={addresses.length}
-            onChange={(page) => setCurrentPage(page)}
-            showSizeChanger={false}
-          />
+          <div className="mt-6 flex justify-center">
+            <Pagination
+              current={currentPage}
+              pageSize={pageSize}
+              total={addresses.length}
+              onChange={(page) => setCurrentPage(page)}
+              showSizeChanger={false}
+              className="custom-pagination"
+            />
+          </div>
         )}
-      </div>
+      </motion.div>
 
       <Modal
-        title={editingAddress?.id ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ mới"}
+        title={
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-xl font-bold bg-gradient-to-r from-amber-700 to-amber-900 bg-clip-text text-transparent flex items-center gap-3"
+          >
+            <span>{editingAddress.id ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ mới"}</span>
+          </motion.div>
+        }
         open={isModalVisible}
-        onOk={handleSaveAddress}
         onCancel={handleCancel}
         footer={[
-          <Button key="back" onClick={handleCancel}>
+          <div className="flex flex_row">
+            <Button 
+            key="back" 
+            onClick={handleCancel}
+            className="px-6 hover:bg-gray-50 transition-all duration-300"
+          >
             Hủy
           </Button>,
-          <Button key="submit" type="primary" onClick={handleSaveAddress}>
-            OK
-          </Button>,
+          <motion.div
+            key="submit"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Button
+              key="submit"
+              type="primary"
+              loading={loading}
+              onClick={handleSaveAddress}
+              className="px-6 bg-gradient-to-r from-amber-500 to-amber-700 border-none hover:from-amber-600 hover:to-amber-800 
+                       shadow-md hover:shadow-lg transition-all duration-300"
+            >
+              {editingAddress.id ? "Lưu thay đổi" : "Thêm địa chỉ"}
+            </Button>
+          </motion.div>
+          </div>
         ]}
+        className="custom-modal"
       >
-        <h3 className="mt-3 font-semibold ">
-          Tên người nhận: <span className="text-red-500">*</span>{" "}
-        </h3>
-        <Input
-          maxLength={60}
-          required
-          placeholder="Tên người nhận"
-          value={editingAddress?.receiverName || ""}
-          onChange={(e) => {
-            const value = e.target.value;
-            setErrors((prevErrors) => ({
-              ...prevErrors,
-              receiverName: "",
-            }));
-            setEditingAddress((prev) => ({
-              ...prev,
-              receiverName: value,
-            }));
-          }}
-          onBlur={(e) => {
-            if (e.target.value.trim().length === 0) {
-              setErrors((prevErrors) => ({
-                ...prevErrors,
-                receiverName: "Tên người nhận không được bỏ trống",
-              }));
-            }
-          }}
-          className={`${errors.receiverName ? "border-red-500" : ""}`}
-        />
-        {errors.receiverName && (
-          <p className="text-red-500 text-sm">{errors.receiverName}</p>
-        )}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3 }}
+          className="space-y-6"
+        >
+          <div className="space-y-4">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <label className="block text-gray-700 text-sm font-medium mb-2 flex items-center gap-2">
+                <FiUser className="text-amber-500" />
+                Người nhận
+              </label>
+              <Input
+                placeholder="Nhập tên người nhận"
+                value={editingAddress.receiverName}
+                onChange={(e) =>
+                  setEditingAddress({
+                    ...editingAddress,
+                    receiverName: e.target.value,
+                  })
+                }
+                className={`rounded-xl border-2 ${
+                  errors.receiverName 
+                    ? 'border-red-200 focus:border-red-500 focus:ring-red-500/20' 
+                    : 'border-gray-100 focus:border-amber-500 focus:ring-amber-500/20'
+                } py-2 px-4 transition-all duration-300 hover:border-amber-200`}
+              />
+              {errors.receiverName && (
+                <motion.p
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-2 text-sm text-red-500 flex items-center gap-1"
+                >
+                  <FiAlertCircle />
+                  {errors.receiverName}
+                </motion.p>
+              )}
+            </motion.div>
 
-        <h3 className="mt-3 font-semibold ">
-          Số điện thoại người nhận: <span className="text-red-500">*</span>{" "}
-        </h3>
-        <Input
-          maxLength={12}
-          required
-          placeholder="Số điện thoại người nhận "
-          value={editingAddress?.receiverPhone || ""}
-          onChange={(e) => {
-            const value = e.target.value;
-            setErrors((prevErrors) => ({
-              ...prevErrors,
-              receiverPhone: "",
-            }));
-            setEditingAddress((prev) => ({ ...prev, receiverPhone: value }));
-          }}
-          onBlur={(e) => {
-            if (!validatePhone(e.target.value)) {
-              setErrors((prevErrors) => ({
-                ...prevErrors,
-                receiverPhone: "Nhập đúng định dạng số điện thoại",
-              }));
-            } else {
-              setErrors((prevErrors) => ({
-                ...prevErrors,
-                receiverPhone: "",
-              }));
-            }
-          }}
-          className={` ${errors.receiverPhone ? "border-red-500" : ""}`}
-        />
-        {errors.receiverPhone && (
-          <p className="text-red-500 text-sm">{errors.receiverPhone}</p>
-        )}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <label className="block text-gray-700 text-sm font-medium mb-2 flex items-center gap-2">
+                <FiPhone className="text-amber-500" />
+                Số điện thoại
+              </label>
+              <Input
+                placeholder="Nhập số điện thoại"
+                value={editingAddress.receiverPhone}
+                onChange={(e) =>
+                  setEditingAddress({
+                    ...editingAddress,
+                    receiverPhone: e.target.value,
+                  })
+                }
+                className={`rounded-xl border-2 ${
+                  errors.receiverPhone 
+                    ? 'border-red-200 focus:border-red-500 focus:ring-red-500/20' 
+                    : 'border-gray-100 focus:border-amber-500 focus:ring-amber-500/20'
+                } py-2 px-4 transition-all duration-300 hover:border-amber-200`}
+              />
+              {errors.receiverPhone && (
+                <motion.p
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-2 text-sm text-red-500 flex items-center gap-1"
+                >
+                  <FiAlertCircle />
+                  {errors.receiverPhone}
+                </motion.p>
+              )}
+            </motion.div>
 
-        <h3 className="mt-3 font-semibold ">
-          Địa chỉ: <span className="text-red-500">*</span>{" "}
-        </h3>
-        <Input.TextArea
-          maxLength={100}
-          placeholder="Địa chỉ(Khu vực và đường)"
-          value={editingAddress?.location || ""}
-          onChange={(e) => {
-            const value = e.target.value;
-            setErrors((prevErrors) => ({
-              ...prevErrors,
-              location: "",
-            }));
-            setEditingAddress((prev) => ({ ...prev, location: value }));
-          }}
-          onBlur={(e) => {
-            if (e.target.value.trim().length === 0) {
-              setErrors((prevErrors) => ({
-                ...prevErrors,
-                location: "Vị trí không được để trống",
-              }));
-            }
-          }}
-          className={` ${errors.location ? "border-red-500" : ""}`}
-          style={{ maxHeight: "100px", overflowY: "auto" }}
-        />
-        {errors.location && (
-          <p className="text-red-500 text-sm">{errors.location}</p>
-        )}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <label className="block text-gray-700 text-sm font-medium mb-2 flex items-center gap-2">
+                <FiMapPin className="text-amber-500" />
+                Địa chỉ
+              </label>
+              <Input.TextArea
+                placeholder="Nhập địa chỉ chi tiết"
+                value={editingAddress.location}
+                onChange={(e) =>
+                  setEditingAddress({
+                    ...editingAddress,
+                    location: e.target.value,
+                  })
+                }
+                className={`rounded-xl border-2 ${
+                  errors.location 
+                    ? 'border-red-200 focus:border-red-500 focus:ring-red-500/20' 
+                    : 'border-gray-100 focus:border-amber-500 focus:ring-amber-500/20'
+                } py-2 px-4 transition-all duration-300 hover:border-amber-200`}
+                rows={4}
+              />
+              {errors.location && (
+                <motion.p
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-2 text-sm text-red-500 flex items-center gap-1"
+                >
+                  <FiAlertCircle />
+                  {errors.location}
+                </motion.p>
+              )}
+            </motion.div>
+          </div>
+        </motion.div>
       </Modal>
+
+      <style jsx global>{`
+        .custom-modal .ant-modal-content {
+          border-radius: 24px;
+          overflow: hidden;
+          box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+          border: 1px solid rgba(245, 158, 11, 0.1);
+        }
+        
+        .custom-modal .ant-modal-header {
+          border-bottom: 1px solid rgba(245, 158, 11, 0.1);
+          padding: 24px 24px 12px;
+          background: linear-gradient(to bottom, rgba(245, 158, 11, 0.05), transparent);
+        }
+        
+        .custom-modal .ant-modal-body {
+          padding: 24px;
+          background: white;
+        }
+        
+        .custom-modal .ant-modal-footer {
+          border-top: 1px solid rgba(245, 158, 11, 0.1);
+          padding: 12px 24px;
+          background: linear-gradient(to top, rgba(245, 158, 11, 0.05), transparent);
+        }
+
+        .custom-modal .ant-input:focus,
+        .custom-modal .ant-input-focused,
+        .custom-modal .ant-input-textarea-focused {
+          border-color: #f59e0b;
+          box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
+        }
+
+        .custom-modal .ant-input:hover,
+        .custom-modal .ant-input-textarea:hover {
+          border-color: #fbbf24;
+        }
+
+        .custom-modal .ant-input-textarea {
+          resize: none;
+        }
+      `}</style>
     </div>
   );
 };

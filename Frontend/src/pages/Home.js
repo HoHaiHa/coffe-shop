@@ -196,7 +196,7 @@ const Home = () => {
   };
 
   if (user?.roleName === "ROLE_ADMIN" || user?.roleName === "ROLE_STAFF") {
-    navigate("/admin");
+    navigate("/admin/messages");
   } else if (isCartLoading) {
     const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
@@ -235,9 +235,9 @@ const Home = () => {
                   </div>
                   
                   {((filteredProducts.length === 0 && onClickFilter) || productList.length === 0) ? (
-                    <div className="lg:col-start-4 lg:col-span-9 md:col-start-5 md:col-span-8 bg-white shadow-md mt-10 ">
+                    <div className="lg:col-start-4 lg:col-span-9 md:col-start-5 md:col-span-8 bg-white shadow-md mt-10 rounded-2xl">
                       <p className="text-center text-lg font-bold text-gray-500 ">
-                        Không tìm thấy nội dung
+                        Không tìm thấy sản phẩm
                       </p>
                     </div>
                   ) : (

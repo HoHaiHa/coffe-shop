@@ -122,7 +122,23 @@ const ChatContent = () => {
   };
 
   const paginatedData = conversationList
-    .sort((a, b) => a.hostId - b.hostId)
+    .sort((a, b) => {
+      const aMessages = a.messageList;
+      const bMessages = b.messageList;
+
+      const aLastMsg = aMessages.length > 0 ? aMessages[aMessages.length - 1] : null;
+      const bLastMsg = bMessages.length > 0 ? bMessages[bMessages.length - 1] : null;
+
+      // Nếu a không có tin nhắn, xếp xuống dưới
+      if (!aLastMsg && bLastMsg) return 1;
+      // Nếu b không có tin nhắn, a lên trên
+      if (aLastMsg && !bLastMsg) return -1;
+      // Nếu cả hai đều không có tin nhắn, giữ nguyên thứ tự
+      if (!aLastMsg && !bLastMsg) return 0;
+
+      // Sắp xếp giảm dần theo id của tin nhắn cuối cùng
+      return bLastMsg.id - aLastMsg.id;
+    })
     .slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const getLastMessage = (conversation) => {
@@ -149,23 +165,20 @@ const ChatContent = () => {
             renderItem={(conversation) => (
               <List.Item
                 key={conversation.id}
-                className={`cursor-pointer rounded-xl transition-all duration-200 my-2 hover:bg-gray-50 ${
-                  selectedConversationId === conversation.id
-                    ? "bg-[#596ecd]/10 border-[#596ecd] shadow-sm"
-                    : "border-transparent"
-                }`}
+                className={`cursor-pointer rounded-xl transition-all duration-200 my-2 hover:bg-gray-50 ${selectedConversationId === conversation.id
+                  ? "bg-[#596ecd]/10 border-[#596ecd] shadow-sm"
+                  : "border-transparent"
+                  } ${getUnreadCount(conversation) > 0 ? "font-bold bg-gray-100" : ""}`}
                 onClick={() => setselectedConversationId(conversation.id)}
               >
                 <div className="flex items-center w-full p-3">
-                  <Badge count={getUnreadCount(conversation)} offset={[-2, 2]}>
-                    <Avatar
-                      size={48}
-                      src={conversation.hostAvatar}
-                      icon={<UserOutlined />}
-                      className="bg-[#596ecd]/10 text-[#596ecd]"
-                    />
-                  </Badge>
-                  <div className="ml-3 flex-1 min-w-0">
+                  <Avatar
+                    size={48}
+                    src={conversation.hostAvatar}
+                    icon={<UserOutlined />}
+                    className="bg-[#596ecd]/10 text-[#596ecd]"
+                  />
+                  <div className="ml-3 flex flex-col flex-1 min-w-0">
                     <Text className="font-medium text-gray-900 block" ellipsis>
                       {conversation.hostName}
                     </Text>
@@ -217,16 +230,15 @@ const ChatContent = () => {
                     className={`flex ${msg.senderId === user.id ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[70%] px-4 py-3 rounded-2xl ${
-                        msg.senderId === user.id
-                          ? "bg-[#596ecd] text-white"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
+                      className={`max-w-[70%] px-4 py-3 rounded-2xl ${msg.senderId === user.id
+                        ? "bg-[#596ecd] text-white"
+                        : "bg-gray-100 text-gray-800"
+                        }`}
                     >
                       {msg.content}
                     </div>
                   </div>
-              ))}
+                ))}
               <div ref={messagesEndRef} />
             </div>
 

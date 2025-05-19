@@ -1,10 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Input, Upload, Image, Popconfirm, Spin } from 'antd';
-import { PlusOutlined, SearchOutlined, CloseOutlined } from '@ant-design/icons';
+import React, { useState, useEffect, useRef } from 'react';
+import { Table, Button, Modal, Form, Input, Upload, Image, Popconfirm, Spin, Space, Row, Col, Card, Statistic, Tree, Select, message, Divider, Typography, Tag, Tooltip } from 'antd';
+import { PlusOutlined, SearchOutlined, CloseOutlined, EditOutlined, DeleteOutlined, InfoCircleOutlined, FileExcelOutlined, PictureOutlined } from '@ant-design/icons';
 import fetchWithAuth from '../../../helps/fetchWithAuth';
 import summaryApi from '../../../common';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
+import Highlighter from 'react-highlight-words';
+import moment from 'moment';
+import 'moment/locale/vi';
+import * as XLSX from 'xlsx';
+
+const { Title, Text } = Typography;
+const { TextArea } = Input;
+
+moment.locale('vi');
 
 const CategoryTable = () => {
     const [categories, setCategories] = useState([]);
@@ -16,11 +25,20 @@ const CategoryTable = () => {
     const [loading, setLoading] = useState(false);
     const [nameError, setNameError] = useState('');
     const user = useSelector((state) => state.user.user, (prev, next) => prev === next);
+    const [categoryStats, setCategoryStats] = useState({
+        total: 0,
+        active: 0,
+        inactive: 0,
+        parent: 0,
+        child: 0
+    });
+    const [expandedKeys, setExpandedKeys] = useState([]);
+    const [treeData, setTreeData] = useState([]);
 
+    const searchInput = useRef(null);
 
     useEffect(() => {
         const fetchCategories = async () => {
-
             const response = await fetchWithAuth(summaryApi.allCategory.url, {
                 method: summaryApi.allCategory.method,
             });
@@ -33,6 +51,46 @@ const CategoryTable = () => {
         };
         fetchCategories();
     }, []);
+
+    useEffect(() => {
+        calculateCategoryStats();
+        buildTreeData();
+    }, [categories]);
+
+    const calculateCategoryStats = () => {
+        const stats = categories.reduce((acc, category) => {
+            acc.total++;
+            acc[category.status.toLowerCase()]++;
+            if (category.parentId) {
+                acc.child++;
+            } else {
+                acc.parent++;
+            }
+            return acc;
+        }, {
+            total: 0,
+            active: 0,
+            inactive: 0,
+            parent: 0,
+            child: 0
+        });
+        setCategoryStats(stats);
+    };
+
+    const buildTreeData = () => {
+        const parents = categories.filter(cat => !cat.parentId);
+        const tree = parents.map(parent => ({
+            title: parent.name,
+            key: parent.id,
+            children: categories
+                .filter(child => child.parentId === parent.id)
+                .map(child => ({
+                    title: child.name,
+                    key: child.id
+                }))
+        }));
+        setTreeData(tree);
+    };
 
     const handleAddOrUpdateCategory = (values) => {
         const api = currentCategory ? summaryApi.updateCategory : summaryApi.addCategory;
@@ -103,7 +161,6 @@ const CategoryTable = () => {
             setLoading(false)
         };
         fetchDeleteCategory();
-
     };
 
     const handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -112,46 +169,69 @@ const CategoryTable = () => {
         setSearchedColumn(dataIndex);
     };
 
-    const handleReset = (clearFilters) => {
+    const handleReset = (clearFilters, confirm) => {
         clearFilters();
+        confirm();
         setSearchText('');
     };
 
     const getColumnSearchProps = (dataIndex) => ({
-        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-            <div style={{ padding: 8 }}>
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+            <div className="p-4">
                 <Input
+                    ref={searchInput}
                     placeholder={`Tìm kiếm ${dataIndex}`}
                     value={selectedKeys[0]}
                     onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
                     onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                    style={{ marginBottom: 8, display: 'block' }}
+                    className="mb-2 block w-full"
                 />
-                <Button
-                    type="primary"
-                    onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-                    icon={<SearchOutlined />}
-                    size="small"
-                    style={{ width: 90, marginRight: 8 }}
-                >
-                    Tìm kiếm
-                </Button>
-                <Button
-                    onClick={() => handleReset(clearFilters)}
-                    size="small"
-                    style={{ width: 90 }}
-                >
-                    Xóa
-                </Button>
+                <Space>
+                    <Button
+                        type="primary"
+                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                        icon={<SearchOutlined />}
+                        size="small"
+                    >
+                        Tìm
+                    </Button>
+                    <Button
+                        onClick={() => clearFilters && handleReset(clearFilters, confirm)}
+                        size="small"
+                    >
+                        Đặt lại
+                    </Button>
+                    <Button
+                        type="link"
+                        size="small"
+                        onClick={close}
+                    >
+                        Đóng
+                    </Button>
+                </Space>
             </div>
         ),
         filterIcon: (filtered) => (
             <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
         ),
         onFilter: (value, record) =>
-            record[dataIndex]
-                ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
-                : '',
+            record[dataIndex]?.toString().toLowerCase().includes(value.toLowerCase()) ?? false,
+        onFilterDropdownOpenChange: (visible) => {
+            if (visible) {
+                setTimeout(() => searchInput.current?.select(), 100);
+            }
+        },
+        render: (text) =>
+            searchedColumn === dataIndex ? (
+                <Highlighter
+                    highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+                    searchWords={[searchText]}
+                    autoEscape
+                    textToHighlight={text?.toString() ?? ''}
+                />
+            ) : (
+                text
+            ),
     });
 
     const columns = [
@@ -159,6 +239,8 @@ const CategoryTable = () => {
             title: 'Mã danh mục',
             dataIndex: 'id',
             key: 'id',
+            width: 80,
+            ...getColumnSearchProps('id'),
         },
         {
             title: 'Ảnh bìa',
@@ -179,12 +261,28 @@ const CategoryTable = () => {
             title: 'Tên danh mục',
             dataIndex: 'name',
             key: 'name',
-            ...getColumnSearchProps('name')
+            ...getColumnSearchProps('name'),
         },
         {
             title: 'Mô tả',
             dataIndex: 'description',
             key: 'description',
+            ellipsis: true,
+        },
+        {
+            title: 'Danh mục cha',
+            dataIndex: 'parentId',
+            key: 'parentId',
+            render: (parentId) => {
+                const parent = categories.find(cat => cat.id === parentId);
+                return parent ? parent.name : 'Danh mục gốc';
+            },
+        },
+        {
+            title: 'Ngày tạo',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            render: (date) => moment(date).format('DD/MM/YYYY HH:mm'),
         },
         ...(user?.roleName !== 'ROLE_STAFF'
             ? [{
@@ -229,109 +327,280 @@ const CategoryTable = () => {
                 ),
             }]
             : [])
-
     ];
 
+    const handleExportToExcel = () => {
+        try {
+            const exportData = categories.map(category => ({
+                'Mã danh mục': category.id,
+                'Tên danh mục': category.name,
+                'Mô tả': category.description || 'Không có mô tả',
+                'Danh mục cha': category.parentId ? categories.find(c => c.id === category.parentId)?.name || 'N/A' : 'Danh mục gốc',
+                'Tên bài viết': category.articleTitle || 'Không có bài viết',
+                'Trạng thái': category.status === 'ACTIVE' ? 'Đang hoạt động' : 'Không hoạt động',
+                'Ngày tạo': moment(category.createdAt).format('DD/MM/YYYY HH:mm:ss')
+            }));
+
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Danh sách danh mục');
+
+            // Tự động điều chỉnh độ rộng cột
+            const colWidths = [
+                { wch: 15 }, // Mã danh mục
+                { wch: 30 }, // Tên danh mục
+                { wch: 40 }, // Mô tả
+                { wch: 25 }, // Danh mục cha
+                { wch: 30 }, // Tên bài viết
+                { wch: 20 }, // Trạng thái
+                { wch: 25 }, // Ngày tạo
+            ];
+            ws['!cols'] = colWidths;
+
+            XLSX.writeFile(wb, `danh_sach_danh_muc_${moment().format('DD_MM_YYYY_HH_mm')}.xlsx`);
+            toast.success('Xuất file Excel thành công!');
+        } catch (error) {
+            console.error('Export error:', error);
+            toast.error('Có lỗi xảy ra khi xuất file Excel!');
+        }
+    };
+
     return (
-        <div className="p-6 bg-gray-100 rounded-lg shadow-md">
-            {user?.roleName === 'ROLE_STAFF' ||
-                <div className="flex justify-start items-center mb-4">
-                    <Button
-                        type="primary"
-                        onClick={() => {
-                            setCurrentCategory(null);
-                            form.resetFields();
-                            setIsModalVisible(true);
+        <div className="space-y-6">
+            <div className="grid grid-cols-1 w-full">
+                {/* Category Table */}
+                <Card className="lg:col-span-2 shadow-sm">
+                    <div className="flex justify-between items-center mb-4">
+                        <Title level={4} className="mb-0">Danh sách danh mục</Title>
+                        <Space size="middle">
+                            <Tooltip title="Xuất danh sách danh mục">
+                                <Button
+                                    type="primary"
+                                    icon={<FileExcelOutlined />}
+                                    onClick={handleExportToExcel}
+                                >
+                                    Xuất báo cáo Excel
+                                </Button>
+                            </Tooltip>
+                            {user?.roleName !== 'ROLE_STAFF' && (
+                                <Button
+                                    type="primary"
+                                    onClick={() => {
+                                        setCurrentCategory(null);
+                                        form.resetFields();
+                                        setIsModalVisible(true);
+                                    }}
+                                    icon={<PlusOutlined />}
+                                    className="bg-blue-500 hover:bg-blue-600"
+                                >
+                                    Thêm danh mục
+                                </Button>
+                            )}
+                        </Space>
+                    </div>
+
+                    <Table
+                        rowKey="id"
+                        columns={columns}
+                        dataSource={categories}
+                        loading={loading}
+                        className="border rounded-lg"
+                        pagination={{
+                            pageSize: 10,
+                            showSizeChanger: true,
+                            showTotal: (total) => `Tổng ${total} danh mục`,
                         }}
-                        className="bg-blue-500 hover:bg-blue-600 text-white"
-                        icon={<PlusOutlined />}
-                    >
-                        Thêm danh mục mới
-                    </Button>
-                </div>}
-            <Table
-                rowKey="id"
-                columns={columns}
-                dataSource={categories}
-                className="rounded-lg overflow-hidden"
-            />
+                    />
+                </Card>
+            </div>
 
             <Modal
-                title={currentCategory ? "Chỉnh sửa danh mục" : "Thêm danh mục mới"}
-                visible={isModalVisible}
+                title={
+                    <div className="flex items-center gap-2">
+                        <span className="text-xl font-semibold text-gray-800">
+                            {currentCategory ? "Chỉnh sửa danh mục" : "Thêm danh mục mới"}
+                        </span>
+                    </div>
+                }
+                open={isModalVisible}
                 onCancel={() => {
                     setIsModalVisible(false);
-                    setCurrentCategory(null);
+                    setNameError('');
                     form.resetFields();
                 }}
                 footer={null}
+                width={720}
                 className="rounded-lg"
+                centered
             >
-                <Form form={form} onFinish={handleAddOrUpdateCategory} layout="vertical">
-                    <Form.Item
-                        name="name"
-                        label="Tên danh mục"
-                        rules={[{ required: true, message: 'Vui lòng nhập tên danh mục!' }]}
-                        help={nameError}
-                        validateStatus={nameError ? 'error' : ''}
+                <div className="p-4">
+                    <Form
+                        form={form}
+                        onFinish={handleAddOrUpdateCategory}
+                        layout="vertical"
+                        className="space-y-4"
                     >
-                        <Input placeholder="Nhập tên danh mục" className="rounded-md" />
-                    </Form.Item>
+                        <Row gutter={16}>
+                            <Col span={16}>
+                                <Form.Item
+                                    name="name"
+                                    label={
+                                        <span className="text-gray-700 font-medium">
+                                            Tên danh mục
+                                        </span>
+                                    }
+                                    rules={[{ required: true, message: 'Vui lòng nhập tên danh mục!' }]}
+                                    help={nameError}
+                                    validateStatus={nameError ? 'error' : ''}
+                                >
+                                    <Input
+                                        placeholder="Nhập tên danh mục"
+                                        className="rounded-lg border-gray-300 hover:border-blue-400 focus:border-blue-500"
+                                        size="large"
+                                    />
+                                </Form.Item>
 
-                    <Form.Item
-                        name="description"
-                        label="Mô tả"
-                    >
-                        <Input.TextArea
-                            placeholder="Nhập mô tả danh mục"
-                            className="rounded-md"
-                            rows={2}
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        name="articleTitle"
-                        label="Tên bài viết"
-                    >
-                        <Input placeholder="Nhập tên bài viết" className="rounded-md" />
-                    </Form.Item>
-                    <Form.Item
-                        name="article"
-                        label="Bài viết"
-                    >
-                        <Input.TextArea placeholder="Nhập tên bài viết" className="rounded-md" rows={4} />
-                    </Form.Item>
+                                <Form.Item
+                                    name="parentId"
+                                    label={
+                                        <span className="text-gray-700 font-medium">
+                                            Danh mục cha
+                                        </span>
+                                    }
+                                >
+                                    <Select
+                                        placeholder="Chọn danh mục cha"
+                                        allowClear
+                                        className="w-full"
+                                        size="large"
+                                    >
+                                        {categories
+                                            .filter(cat => !cat.parentId)
+                                            .map(cat => (
+                                                <Select.Option key={cat.id} value={cat.id}>
+                                                    {cat.name}
+                                                </Select.Option>
+                                            ))
+                                        }
+                                    </Select>
+                                </Form.Item>
 
-                    <Form.Item
-                        name="image"
-                        label="Ảnh bìa"
-                        valuePropName="fileList"
-                        getValueFromEvent={(e) => {
-                            if (Array.isArray(e)) {
-                                return e;
-                            }
-                            return e?.fileList;
-                        }}
-                    >
-                        <Upload
-                            listType="picture-card"
-                            maxCount={1}
-                            beforeUpload={() => false}
-                        >
-                            <div>
-                                <PlusOutlined className="text-gray-400" />
-                                <div style={{ marginTop: 8 }}>Tải ảnh lên</div>
+                                <Form.Item
+                                    name="description"
+                                    label={
+                                        <span className="text-gray-700 font-medium">
+                                            Mô tả
+                                        </span>
+                                    }
+                                >
+                                    <TextArea
+                                        placeholder="Nhập mô tả về danh mục"
+                                        className="rounded-lg border-gray-300 hover:border-blue-400 focus:border-blue-500"
+                                        rows={3}
+                                        showCount
+                                        maxLength={500}
+                                    />
+                                </Form.Item>
+                            </Col>
+
+                            <Col span={8}>
+                                <Form.Item
+                                    name="image"
+                                    label={
+                                        <span className="text-gray-700 font-medium">
+                                            Ảnh bìa
+                                        </span>
+                                    }
+                                    valuePropName="fileList"
+                                    getValueFromEvent={(e) => {
+                                        if (Array.isArray(e)) {
+                                            return e;
+                                        }
+                                        return e?.fileList;
+                                    }}
+                                >
+                                    <Upload
+                                        name="image"
+                                        listType="picture-card"
+                                        maxCount={1}
+                                        beforeUpload={() => false}
+                                        accept="image/*"
+                                    >
+                                        <div className="text-center">
+                                            <PictureOutlined className="text-2xl" />
+                                            <div className="mt-2">Tải lên</div>
+                                        </div>
+                                    </Upload>
+                                </Form.Item>
+                                <Text type="secondary" className="text-sm block mt-2">
+                                    Kích thước đề xuất: 800x400px<br />
+                                    Định dạng: JPG, PNG<br />
+                                    Dung lượng tối đa: 2MB
+                                </Text>
+                            </Col>
+                        </Row>
+
+                        <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+                            <div className="text-gray-700 font-medium mb-2">
+                                Thông tin bài viết
                             </div>
-                        </Upload>
-                    </Form.Item>
-                    <Button
-                        type="primary"
-                        htmlType="submit"
-                        loading={loading}
-                        className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-md"
-                    >
-                        {currentCategory ? "Cập nhật danh mục" : "Thêm danh mục"}
-                    </Button>
-                </Form>
+                            <Form.Item
+                                name="articleTitle"
+                                label={
+                                    <span className="text-gray-700">
+                                        Tên bài viết
+                                    </span>
+                                }
+                            >
+                                <Input
+                                    placeholder="Nhập tên bài viết"
+                                    className="rounded-lg border-gray-300 hover:border-blue-400 focus:border-blue-500"
+                                    size="large"
+                                />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="article"
+                                label={
+                                    <span className="text-gray-700">
+                                        Nội dung bài viết
+                                    </span>
+                                }
+                            >
+                                <TextArea
+                                    placeholder="Nhập nội dung bài viết"
+                                    className="rounded-lg border-gray-300 hover:border-blue-400 focus:border-blue-500"
+                                    rows={6}
+                                    showCount
+                                    maxLength={2000}
+                                />
+                            </Form.Item>
+                        </div>
+
+                        <Form.Item className="mb-0 pt-4 border-t">
+                            <Space className="w-full justify-end">
+                                <Button
+                                    onClick={() => {
+                                        setIsModalVisible(false);
+                                        setNameError('');
+                                        form.resetFields();
+                                    }}
+                                    className="min-w-[100px]"
+                                >
+                                    Hủy
+                                </Button>
+                                <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    loading={loading}
+                                    className="min-w-[100px] bg-blue-500 hover:bg-blue-600"
+                                >
+                                    {currentCategory ? 'Cập nhật' : 'Thêm mới'}
+                                </Button>
+                            </Space>
+                        </Form.Item>
+                    </Form>
+                </div>
             </Modal>
         </div>
     );

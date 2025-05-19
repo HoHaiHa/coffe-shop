@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Button, Table, Tag, Spin, message, Popconfirm } from "antd";
+import { motion } from "framer-motion";
 import fetchWithAuth from "../../helps/fetchWithAuth";
 import summaryApi from "../../common";
 import { LoadingOutlined } from "@ant-design/icons";
+import { FiPackage, FiClock, FiCheckCircle, FiXCircle } from "react-icons/fi";
 import OrderDetails from "./OrderDetails";
 
 const OrderHistory = React.memo(() => {
@@ -46,57 +48,76 @@ const OrderHistory = React.memo(() => {
   };
 
   const handleCancelOrder = async (record) => {
-    const { orderId, paymentMethod } = record;
-    setLoading(true);
     try {
-      const apiUrl = paymentMethod === 'COD' 
-        ? `${summaryApi.cancelOrder.url}${orderId}` 
-        : `${summaryApi.cancelOrderAndRefund.url}?orderId=${orderId}`;
-      const method = paymentMethod === 'COD' 
-      ? summaryApi.cancelOrder.method 
-      : summaryApi.cancelOrderAndRefund.method;
-        
-      const response = await fetchWithAuth(apiUrl, {
-        method: method,
-      });
+      const response = await fetchWithAuth(
+        summaryApi.cancelOrder.url + record.orderId,
+        {
+          method: summaryApi.cancelOrder.method,
+        }
+      );
       const result = await response.json();
-      console.log(paymentMethod)
-      console.log(apiUrl)
-  
       if (result.respCode === "000") {
-        message.info("Đã hủy thành công đơn hàng");
-        updateOrderStatus(orderId, "Cancelled");
+        message.success("Đơn hàng đã được hủy thành công");
+        updateOrderStatus(record.orderId, "Cancelled");
       } else {
-        message.error("Có lỗi xảy ra, vui lòng thử lại sau hoặc liên hệ với chúng tôi để được hỗ trợ!");
+        message.error(result.message || "Không thể hủy đơn hàng");
       }
     } catch (error) {
-      console.error("Error cancelling order:", error.message);
-      message.error("Có lỗi xảy ra, vui lòng thử lại sau hoặc liên hệ với chúng tôi để được hỗ trợ!");
-    } finally {
-      setLoading(false);
+      console.error("Error cancelling order:", error);
+      message.error("Đã xảy ra lỗi khi hủy đơn hàng");
     }
   };
 
-  if (loading) {
-    const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
-    return (
-      <div className="flex justify-center h-screen mt-3">
-        <Spin indicator={antIcon} />
-      </div>
-    );
-  }
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "Completed":
+        return <FiCheckCircle className="text-green-500" />;
+      case "Cancelled":
+        return <FiXCircle className="text-red-500" />;
+      case "Processing":
+        return <FiClock className="text-blue-500" />;
+      default:
+        return <FiPackage className="text-gray-500" />;
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Completed":
+        return "success";
+      case "Cancelled":
+        return "error";
+      case "Processing":
+        return "processing";
+      default:
+        return "default";
+    }
+  };
 
   const columns = [
     {
       title: "STT",
-      key: "id",
-      render: (_, __, index) => index + 1,
+      key: "index",
+      width: 70,
+      render: (_, __, index) => (
+        <span className="text-gray-600">{index + 1}</span>
+      ),
     },
     {
-      title: "Ngày tạo đơn",
+      title: "Ngày đặt hàng",
       dataIndex: "orderDate",
       key: "orderDate",
-      render: (date) => new Date(date).toLocaleDateString(),
+      render: (date) => (
+        <span className="text-gray-700">
+          {new Date(date).toLocaleDateString("vi-VN", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </span>
+      ),
     },
     {
       title: "Trạng thái",
@@ -104,15 +125,11 @@ const OrderHistory = React.memo(() => {
       key: "orderStatus",
       render: (status) => (
         <Tag
-          color={
-            status === "Completed"
-              ? "green"
-              : status === "Cancelled"
-              ? "red"
-              : "blue"
-          }
+          icon={getStatusIcon(status)}
+          color={getStatusColor(status)}
+          className="px-3 py-1 flex items-center space-x-1 w-fit"
         >
-          {status}
+          <span>{status}</span>
         </Tag>
       ),
     },
@@ -120,7 +137,11 @@ const OrderHistory = React.memo(() => {
       title: "Phương thức thanh toán",
       dataIndex: "paymentMethod",
       key: "paymentMethod",
-      render: (method) => <Tag color="blue">{method}</Tag>,
+      render: (method) => (
+        <Tag color="blue" className="px-3 py-1">
+          {method}
+        </Tag>
+      ),
     },
     {
       title: "Hành động",
@@ -130,50 +151,111 @@ const OrderHistory = React.memo(() => {
           <Button
             type="primary"
             onClick={() => handleViewDetails(record.orderId)}
+            className="bg-gradient-to-r from-amber-500 to-amber-700 border-none hover:from-amber-600 hover:to-amber-800"
           >
-            View Order
+            Xem chi tiết
           </Button>
 
-          <Button
-            type="primary"
-            danger
-            disabled={record.orderStatus !== 'Processing' }
-          >
+          {record.orderStatus === "Processing" && (
             <Popconfirm
-              title="Bạn có chắc muốn hủy đơn hàng này?"
+              title="Hủy đơn hàng"
+              description="Bạn có chắc chắn muốn hủy đơn hàng này?"
               onConfirm={() => handleCancelOrder(record)}
-              okText="OK"
-              cancelText="Hủy"
+              okText="Hủy đơn"
+              cancelText="Đóng"
+              okButtonProps={{
+                className: "bg-red-500 hover:bg-red-600",
+              }}
             >
-              Hủy đơn hàng
+              <Button danger>Hủy đơn hàng</Button>
             </Popconfirm>
-          </Button>
+          )}
         </div>
       ),
     },
   ];
 
   return (
-    <div className="max-w-full mx-auto px-4 sm:px-6">
-      <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">
-        Lịch sử mua hàng
-      </h1>
-      <Table
-        columns={columns}
-        dataSource={orders.sort(
-          (a, b) => new Date(b.orderDate) - new Date(a.orderDate)
-        )}
-        rowKey="orderId"
-        pagination={{ pageSize: 5  , showSizeChanger :false}}
-        className="overflow-x-auto"
-      />
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="bg-white rounded-xl shadow-md p-6"
+    >
+      <div className="mb-6">
+        <h2 className="text-2xl font-semibold text-gray-800">Lịch sử đơn hàng</h2>
+        <p className="text-gray-500 mt-1">Theo dõi và quản lý các đơn hàng của bạn</p>
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center items-center py-12">
+          <LoadingOutlined style={{ fontSize: 48 }} className="text-amber-500" spin />
+        </div>
+      ) : (
+        <div className="overflow-hidden rounded-xl border border-gray-100">
+          <Table
+            columns={columns}
+            dataSource={orders}
+            rowKey="orderId"
+            pagination={{
+              pageSize: 10,
+              position: ["bottomCenter"],
+              className: "custom-pagination",
+            }}
+            className="custom-table"
+          />
+        </div>
+      )}
+
       {selectedOrderId && (
         <OrderDetails
           orderId={selectedOrderId}
           onClose={() => setSelectedOrderId(null)}
         />
       )}
-    </div>
+
+      <style jsx global>{`
+        .custom-table .ant-table {
+          background: transparent;
+        }
+        
+        .custom-table .ant-table-thead > tr > th {
+          background: #f8fafc;
+          border-bottom: none;
+          font-weight: 600;
+          color: #1f2937;
+        }
+        
+        .custom-table .ant-table-tbody > tr > td {
+          border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .custom-table .ant-table-tbody > tr:hover > td {
+          background: #fef3c7 !important;
+        }
+        
+        .custom-pagination .ant-pagination-item {
+          border-radius: 9999px;
+          border: none;
+          background: #f3f4f6;
+        }
+        
+        .custom-pagination .ant-pagination-item-active {
+          background: linear-gradient(to right, #f59e0b, #b45309);
+        }
+        
+        .custom-pagination .ant-pagination-item-active a {
+          color: white;
+        }
+        
+        .custom-pagination .ant-pagination-prev button,
+        .custom-pagination .ant-pagination-next button {
+          border-radius: 9999px;
+          border: none;
+          background: #f3f4f6;
+        }
+      `}</style>
+    </motion.div>
   );
 });
 
