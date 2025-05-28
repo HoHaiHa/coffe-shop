@@ -3,6 +3,7 @@ package com.haui.coffee_shop.controller;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +20,10 @@ import com.haui.coffee_shop.payload.response.RespMessage;
 import com.haui.coffee_shop.repository.OrderRepository;
 import com.haui.coffee_shop.service.OrderService;
 
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 @AllArgsConstructor
@@ -33,8 +38,12 @@ public class OrderController {
 
     @GetMapping("/get-all")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_STAFF')")
-    public ResponseEntity<String> getAllOrders() {
-        RespMessage respMessage = orderService.getAllOrders();
+    public ResponseEntity<String> getAllOrders(
+            @RequestParam(required = false) 
+            @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+            @RequestParam(required = false) 
+            @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+        RespMessage respMessage = orderService.getAllOrders(startDate, endDate);
         return new ResponseEntity<>(GsonUtil.getInstance().toJson(respMessage), HttpStatus.OK);
     }
 
@@ -112,6 +121,38 @@ public class OrderController {
             return new ResponseEntity<>(GsonUtil.getInstance().toJson(respMessage), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             RespMessage respMessage = messageBuilder.buildFailureMessage(Constant.SYSTEM_ERROR, null, e.getMessage());
+            return new ResponseEntity<>(GsonUtil.getInstance().toJson(respMessage), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @GetMapping("/export")
+    public ResponseEntity<String> exportProducts(HttpServletResponse response, 
+    @RequestParam(required = false) 
+    @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
+    @RequestParam(required = false) 
+    @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) throws IOException {
+        try {
+        	orderService.exportOrdersToExcel(response,startDate, endDate);;
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (CoffeeShopException e) {
+            RespMessage respMessage = messageBuilder.buildFailureMessage(e.getCode(), e.getObjects(), e.getMessage());
+            return new ResponseEntity<>(GsonUtil.getInstance().toJson(respMessage), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            RespMessage respMessage = messageBuilder.buildFailureMessage(Constant.UNDEFINED, null, e.getMessage());
+            return new ResponseEntity<>(GsonUtil.getInstance().toJson(respMessage), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    @GetMapping("/invoice/{orderId}")
+    public ResponseEntity<String> exportInvoice(@PathVariable Long orderId, HttpServletResponse response) throws IOException {
+        try {
+        	orderService.printInvoiceAndSendEmail(orderId,response);;
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (CoffeeShopException e) {
+            RespMessage respMessage = messageBuilder.buildFailureMessage(e.getCode(), e.getObjects(), e.getMessage());
+            return new ResponseEntity<>(GsonUtil.getInstance().toJson(respMessage), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            RespMessage respMessage = messageBuilder.buildFailureMessage(Constant.UNDEFINED, null, e.getMessage());
             return new ResponseEntity<>(GsonUtil.getInstance().toJson(respMessage), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

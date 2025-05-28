@@ -338,7 +338,7 @@ const ProductSlowChart = () => {
 
         // Tạo blob và tải xuống
         const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        const fileName = `bao_cao_top_5_san_pham_ban_cham_${view === 'overview' ? 'tong_quan' : `thang_${selectedMonth + 1}_${selectedYear}`}.xlsx`;
+        const fileName = `bao_cao_5_san_pham_ban_cham_${view === 'overview' ? 'tong_quan' : `thang_${selectedMonth + 1}_${selectedYear}`}.xlsx`;
         
         // Tạo link tải và click
         const link = document.createElement('a');

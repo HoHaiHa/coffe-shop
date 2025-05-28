@@ -71,7 +71,7 @@ export const exportStatisticsToExcel = async (data, type = 'statistics') => {
     const headerRow = worksheet.addRow(
         type === 'brand' 
             ? ['ID', 'Tên nhãn hàng', 'Mô tả', 'Trạng thái', 'Ngày tạo']
-            : ['ID', 'Tên danh mục', 'Mô tả', 'Danh mục cha', 'Trạng thái', 'Ngày tạo']
+            : ['ID', 'Tên danh mục', 'Mô tả', 'Trạng thái', 'Ngày tạo']
     );
     headerRow.font = { bold: true };
 

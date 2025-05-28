@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { List, Avatar, Input, Spin, Button, Typography, Pagination, Badge } from "antd";
+import { List, Avatar, Input, Spin, Button, Typography, Pagination } from "antd";
 import { LoadingOutlined, SendOutlined, UserOutlined } from "@ant-design/icons";
 import { Stomp } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { useSelector } from "react-redux";
 import fetchWithAuth from "../../../helps/fetchWithAuth";
 import summaryApi from "../../../common/index";
+import { BellOutlined } from '@ant-design/icons';
+
 
 const { Text } = Typography;
 
@@ -21,35 +23,38 @@ const ChatContent = () => {
   const inputRef = useRef(null);
 
   const user = useSelector((state) => state?.user?.user);
+  const currentConversation = conversationList.find(c => c.id === selectedConversationId);
+
+
+  const fetchAllConversation = async () => {
+    try {
+      setLoading(true);
+      const response = await fetchWithAuth(
+        summaryApi.getAllConversation.url,
+        {
+          method: summaryApi.getAllConversation.method,
+        }
+      );
+      const data = await response.json();
+      if (data.respCode === "000") {
+        setConversationList(data.data);
+      } else {
+        console.error("Error fetching conversation list:", data);
+      }
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchAllConversation = async () => {
-      try {
-        setLoading(true);
-        const response = await fetchWithAuth(
-          summaryApi.getAllConversation.url,
-          {
-            method: summaryApi.getAllConversation.method,
-          }
-        );
-        const data = await response.json();
-        if (data.respCode === "000") {
-          setConversationList(data.data);
-        } else {
-          console.error("Error fetching conversation list:", data);
-        }
-      } catch (error) {
-        console.error("Error fetching messages:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchAllConversation();
   }, []);
 
   useEffect(() => {
     setLoading(true);
-    const socketFactory = () => new SockJS("http://localhost:8080/ws");
+    const socketFactory = () => new SockJS(`${process.env.REACT_APP_BACKEND_URL}ws`);
     stompClient.current = Stomp.over(socketFactory);
     stompClient.current.connect(
       {},
@@ -85,6 +90,39 @@ const ChatContent = () => {
     };
   }, []);
 
+  const handleReadMessage = async (conversationId) => {
+    try {
+      const response = await fetchWithAuth(
+        `${process.env.REACT_APP_BACKEND_URL}api/conversation/read/${conversationId}`,
+        {
+          method: 'PUT',
+        }
+      );
+      const data = await response.json();
+      if (data.respCode === "000") {
+        setConversationList(prev =>
+          prev.map(convo =>
+            convo.id === conversationId
+              ? {
+                ...convo,
+                messageList: convo.messageList.map(msg =>
+                  msg.senderId !== user.id ? { ...msg, read: true } : msg
+                )
+              }
+              : convo
+          )
+        );
+      } else {
+        console.error("Failed to mark as read:", data);
+      }
+    } catch (err) {
+      console.error("Error marking messages as read:", err);
+    } finally {
+      fetchAllConversation()
+    }
+  };
+
+
   const handleSendMessage = (conversationId) => {
     if (newMessage.trim() && selectedConversationId && stompClient.current) {
       const chatMessage = {
@@ -104,7 +142,7 @@ const ChatContent = () => {
 
   useEffect(() => {
     if (messagesEndRef?.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      messagesEndRef.current.scrollIntoView({ behavior: "auto" });
     }
   }, [conversationList]);
 
@@ -121,25 +159,26 @@ const ChatContent = () => {
     setPageSize(size);
   };
 
-  const paginatedData = conversationList
-    .sort((a, b) => {
-      const aMessages = a.messageList;
-      const bMessages = b.messageList;
+const paginatedData = conversationList
+  .sort((a, b) => {
+    const aMessages = a.messageList;
+    const bMessages = b.messageList;
 
-      const aLastMsg = aMessages.length > 0 ? aMessages[aMessages.length - 1] : null;
-      const bLastMsg = bMessages.length > 0 ? bMessages[bMessages.length - 1] : null;
+    const aLastMsg = aMessages.length > 0 
+      ? aMessages.reduce((max, msg) => msg.id > max.id ? msg : max, aMessages[0]) 
+      : null;
+    const bLastMsg = bMessages.length > 0 
+      ? bMessages.reduce((max, msg) => msg.id > max.id ? msg : max, bMessages[0]) 
+      : null;
 
-      // Nếu a không có tin nhắn, xếp xuống dưới
-      if (!aLastMsg && bLastMsg) return 1;
-      // Nếu b không có tin nhắn, a lên trên
-      if (aLastMsg && !bLastMsg) return -1;
-      // Nếu cả hai đều không có tin nhắn, giữ nguyên thứ tự
-      if (!aLastMsg && !bLastMsg) return 0;
+    if (!aLastMsg && bLastMsg) return 1;
+    if (aLastMsg && !bLastMsg) return -1;
+    if (!aLastMsg && !bLastMsg) return 0;
 
-      // Sắp xếp giảm dần theo id của tin nhắn cuối cùng
-      return bLastMsg.id - aLastMsg.id;
-    })
-    .slice((currentPage - 1) * pageSize, currentPage * pageSize);
+    return bLastMsg.id - aLastMsg.id;
+  })
+  .slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
 
   const getLastMessage = (conversation) => {
     const messages = conversation.messageList || [];
@@ -165,19 +204,33 @@ const ChatContent = () => {
             renderItem={(conversation) => (
               <List.Item
                 key={conversation.id}
-                className={`cursor-pointer rounded-xl transition-all duration-200 my-2 hover:bg-gray-50 ${selectedConversationId === conversation.id
-                  ? "bg-[#596ecd]/10 border-[#596ecd] shadow-sm"
-                  : "border-transparent"
-                  } ${getUnreadCount(conversation) > 0 ? "font-bold bg-gray-100" : ""}`}
-                onClick={() => setselectedConversationId(conversation.id)}
+                className={`relative cursor-pointer rounded-xl transition-all duration-200 my-2 px-4 py-3
+                  ${selectedConversationId === conversation.id
+                    ? "bg-[#596ecd]/10 border-l-4 border-[#596ecd] shadow-sm"
+                    : "hover:bg-gray-50 border-l-4 border-transparent"}
+                  ${!conversation.readed && selectedConversationId !== conversation.id
+                    ? "bg-yellow-100 border-yellow-400 font-semibold text-black"
+                    : "text-gray-700"}
+                `}
+                onClick={() => {
+                  setselectedConversationId(conversation.id);
+                  handleReadMessage(conversation.id);
+                }}
               >
                 <div className="flex items-center w-full p-3">
-                  <Avatar
-                    size={48}
-                    src={conversation.hostAvatar}
-                    icon={<UserOutlined />}
-                    className="bg-[#596ecd]/10 text-[#596ecd]"
-                  />
+                  <div className="relative">
+                    <Avatar
+                      size={48}
+                      src={conversation.hostAvatar}
+                      icon={<UserOutlined />}
+                      className="bg-[#596ecd]/10 text-[#596ecd]"
+                    />
+                    {!conversation.readed && selectedConversationId !== conversation.id && (
+                      <div className="absolute -top-1 -right-1 bg-red-500 rounded-full p-1 flex items-center justify-center w-5 h-5">
+                        <BellOutlined className="text-white text-[10px]" />
+                      </div>
+                    )}
+                  </div>
                   <div className="ml-3 flex flex-col flex-1 min-w-0">
                     <Text className="font-medium text-gray-900 block" ellipsis>
                       {conversation.hostName}
@@ -227,12 +280,12 @@ const ChatContent = () => {
                 .map((msg) => (
                   <div
                     key={msg.id}
-                    className={`flex ${msg.senderId === user.id ? "justify-end" : "justify-start"}`}
+                    className={`flex ${msg.senderRole === "ROLE_USER" ? "justify-start" : "justify-end"}`}
                   >
                     <div
-                      className={`max-w-[70%] px-4 py-3 rounded-2xl ${msg.senderId === user.id
-                        ? "bg-[#596ecd] text-white"
-                        : "bg-gray-100 text-gray-800"
+                      className={`max-w-[70%] px-4 py-3 rounded-2xl ${msg.senderRole === "ROLE_USER"
+                        ? "bg-gray-100 text-gray-800"
+                        : "bg-[#596ecd] text-white"
                         }`}
                     >
                       {msg.content}

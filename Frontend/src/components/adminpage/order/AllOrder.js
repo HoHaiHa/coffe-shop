@@ -5,9 +5,17 @@ import summaryApi from "../../../common";
 
 const AllOrder = () => {
   const [orderList, setOrderList] = useState([]);
+  const [dateRange, setDateRange] = useState(null);
 
-  const fetchAllOrder = useCallback (async () => {
-    const response = await fetchWithAuth(summaryApi.getAllOrder.url, {
+  const fetchAllOrder = useCallback(async () => {
+    const params = new URLSearchParams();
+
+    if (dateRange) {
+      if (dateRange[0]) params.append('startDate', dateRange[0].toISOString());
+      if (dateRange[1]) params.append('endDate', dateRange[1].toISOString());
+    }
+
+    const response = await fetchWithAuth(`${summaryApi.getAllOrder.url}?${params.toString()}`, {
       method: summaryApi.getAllOrder.method,
     });
 
@@ -18,21 +26,25 @@ const AllOrder = () => {
     } else {
       console.log("error get all order");
     }
-  },[]
-) 
+  }, [dateRange]
+  )
 
   useEffect(() => {
     fetchAllOrder();
-  }, [fetchAllOrder]);
+  }, [fetchAllOrder, dateRange]);
 
   const refreshOrderList = () => {
     fetchAllOrder();
   };
 
+  const handleDateFilter = (value) => {
+    setDateRange(value);
+  }
+
 
   return (
     <div className="mt-12">
-      <OrderTable orderList={orderList}  refreshOrderList={refreshOrderList} />
+      <OrderTable orderList={orderList} refreshOrderList={refreshOrderList} handleDateFilter={handleDateFilter} />
     </div>
   );
 };

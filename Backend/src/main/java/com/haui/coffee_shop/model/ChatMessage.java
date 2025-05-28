@@ -16,7 +16,7 @@ public class ChatMessage {
     private User sender;
 
     private String content;
-
+    
     @ManyToOne
     @JoinColumn(name = "conversation_id")
     private Conversation conversation;

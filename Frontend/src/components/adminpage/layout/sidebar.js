@@ -81,7 +81,6 @@ const Sidebar = () => {
               Đơn hàng
             </NavLink>
 
-            {user?.roleName === 'ROLE_STAFF' || 
             <NavLink
               to="statistics"
               className={({ isActive }) =>
@@ -92,7 +91,7 @@ const Sidebar = () => {
             >
               <MdBarChart className="text-xl mr-3" />
               Thống kê
-            </NavLink>}
+            </NavLink>
           </ul>
         </div>
 

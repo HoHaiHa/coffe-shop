@@ -270,15 +270,6 @@ const CategoryTable = () => {
             ellipsis: true,
         },
         {
-            title: 'Danh mục cha',
-            dataIndex: 'parentId',
-            key: 'parentId',
-            render: (parentId) => {
-                const parent = categories.find(cat => cat.id === parentId);
-                return parent ? parent.name : 'Danh mục gốc';
-            },
-        },
-        {
             title: 'Ngày tạo',
             dataIndex: 'createdAt',
             key: 'createdAt',
@@ -335,10 +326,9 @@ const CategoryTable = () => {
                 'Mã danh mục': category.id,
                 'Tên danh mục': category.name,
                 'Mô tả': category.description || 'Không có mô tả',
-                'Danh mục cha': category.parentId ? categories.find(c => c.id === category.parentId)?.name || 'N/A' : 'Danh mục gốc',
                 'Tên bài viết': category.articleTitle || 'Không có bài viết',
                 'Trạng thái': category.status === 'ACTIVE' ? 'Đang hoạt động' : 'Không hoạt động',
-                'Ngày tạo': moment(category.createdAt).format('DD/MM/YYYY HH:mm:ss')
+                'Ngày tạo': moment(category.createdAt).format('DD-MM-YYYY')
             }));
 
             const ws = XLSX.utils.json_to_sheet(exportData);
@@ -350,14 +340,13 @@ const CategoryTable = () => {
                 { wch: 15 }, // Mã danh mục
                 { wch: 30 }, // Tên danh mục
                 { wch: 40 }, // Mô tả
-                { wch: 25 }, // Danh mục cha
                 { wch: 30 }, // Tên bài viết
                 { wch: 20 }, // Trạng thái
                 { wch: 25 }, // Ngày tạo
             ];
             ws['!cols'] = colWidths;
 
-            XLSX.writeFile(wb, `danh_sach_danh_muc_${moment().format('DD_MM_YYYY_HH_mm')}.xlsx`);
+            XLSX.writeFile(wb, `danh_sach_danh_muc_${moment().format('DD-MM-YYYY')}.xlsx`);
             toast.success('Xuất file Excel thành công!');
         } catch (error) {
             console.error('Export error:', error);
@@ -449,40 +438,14 @@ const CategoryTable = () => {
                                             Tên danh mục
                                         </span>
                                     }
-                                    rules={[{ required: true, message: 'Vui lòng nhập tên danh mục!' }]}
-                                    help={nameError}
-                                    validateStatus={nameError ? 'error' : ''}
+                                    rules={[{ required: true, message: 'Vui lòng chọn tên danh mục!' }]}
                                 >
                                     <Input
-                                        placeholder="Nhập tên danh mục"
-                                        className="rounded-lg border-gray-300 hover:border-blue-400 focus:border-blue-500"
-                                        size="large"
-                                    />
-                                </Form.Item>
-
-                                <Form.Item
-                                    name="parentId"
-                                    label={
-                                        <span className="text-gray-700 font-medium">
-                                            Danh mục cha
-                                        </span>
-                                    }
-                                >
-                                    <Select
-                                        placeholder="Chọn danh mục cha"
+                                        placeholder="Chọn danh mục"
                                         allowClear
                                         className="w-full"
                                         size="large"
-                                    >
-                                        {categories
-                                            .filter(cat => !cat.parentId)
-                                            .map(cat => (
-                                                <Select.Option key={cat.id} value={cat.id}>
-                                                    {cat.name}
-                                                </Select.Option>
-                                            ))
-                                        }
-                                    </Select>
+                                    />
                                 </Form.Item>
 
                                 <Form.Item

@@ -1,8 +1,17 @@
 package com.haui.coffee_shop.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,8 +28,14 @@ import com.haui.coffee_shop.payload.response.RespMessage;
 import com.haui.coffee_shop.payload.response.ReviewResponse;
 import com.haui.coffee_shop.repository.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,6 +43,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+    private final ProductItemRepository productItemRepository;
     private final CategoryRepository categoryRepository;
     private final BrandRepository brandRepository;
     private final TypeProductRepository typeProductRepository;
@@ -48,6 +64,7 @@ public class ProductService {
         }
         return messageBuilder.buildSuccessMessage(productResponseList);
     }
+
 
     public RespMessage getProductById(Long id) {
         Optional<Product> productOp = productRepository.findById(id);
@@ -397,4 +414,105 @@ public class ProductService {
         
         return messageBuilder.buildSuccessMessage(productResponses);
     }
+    
+    public void exportToExcel(HttpServletResponse response) throws IOException {
+        List<Product> products = productRepository.findAll();
+        List<Product> productList = products.stream()
+                .filter(product -> product.getStatus() == Status.ACTIVE)
+                .toList();
+
+        // Lấy ngày hiện tại và format thành dd-MM-yyyy
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String fileName = "Total-products-" +today.format(formatter);
+        
+        
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet(fileName);
+
+        // Tạo style căn giữa theo chiều dọc
+        CellStyle verticalCenterStyle = workbook.createCellStyle();
+        verticalCenterStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        // Header
+        Row headerRow = sheet.createRow(0);
+        String[] headers = {
+            "STT", "ID sản phẩm", "Tên sản phẩm", "Mô tả", "Danh mục", "Thương hiệu", "Trạng thái",
+            "Khối lượng tịnh", "Loại hạt", "Xuất xứ", "Mức độ rang",
+            "Ghi chú hương vị", "Hàm lượng caffeine", "Dạng cà phê", "Ngày tạo",
+            "ID từng phiên bản", "Loại sản phẩm", "Giá", "Số lượng", "Giảm giá", "Trạng thái phiên bản"
+        };
+
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(verticalCenterStyle); // Căn giữa header nếu muốn
+        }
+
+        int rowIdx = 1;
+        int stt = 1;
+
+        for (Product product : productList) {
+            List<ProductItem> items = productItemRepository.findByProductId(product.getId());
+            int itemCount = items.size();
+            int startRow = rowIdx;
+            int endRow = rowIdx + itemCount - 1;
+
+            // Tạo các dòng cho từng ProductItem
+            for (ProductItem item : items) {
+                Row row = sheet.createRow(rowIdx++);
+                int col = 15;
+                row.createCell(col++).setCellValue(item.getId());
+                row.createCell(col++).setCellValue(item.getType().getName());
+                row.createCell(col++).setCellValue(item.getPrice());
+                row.createCell(col++).setCellValue(item.getStock());
+                row.createCell(col++).setCellValue(item.getDiscount());
+                row.createCell(col++).setCellValue(item.getStatus().toString());
+            }
+
+            // Đưa dữ liệu của Product vào các ô gộp và áp dụng style căn giữa dọc
+            for (int i = 0; i < 15; i++) {
+                Cell cell = sheet.getRow(startRow).createCell(i);
+                cell.setCellStyle(verticalCenterStyle);
+
+                switch (i) {
+                    case 0 -> cell.setCellValue(stt++);
+                    case 1 -> cell.setCellValue(product.getId());
+                    case 2 -> cell.setCellValue(product.getName());
+                    case 3 -> cell.setCellValue(product.getDescription());
+                    case 4 -> cell.setCellValue(product.getCategory().getName());
+                    case 5 -> cell.setCellValue(product.getBrand().getName());
+                    case 6 -> cell.setCellValue(product.getStatus().toString());
+                    case 7 -> cell.setCellValue(product.getNetWeight());
+                    case 8 -> cell.setCellValue(product.getBeanType());
+                    case 9 -> cell.setCellValue(product.getOrigin());
+                    case 10 -> cell.setCellValue(product.getRoadLevel());
+                    case 11 -> cell.setCellValue(product.getFlavoNotes());
+                    case 12 -> cell.setCellValue(product.getCaffeineContents());
+                    case 13 -> cell.setCellValue(product.getCafeForm());
+                    case 14 -> cell.setCellValue(product.getCreatedAt().toString());
+                }
+
+                // Nếu product có nhiều productitem thì gộp các ô lại
+                if (itemCount > 1) {
+                    sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, i, i));
+                }
+            }
+        }
+
+        for (int i = 0; i < headers.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        // Thiết lập header cho response với tên file có ngày tháng
+        String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"; filename*=UTF-8''" + encodedFileName);
+
+        workbook.write(response.getOutputStream());
+        workbook.close();
+        
+    }
+
 }

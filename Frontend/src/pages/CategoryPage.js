@@ -91,7 +91,7 @@ const CategoryPage = () => {
   useEffect(() => {
     const fetchBestSellingProduct = async () => {
       try {
-        const productResponse = await fetch(`${summaryApi.bestSellingProduct.url}+?categoryId=+${categoryId}`, {
+        const productResponse = await fetch(`${summaryApi.bestSellingProduct.url}?categoryId=${categoryId}`, {
           method: summaryApi.allProduct.method,
           headers: {
             "Content-Type": "application/json",

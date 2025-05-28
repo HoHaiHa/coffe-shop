@@ -2,8 +2,11 @@ package com.haui.coffee_shop.controller;
 
 import lombok.RequiredArgsConstructor;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,10 +18,16 @@ import com.haui.coffee_shop.common.Constant;
 import com.haui.coffee_shop.common.GsonUtil;
 import com.haui.coffee_shop.config.MessageBuilder;
 import com.haui.coffee_shop.exception.CoffeeShopException;
+import com.haui.coffee_shop.model.Product;
 import com.haui.coffee_shop.payload.request.ProductRequest;
 import com.haui.coffee_shop.payload.response.RespMessage;
 import com.haui.coffee_shop.service.ProductService;
 
+import jakarta.servlet.http.HttpServletResponse;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/product")
@@ -183,7 +192,20 @@ public class ProductController {
             return new ResponseEntity<>(GsonUtil.getInstance().toJson(respMessage), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    
+    @GetMapping("/export")
+    public ResponseEntity<String> exportProducts(HttpServletResponse response) throws IOException {
+        try {
+            productService.exportToExcel(response);;
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (CoffeeShopException e) {
+            RespMessage respMessage = messageBuilder.buildFailureMessage(e.getCode(), e.getObjects(), e.getMessage());
+            return new ResponseEntity<>(GsonUtil.getInstance().toJson(respMessage), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            RespMessage respMessage = messageBuilder.buildFailureMessage(Constant.UNDEFINED, null, e.getMessage());
+            return new ResponseEntity<>(GsonUtil.getInstance().toJson(respMessage), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 
 }

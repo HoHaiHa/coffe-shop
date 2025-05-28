@@ -92,7 +92,7 @@ const BrandPage = () => {
   useEffect(() => {
     const fetchBestSellingProduct = async () => {
       try {
-        const productResponse = await fetch(`${summaryApi.bestSellingProduct.url}+?brandId=+${brandId}`, {
+        const productResponse = await fetch(`${summaryApi.bestSellingProduct.url}?brandId=${brandId}`, {
           method: summaryApi.allProduct.method,
           headers: {
             "Content-Type": "application/json",

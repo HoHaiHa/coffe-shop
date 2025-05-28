@@ -11,6 +11,8 @@ public class ChatMessageResponse {
     private long senderId;
     @JsonProperty("senderName")
     private String senderEmail;
+    @JsonProperty("senderRole")
+    private String senderRole;
     @JsonProperty("content")
     private String content;
 }

@@ -25,17 +25,34 @@ const AddItemModal = ({ visible, onClose, onSave, types, onAddType, editingItem 
         }
     }, [editingItem, form]);
 
-    const handleSave = async () => {
-        try {
-            setLoading(true);
-            const values = await form.validateFields();
-            await onSave(values, editingItem?.id);
+    const handleSave = () => {
+        form.validateFields().then((values) => {
+            onSave(values, editingItem?.id);
             form.resetFields();
-            message.success(editingItem ? 'Cập nhật thành công' : 'Thêm mới thành công');
-        } catch (error) {
-            message.error('Có lỗi xảy ra: ' + error.message);
-        } finally {
-            setLoading(false);
+        });
+    };
+
+    const handleAddType = async () => {
+        if (newTypeName.trim()) {
+            try {
+                const response = await fetchWithAuth(summaryApi.addType.url, {
+                    method: summaryApi.addType.method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: newTypeName }),
+                });
+                const result = await response.json();
+                if (response && result.respCode === '000') {
+                    onAddType(result.data);
+                    setNewTypeName('');
+                    setIsAddingType(false);
+                } else if (result.status === 403) {
+                    toast.error('Bạn không có quyền');
+                } else {
+                    console.error('Failed to add type:', result.message || 'Unknown error');
+                }
+            } catch (error) {
+                console.error('Error adding type:', error);
+            }
         }
     };
 
@@ -86,14 +103,14 @@ const AddItemModal = ({ visible, onClose, onSave, types, onAddType, editingItem 
 
                 <Form.Item
                     name="discount"
-                    label="Giảm giá (%)"
+                    label="Giảm giá"
                     rules={[
-                        { type: 'number', min: 0, max: 100, message: 'Giảm giá phải từ 0-100%' }
+                        { type: 'number', message: 'Giảm giá' }
                     ]}
                 >
                     <InputNumber
                         className="w-full"
-                        placeholder="Nhập % giảm giá"
+                        placeholder="Nhập giảm giá"
                     />
                 </Form.Item>
 
@@ -119,7 +136,7 @@ const AddItemModal = ({ visible, onClose, onSave, types, onAddType, editingItem 
                                                 type="primary"
                                                 onClick={() => {
                                                     if (newTypeName.trim()) {
-                                                        onAddType(newTypeName);
+                                                        handleAddType(newTypeName);
                                                         setNewTypeName('');
                                                         setIsAddingType(false);
                                                     }
@@ -144,7 +161,7 @@ const AddItemModal = ({ visible, onClose, onSave, types, onAddType, editingItem 
                             </div>
                         )}
                     >
-                        {types.map(type => (
+                        {types.map((type) => (
                             <Select.Option key={type.id} value={type.name}>
                                 {type.name}
                             </Select.Option>
@@ -166,208 +183,215 @@ const ProductItemsModal = ({ product, setProduct, visible, onClose, setProductLi
     const [reorderLoading, setReorderLoading] = useState(false);
 
     useEffect(() => {
+        const fetchProductItems = async () => {
+            setLoading(true);
+            try {
+                const response = await fetchWithAuth(
+                    summaryApi.productItem.url + product.id,
+                    {
+                        method: summaryApi.productItem.method,
+                    }
+                );
+                const data = await response.json();
+                if (data && data.respCode === '000') {
+                    setProductItems(data.data);
+                }
+            } catch (error) {
+                console.error('Error fetching product items:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        const fetchTypes = async () => {
+            try {
+                const response = await fetchWithAuth(summaryApi.getAllType.url, {
+                    method: summaryApi.getAllType.method,
+                });
+                const data = await response.json();
+                if (data && data.respCode === '000') {
+                    setTypes(data.data);
+                }
+            } catch (error) {
+                console.error('Error fetching types:', error);
+            }
+        };
+
+
         if (product && visible) {
-            fetchData();
+            fetchProductItems();
+            fetchTypes();
         }
     }, [product, visible]);
 
-    const fetchData = async () => {
-        setLoading(true);
-        try {
-            await Promise.all([fetchProductItems(), fetchTypes()]);
-        } catch (error) {
-            message.error('Có lỗi khi tải dữ liệu');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchProductItems = async () => {
-        try {
-            const response = await fetchWithAuth(
-                summaryApi.productItem.url + product.id,
-                { method: summaryApi.productItem.method }
-            );
-            const data = await response.json();
-            if (data && data.respCode === '000') {
-                setProductItems(data.data);
-            }
-        } catch (error) {
-            console.error('Error fetching product items:', error);
-            throw error;
-        }
-    };
-
-    const fetchTypes = async () => {
-        try {
-            const response = await fetchWithAuth(summaryApi.getAllType.url, {
-                method: summaryApi.getAllType.method
-            });
-            const data = await response.json();
-            if (data && data.respCode === '000') {
-                setTypes(data.data);
-            }
-        } catch (error) {
-            console.error('Error fetching types:', error);
-            throw error;
-        }
-    };
-
-    const handleSaveItem = async (values, itemId) => {
-        try {
-            const url = itemId
-                ? summaryApi.updateProductItem.url + itemId
-                : summaryApi.addProductItem.url + product.id;
-            const method = itemId
-                ? summaryApi.updateProductItem.method
-                : summaryApi.addProductItem.method;
-
-            const response = await fetchWithAuth(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    ...values,
-                    type: types.find(t => t.name === values.type)?.id
-                })
-            });
-
-            const data = await response.json();
-            if (data.respCode === '000') {
-                await fetchProductItems();
-                setIsAdding(false);
-                setEditingItem(null);
-            } else {
-                throw new Error(data.respDesc || 'Có lỗi xảy ra');
-            }
-        } catch (error) {
-            throw error;
-        }
-    };
-
-    const handleDeleteItem = async (item) => {
-        try {
-            const response = await fetchWithAuth(
-                summaryApi.deleteProductItem.url + item.id,
-                { method: summaryApi.deleteProductItem.method }
-            );
-            const data = await response.json();
-            if (data.respCode === '000') {
-                setProductItems(prev => prev.filter(i => i.id !== item.id));
-                message.success('Xóa thành công');
-            } else {
-                message.error(data.respDesc || 'Có lỗi xảy ra khi xóa');
-            }
-        } catch (error) {
-            message.error('Có lỗi xảy ra khi kết nối với server');
-        }
-    };
-
-    const handleAddType = async (name) => {
-        try {
-            const response = await fetchWithAuth(summaryApi.addType.url, {
-                method: summaryApi.addType.method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name })
-            });
-            const data = await response.json();
-            if (data.respCode === '000') {
-                setTypes(prev => [...prev, data.data]);
-                message.success('Thêm loại mới thành công');
-            } else {
-                throw new Error(data.respDesc || 'Có lỗi xảy ra');
-            }
-        } catch (error) {
-            message.error('Có lỗi xảy ra: ' + error.message);
-        }
-    };
-
     const handleAddImage = async (file) => {
-        try {
-            setImageLoading(true);
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('productId', product.id);
-
-            const response = await fetchWithAuth(summaryApi.uploadImage.url, {
-                method: summaryApi.uploadImage.method,
-                body: formData
-            });
-
-            const data = await response.json();
-            if (data.respCode === '000') {
-                setProduct(prev => ({
-                    ...prev,
-                    images: [...(prev.images || []), data.data]
-                }));
-                message.success('Tải ảnh lên thành công');
-            } else {
-                throw new Error(data.respDesc || 'Có lỗi xảy ra');
+        const fetchAddImage = async () => {
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                const response = await fetchWithAuth(
+                    summaryApi.uploadProductImage.url + product.id + "/image", {
+                    method: summaryApi.uploadProductImage.method,
+                    body: formData,
+                });
+                const data = await response.json();
+                if (data && data.respCode === '000') {
+                    const product = data.data;
+                    setProduct(product);
+                    const productListUpdate = productList.map((item) => {
+                        if (item.id === product.id) {
+                            return product;
+                        }
+                        return item;
+                    });
+                    setProductList(productListUpdate);
+                    message.success("Ảnh đã được thêm thành công.");
+                } else {
+                    console.error('Failed to upload image:', data || 'Unknown error');
+                }
+            } catch (error) {
+                console.error('Error uploading image:', error);
             }
-        } catch (error) {
-            message.error('Có lỗi khi tải ảnh lên: ' + error.message);
-        } finally {
-            setImageLoading(false);
+        };
+        fetchAddImage();
+    };
+
+    const handleRemoveImage = async (id) => {
+        // Xử lý xóa ảnh
+        const fetchRemoveImage = async (id) => {
+            try {
+                const response = await fetchWithAuth(summaryApi.deleteProductImage.url + id, {
+                    method: summaryApi.deleteProductImage.method,
+                });
+                const data = await response.json();
+                if (data && data.respCode === '000') {
+                    const product = data.data;
+                    setProduct(product);
+                    message.success("Ảnh đã được xóa.");
+
+                } else {
+                    console.error('Failed to remove image:', data || 'Unknown error');
+                }
+            } catch (error) {
+                console.error('Error removing image:', error);
+            }
+        };
+        fetchRemoveImage(id);
+    };
+
+    const handleAddNewItem = (newItem) => {
+        const { price, stock, discount, type } = newItem;
+        const selectedType = types.find((t) => t.name === type); // Tìm đối tượng type đầy đủ
+        if (!selectedType) {
+            console.error('Type không hợp lệ:', type);
+            return;
+        }
+
+        if (discount > price) {
+            message.error("Giảm giá không hợp lệ ")
+            return;
+        }
+
+        const fetchAddItem = async () => {
+            try {
+                const response = await fetchWithAuth(summaryApi.addProductItem.url, {
+                    method: summaryApi.addProductItem.method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ProductId: product.id,
+                        Price: price,
+                        Stock: stock,
+                        Discount: discount,
+                        TypeId: selectedType.id,
+                    }),
+                });
+                const data = await response.json();
+                if (data && data.respCode === '000') {
+                    setProductItems((prevItems) => [...prevItems, data.data]);
+                    setIsAdding(false);
+
+                }
+                else {
+                    console.error('Failed to add new item:', data || 'Failed to add new item: Unknown error');
+                }
+            } catch (error) {
+                console.error('Error adding new item:', error);
+            }
+        };
+        fetchAddItem();
+    };
+    const handleSaveItem = (item, itemId) => {
+        if (itemId) {
+            // Update existing item
+            if (item.discount > item.price) {
+                message.error("Giảm giá không hợp lệ ")
+                return;
+            }
+
+            const fetchUpdateItem = async () => {
+                try {
+                    const response = await fetchWithAuth(
+                        `${summaryApi.updateProductItem.url}${itemId}`,
+                        {
+                            method: summaryApi.updateProductItem.method,
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                Price: item.price,
+                                Stock: item.stock,
+                                Discount: item.discount,
+                                TypeId: types.find((t) => t.name === item.type)?.id,
+                                ProductId: product.id,
+                            }),
+                        }
+                    );
+                    const data = await response.json();
+                    if (data && data.respCode === '000') {
+                        setProductItems((prevItems) =>
+                            prevItems.map((i) => (i.id === itemId ? data.data : i))
+                        );
+                        setEditingItem(null);
+                        setIsAdding(false);
+                    }
+                } catch (error) {
+                    console.error('Error updating item:', error);
+                }
+            };
+            fetchUpdateItem();
+        } else {
+            handleAddNewItem(item);
         }
     };
 
-    const handleRemoveImage = async (imageId) => {
-        try {
-            const response = await fetchWithAuth(
-                summaryApi.deleteImage.url + imageId,
-                { method: summaryApi.deleteImage.method }
-            );
-            const data = await response.json();
-            if (data.respCode === '000') {
-                setProduct(prev => ({
-                    ...prev,
-                    images: prev.images.filter(img => img.id !== imageId)
-                }));
-                message.success('Xóa ảnh thành công');
-            } else {
-                throw new Error(data.respDesc || 'Có lỗi xảy ra');
-            }
-        } catch (error) {
-            message.error('Có lỗi khi xóa ảnh: ' + error.message);
-        }
+
+    const handleAddType = (type) => {
+        setTypes((prevTypes) => [...prevTypes, type]);
     };
 
-    const handleDragEnd = async (result) => {
-        if (!result.destination) return;
-
-        try {
-            setReorderLoading(true);
-            const items = Array.from(product.images);
-            const [reorderedItem] = items.splice(result.source.index, 1);
-            items.splice(result.destination.index, 0, reorderedItem);
-
-            // Update UI immediately
-            setProduct(prev => ({
-                ...prev,
-                images: items
-            }));
-
-            // Send reorder request to server
-            const response = await fetchWithAuth(summaryApi.reorderImages.url, {
-                method: summaryApi.reorderImages.method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    productId: product.id,
-                    imageIds: items.map(img => img.id)
-                })
-            });
-
-            const data = await response.json();
-            if (data.respCode !== '000') {
-                throw new Error(data.respDesc || 'Có lỗi xảy ra');
+    const handleDeleteItem = (item) => {
+        const fetchDeleteItem = async () => {
+            try {
+                const response = await fetchWithAuth(
+                    summaryApi.deleteProductItem.url + item.id,
+                    {
+                        method: summaryApi.deleteProductItem.method,
+                    }
+                );
+                const data = await response.json();
+                if (data && data.respCode === '000') {
+                    setProductItems((prevItems) =>
+                        prevItems.filter((i) => i.id !== item.id)
+                    );
+                } else {
+                    console.error('Failed to delete item:', data || 'Unknown error');
+                }
+            } catch (error) {
+                console.error('Error deleting item:', error);
             }
-        } catch (error) {
-            message.error('Có lỗi khi sắp xếp ảnh: ' + error.message);
-            // Revert UI if error occurs
-            fetchData();
-        } finally {
-            setReorderLoading(false);
-        }
-    };
+        };
+        fetchDeleteItem();
+    }
+
+
 
     const columns = [
         {
@@ -461,7 +485,7 @@ const ProductItemsModal = ({ product, setProduct, visible, onClose, setProductLi
                 <Spin spinning={reorderLoading} tip="Đang cập nhật thứ tự...">
                     <div className="mt-4 p-4 rounded-md bg-gray-50">
                         <h3 className="text-lg font-medium mb-4">Hình ảnh sản phẩm</h3>
-                        <DragDropContext onDragEnd={handleDragEnd}>
+                        <DragDropContext >
                             <Droppable droppableId="images" direction="horizontal">
                                 {(provided) => (
                                     <div

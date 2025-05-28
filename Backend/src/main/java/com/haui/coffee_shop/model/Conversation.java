@@ -12,6 +12,9 @@ public class Conversation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    
+    @Column(name = "is_readed")
+    private boolean readed;
 
     @OneToOne
     @JoinColumn(name = "host_id")

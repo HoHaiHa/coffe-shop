@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import com.haui.coffee_shop.common.enums.OrderStatus;
 import com.haui.coffee_shop.model.Order;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,4 +22,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT od FROM Order od WHERE od.status = :orderStatus")
     List<Order> findByStatus(@Param("orderStatus") OrderStatus orderStatus );
+    
+    @Query("SELECT od FROM Order od WHERE "
+            + "(:startDate IS NULL OR od.orderDate >= :startDate) AND "
+            + "(:endDate IS NULL OR od.orderDate <= :endDate)")
+       List<Order> findAllFilterOrderDate(
+           @Param("startDate") Date startDate,
+           @Param("endDate") Date endDate);
 }

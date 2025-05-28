@@ -27,11 +27,6 @@ const SortProduct = ({ onSelect }) => {
                     boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
                 }}
             >
-                <Option value="">
-                    <span className="flex items-center text-gray-600 hover:text-amber-600 transition-colors">
-                        Mặc định
-                    </span>
-                </Option>
                 <Option value="createdAtDesc">
                     <span className="flex items-center text-gray-600 hover:text-amber-600 transition-colors">
                         Cũ nhất
@@ -80,7 +75,7 @@ const SortProduct = ({ onSelect }) => {
                     background-color: #f8fafc;
                     border-radius: 9999px;
                     padding: 4px 16px;
-                    height: 40px;
+                    height: 30px;
                     display: flex;
                     align-items: center;
                     transition: all 0.3s ease;

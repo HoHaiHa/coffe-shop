@@ -17,4 +17,6 @@ public class ConversationResponse {
     private String hostAvatar;
     @JsonProperty("messageList")
     private List<ChatMessageResponse> messageList;
+    @JsonProperty("readed")
+    private boolean readed;
 }

@@ -277,13 +277,13 @@ const UserTable = ({ userList, setUserList }) => {
             'Số điện thoại': user.phone,
             'Vai trò': user.roleName === 'ROLE_USER' ? 'Người dùng' : 'Nhân viên',
             'Trạng thái': user.status === 'ACTIVE' ? 'Hoạt động' : 'Đã khóa',
-            'Ngày tạo': moment(user.createdAt).format('DD/MM/YYYY HH:mm:ss')
+            'Ngày tạo': moment(user.createdAt).format('DD-MM-YYYY')
         }));
 
         const ws = XLSX.utils.json_to_sheet(exportData);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Users');
-        XLSX.writeFile(wb, `all_users_${moment().format('DDMMYYYY_HHmmss')}.xlsx`);
+        XLSX.writeFile(wb, `danh_sach_nguoi_dung-${moment().format('DD-MM-YYYY')}.xlsx`);
         message.success('Xuất danh sách người dùng thành công');
     };
 

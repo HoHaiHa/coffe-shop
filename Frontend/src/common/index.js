@@ -1,5 +1,5 @@
 
-const backendDomain = "http://localhost:8080/api";
+const backendDomain = `${process.env.REACT_APP_BACKEND_URL}api`;
 
 const summaryApi = {
     getConversationOfUser: {
@@ -86,6 +86,10 @@ const summaryApi = {
     deleteProduct: {
         url: `${backendDomain}/product/`,
         method: "DELETE"
+    },
+    exportToExcel: {
+        url: `${backendDomain}/product/export`,
+        method: "GET"
     },
     updateCartItem: {
         url: `${backendDomain}/cart/item`,
@@ -251,6 +255,14 @@ const summaryApi = {
     updateOrderStatus : {
         url : `${backendDomain}/order/`,
         method : "PUT"
+    },
+    exportOrderToExcel: {
+        url: `${backendDomain}/order/export`,
+        method: "GET"
+    },
+    exportInvoiceOrder: {
+        url: `${backendDomain}/order/invoice`,
+        method: "GET"
     },
     getTop5MonthlySellingProduct : {
         url : `${backendDomain}/statistic/product/best/monthly`,

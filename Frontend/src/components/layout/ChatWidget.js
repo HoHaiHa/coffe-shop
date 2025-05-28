@@ -63,7 +63,7 @@ const ChatWidget = () => {
 
   useEffect(() => {
     if (isChatOpen) {
-      const socketFactory = () => new SockJS("http://localhost:8080/ws");
+      const socketFactory = () => new SockJS(`${process.env.REACT_APP_BACKEND_URL}ws`);
       stompClient.current = Stomp.over(socketFactory);
       stompClient.current.connect(
         {},
@@ -92,7 +92,7 @@ const ChatWidget = () => {
 
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      messagesEndRef.current.scrollIntoView({ behavior: "auto" });
     }
   }, [conversation]);
 

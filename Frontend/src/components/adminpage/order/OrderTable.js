@@ -7,13 +7,14 @@ import img1 from "../../../assets/img/empty.jpg";
 import * as XLSX from 'xlsx';
 import moment from 'moment';
 import 'moment/locale/vi';
+import { toast } from "react-toastify";
 
 moment.locale('vi');
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
 
-const OrderTable = ({ orderList, refreshOrderList }) => {
+const OrderTable = ({ orderList, refreshOrderList, handleDateFilter }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [orderDetail, setOrderDetail] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -101,22 +102,80 @@ const OrderTable = ({ orderList, refreshOrderList }) => {
     }
   };
 
-  const handleExportExcel = () => {
-    const exportData = orderList.map(order => ({
-      'ID': order.orderId,
-      'Ngày đặt': moment(order.orderDate).format('DD/MM/YYYY HH:mm:ss'),
-      'Người nhận': order.shippingAddress.receiverName,
-      'SĐT': order.shippingAddress.receiverPhone,
-      'Địa chỉ': order.shippingAddress.location,
-      'Phương thức thanh toán': order.paymentMethod,
-      'Tổng tiền': order.total,
-      'Trạng thái': order.orderStatus
-    }));
+  const handleExportExcel = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (dateRange) {
+        if (dateRange[0]) params.append('startDate', dateRange[0].toISOString());
+        if (dateRange[1]) params.append('endDate', dateRange[1].toISOString());
+      }
 
-    const ws = XLSX.utils.json_to_sheet(exportData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Orders');
-    XLSX.writeFile(wb, `orders_${moment().format('DDMMYYYY_HHmmss')}.xlsx`);
+      const response = await fetchWithAuth(`${summaryApi.exportOrderToExcel.url}?${params.toString()}`, {
+        method: summaryApi.exportOrderToExcel.method,
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      // Nhận dữ liệu nhị phân
+      const blob = await response.blob();
+
+      // Tạo đường dẫn tải file
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `danh_sach_don_hang.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      toast.success('Xuất danh sách sản phẩm thành công!');
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Có lỗi xảy ra khi xuất file Excel!');
+    }
+  };
+
+  const handleExportInvoice = async (orderId) => {
+    try {
+      const response = await fetchWithAuth(`${summaryApi.exportInvoiceOrder.url}/${orderId}`, {
+        method: summaryApi.exportInvoiceOrder.method,
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+
+      // Tạo iframe ẩn
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = url;
+      document.body.appendChild(iframe);
+
+      // Chờ iframe tải xong rồi in
+      iframe.onload = () => {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+      };
+
+      toast.success('Đang hiển thị hộp thoại in...');
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Có lỗi xảy ra khi xuất hóa đơn!');
+    }
+  };
+
+
+  const getCurrentDateString = () => {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, "0");
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const year = today.getFullYear();
+    return `-${day}-${month}-${year}`;
   };
 
   const handleViewDetail = (record) => {
@@ -141,28 +200,22 @@ const OrderTable = ({ orderList, refreshOrderList }) => {
 
   const filteredOrders = orderList.filter(order => {
     let match = true;
-    
+
     // Filter by status
     if (filterStatus && order.orderStatus !== filterStatus) {
       match = false;
     }
 
-    // Filter by date range
-    if (dateRange) {
-      const orderDate = moment(order.orderDate);
-      if (!orderDate.isBetween(dateRange[0], dateRange[1], 'day', '[]')) {
-        match = false;
-      }
-    }
-
     // Filter by search text
     if (searchText) {
-      const searchLower = searchText.toLowerCase();
-      const matchSearch = 
-        order.orderId.toString().includes(searchLower) ||
-        order.shippingAddress.receiverName.toLowerCase().includes(searchLower) ||
-        order.shippingAddress.receiverPhone.includes(searchLower) ||
-        order.shippingAddress.location.toLowerCase().includes(searchLower);
+      const removeAccents = (str) =>
+        str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+      const searchLower = removeAccents(searchText.toLowerCase().trim());
+      const matchSearch =
+        removeAccents(order.orderId.toString().toLowerCase().trim()).includes(searchLower) ||
+        removeAccents(order.shippingAddress.receiverName.toLowerCase().trim()).includes(searchLower) ||
+        removeAccents(order.shippingAddress.receiverPhone.toLowerCase().trim()).includes(searchLower) ||
+        removeAccents(order.shippingAddress.location.toLowerCase().trim()).includes(searchLower);
       if (!matchSearch) {
         match = false;
       }
@@ -253,6 +306,12 @@ const OrderTable = ({ orderList, refreshOrderList }) => {
           >
             Chi tiết
           </Button>
+          <Button
+            type="primary"
+            onClick={() => handleExportInvoice(record.orderId)}
+          >
+            Xuất hóa đơn
+          </Button>
 
           {record.orderStatus !== 'Completed' && record.orderStatus !== 'Cancelled' && (
             <>
@@ -292,19 +351,6 @@ const OrderTable = ({ orderList, refreshOrderList }) => {
       title: "Id",
       dataIndex: "orderItemId",
       key: "orderItemId",
-    },
-    {
-      title: "Ảnh",
-      dataIndex: "image",
-      key: "image",
-      render: (_, record) => (
-        <img
-          src={record.image || img1}
-          alt="order item"
-          className="w-16 h-16 object-cover rounded-md"
-          onError={(e) => { e.target.src = img1; }}
-        />
-      ),
     },
     {
       title: "Tên sản phẩm",
@@ -424,13 +470,27 @@ const OrderTable = ({ orderList, refreshOrderList }) => {
           />
         </Space>
 
-        <Button
-          type="primary"
-          icon={<FileExcelOutlined />}
-          onClick={handleExportExcel}
-        >
-         Xuất báo cáo Excel
-        </Button>
+        <div>
+          <RangePicker
+            className="mr-4"
+            value={dateRange}
+            onChange={(dates) => {
+              setDateRange(dates)
+              handleDateFilter(dates)
+            }}
+            format="DD-MM-YYYY"
+            allowClear
+            placeholder={["Ngày bắt đầu", "Ngày kết thúc"]}
+          />
+
+          <Button
+            type="primary"
+            icon={<FileExcelOutlined />}
+            onClick={handleExportExcel}
+          >
+            Xuất báo cáo Excel
+          </Button>
+        </div>
       </div>
 
       {/* Orders Table */}
@@ -482,19 +542,32 @@ const OrderTable = ({ orderList, refreshOrderList }) => {
               summary={(pageData) => {
                 const total = pageData.reduce((sum, item) => sum + (item.price * item.amount), 0);
                 return (
-                  <Table.Summary.Row>
+                  <>
+                    <Table.Summary.Row>
+                      <Table.Summary.Cell index={0} colSpan={6} align="right">
+                        <strong>Tổng cộng:</strong>
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell index={1}>
+                        <span className="font-medium text-lg text-blue-600">
+                          {new Intl.NumberFormat('vi-VN', {
+                            style: 'currency',
+                            currency: 'VND'
+                          }).format(total)}
+                        </span>
+
+                      </Table.Summary.Cell>
+                    </Table.Summary.Row>
                     <Table.Summary.Cell index={0} colSpan={6} align="right">
-                      <strong>Tổng cộng:</strong>
+                      <Button
+                        className="flex main-end"
+                        type="primary"
+                        onClick={() => handleExportInvoice(orderDetail.orderId)}
+                      >
+                        Xuất hóa đơn
+                      </Button>
                     </Table.Summary.Cell>
-                    <Table.Summary.Cell index={1}>
-                      <span className="font-medium text-lg text-blue-600">
-                        {new Intl.NumberFormat('vi-VN', {
-                          style: 'currency',
-                          currency: 'VND'
-                        }).format(total)}
-                      </span>
-                    </Table.Summary.Cell>
-                  </Table.Summary.Row>
+
+                  </>
                 );
               }}
             />

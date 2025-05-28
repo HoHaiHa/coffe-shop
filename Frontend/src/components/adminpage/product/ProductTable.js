@@ -54,13 +54,15 @@ import { useSelector } from 'react-redux';
 import * as XLSX from 'xlsx';
 import moment from 'moment';
 import 'moment/locale/vi';
+import SortProduct from '../../layout/SortProduct';
+import { BiSortAlt2 } from 'react-icons/bi';
 
 const { Option } = Select;
 const { Title, Text } = Typography;
 
 moment.locale('vi');
 
-const ProductTable = ({ products, setProducts, categories, brands, setCategories, setBrands }) => {
+const ProductTable = ({ products, setProducts, categories, brands, setCategories, setBrands, onSortChange }) => {
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -109,24 +111,41 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
         }
     };
 
-    const handleExportExcel = () => {
-        const exportData = products
-            .filter(product => selectedRows.includes(product.id))
-            .map(product => ({
-                'ID': product.id,
-                'Tên sản phẩm': product.name,
-                'Danh mục': product.category?.name || 'N/A',
-                'Thương hiệu': product.brand?.name || 'N/A',
-                'Mô tả': product.description || 'N/A',
-                'Khối lượng': product.netWeight || 'N/A',
-                'Loại hạt': product.beanType || 'N/A',
-                'Xuất xứ': product.origin || 'N/A'
-            }));
+    const handleExportExcel = async () => {
+        try {
+            const response = await fetchWithAuth(`${summaryApi.exportToExcel.url}`, {
+                method: summaryApi.exportToExcel.method,
+            });
 
-        const ws = XLSX.utils.json_to_sheet(exportData);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Products');
-        XLSX.writeFile(wb, 'products.xlsx');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            // Nhận dữ liệu nhị phân
+            const blob = await response.blob();
+
+            // Tạo đường dẫn tải file
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `danh_sach_san_pham-${getCurrentDateString()}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+
+            toast.success('Xuất danh sách sản phẩm thành công!');
+        } catch (error) {
+            console.error('Export error:', error);
+            toast.error('Có lỗi xảy ra khi xuất file Excel!');
+        }
+    };
+
+    const getCurrentDateString = () => {
+        const today = new Date();
+        const day = String(today.getDate()).padStart(2, "0");
+        const month = String(today.getMonth() + 1).padStart(2, "0");
+        const year = today.getFullYear();
+        return `-${day}-${month}-${year}`;
     };
 
     const handleImportExcel = (file) => {
@@ -588,6 +607,7 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
                 <div className="flex justify-between items-center mb-4">
                     <Title level={4} className="mb-0">Danh sách sản phẩm</Title>
                     <Space size="middle">
+                        <SortProduct onSelect={onSortChange} />
                         <Tooltip title="Lọc sản phẩm">
                             <Button
                                 icon={<FilterOutlined />}

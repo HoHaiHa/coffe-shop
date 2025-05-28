@@ -142,7 +142,7 @@ const BrandTable = ({ brands, setBrands }) => {
                 'Mô tả': brand.description || 'Không có mô tả',
                 'Tên bài viết': brand.articleTitle || 'Không có bài viết',
                 'Trạng thái': brand.status === 'ACTIVE' ? 'Đang hoạt động' : 'Không hoạt động',
-                'Ngày tạo': moment(brand.createdAt).format('DD/MM/YYYY HH:mm:ss')
+                'Ngày tạo': moment(brand.createdAt).format('DD-MM-YYYY')
             }));
 
             const ws = XLSX.utils.json_to_sheet(exportData);
@@ -160,7 +160,7 @@ const BrandTable = ({ brands, setBrands }) => {
             ];
             ws['!cols'] = colWidths;
 
-            XLSX.writeFile(wb, `danh_sach_nhan_hang_${moment().format('DD_MM_YYYY_HH_mm')}.xlsx`);
+            XLSX.writeFile(wb, `danh_sach_nhan_hang_${moment().format('DD-MM-YYYY')}.xlsx`);
             toast.success('Xuất file Excel thành công!');
         } catch (error) {
             console.error('Export error:', error);
