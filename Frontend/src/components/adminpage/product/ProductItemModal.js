@@ -26,11 +26,16 @@ const AddItemModal = ({ visible, onClose, onSave, types, onAddType, editingItem 
     }, [editingItem, form]);
 
     const handleSave = () => {
-        form.validateFields().then((values) => {
-            onSave(values, editingItem?.id);
-            form.resetFields();
-        });
-    };
+  form.validateFields()
+    .then(values => {
+      onSave(values, editingItem?.id);
+      form.resetFields();
+    })
+    .catch(errorInfo => {
+      console.log('Validation Failed:', errorInfo);
+    });
+};
+
 
     const handleAddType = async () => {
         if (newTypeName.trim()) {
@@ -110,6 +115,8 @@ const AddItemModal = ({ visible, onClose, onSave, types, onAddType, editingItem 
                 >
                     <InputNumber
                         className="w-full"
+                        formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        parser={value => value.replace(/\$\s?|(,*)/g, '')}
                         placeholder="Nhập giảm giá"
                     />
                 </Form.Item>
@@ -423,7 +430,7 @@ const ProductItemsModal = ({ product, setProduct, visible, onClose, setProductLi
             title: 'Giảm giá',
             dataIndex: 'discount',
             key: 'discount',
-            render: discount => discount ? `${discount}%` : '-'
+            render: discount => discount ? `${discount}` : '-'
         },
         {
             title: 'Loại',
