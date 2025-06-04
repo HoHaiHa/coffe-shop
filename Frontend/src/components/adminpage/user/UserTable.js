@@ -494,13 +494,6 @@ const UserTable = ({ userList, setUserList }) => {
                     >
                         Xuất báo cáo Excel
                     </Button>
-                    <Button
-                        icon={<MailOutlined />}
-                        onClick={() => setIsEmailModalVisible(true)}
-                        disabled={selectedUsers.length === 0}
-                    >
-                        Gửi email {selectedUsers.length > 0 && `(${selectedUsers.length})`}
-                    </Button>
                     <Popconfirm
                         title="Khóa tài khoản hàng loạt?"
                         description={`Bạn có chắc muốn khóa ${selectedUsers.length} tài khoản đã chọn?`}

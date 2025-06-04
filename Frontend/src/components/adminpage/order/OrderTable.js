@@ -198,31 +198,33 @@ const OrderTable = ({ orderList, refreshOrderList, handleDateFilter }) => {
     return colors[status] || 'default';
   };
 
-  const filteredOrders = orderList.filter(order => {
-    let match = true;
+  const filteredOrders = [...orderList]
+    .reverse()
+    .filter(order => {
+      let match = true;
 
-    // Filter by status
-    if (filterStatus && order.orderStatus !== filterStatus) {
-      match = false;
-    }
-
-    // Filter by search text
-    if (searchText) {
-      const removeAccents = (str) =>
-        str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-      const searchLower = removeAccents(searchText.toLowerCase().trim());
-      const matchSearch =
-        removeAccents(order.orderId.toString().toLowerCase().trim()).includes(searchLower) ||
-        removeAccents(order.shippingAddress.receiverName.toLowerCase().trim()).includes(searchLower) ||
-        removeAccents(order.shippingAddress.receiverPhone.toLowerCase().trim()).includes(searchLower) ||
-        removeAccents(order.shippingAddress.location.toLowerCase().trim()).includes(searchLower);
-      if (!matchSearch) {
+      // Filter by status
+      if (filterStatus && order.orderStatus !== filterStatus) {
         match = false;
       }
-    }
 
-    return match;
-  });
+      // Filter by search text
+      if (searchText) {
+        const removeAccents = (str) =>
+          str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+        const searchLower = removeAccents(searchText.toLowerCase().trim());
+        const matchSearch =
+          removeAccents(order.orderId.toString().toLowerCase().trim()).includes(searchLower) ||
+          removeAccents(order.shippingAddress.receiverName.toLowerCase().trim()).includes(searchLower) ||
+          removeAccents(order.shippingAddress.receiverPhone.toLowerCase().trim()).includes(searchLower) ||
+          removeAccents(order.shippingAddress.location.toLowerCase().trim()).includes(searchLower);
+        if (!matchSearch) {
+          match = false;
+        }
+      }
+
+      return match;
+    });
 
   const columns = [
     {

@@ -106,7 +106,6 @@ public class StatisticService {
     }
 
     public RespMessage getTop5BestCustomers() {
-//        Pageable pageable = PageRequest.of(0, 5);
         try {
             List<Object[]> results = orderItemRepository.findTop5BestCustomers();
             List<UserStatisticResponse> userStatisticResponses = new ArrayList<>();

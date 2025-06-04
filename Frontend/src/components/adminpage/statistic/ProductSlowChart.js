@@ -211,7 +211,7 @@ const ProductSlowChart = () => {
       // Thêm tiêu đề báo cáo
       worksheet.mergeCells('A1:G1');
       const titleCell = worksheet.getCell('A1');
-      titleCell.value = `BÁO CÁO TOP 5 SẢN PHẨM BÁN CHẬM ${view === 'overview' ? 'TỔNG QUAN' : `THÁNG ${selectedMonth + 1}/${selectedYear}`}`;
+      titleCell.value = `BÁO CÁO 5 SẢN PHẨM BÁN CHẬM ${view === 'overview' ? 'TỔNG QUAN' : `THÁNG ${selectedMonth + 1}/${selectedYear}`}`;
       titleCell.style = titleStyle;
       worksheet.getRow(1).height = 30;
 
@@ -373,7 +373,7 @@ const ProductSlowChart = () => {
           <div className="flex items-center gap-3">
             <FiAlertTriangle className="text-2xl text-red-500" />
             <h2 className="text-xl font-bold bg-gradient-to-r from-red-700 to-red-900 bg-clip-text text-transparent">
-              Top 5 Sản Phẩm Bán Chậm
+              5 Sản Phẩm Bán Chậm
             </h2>
           </div>
           

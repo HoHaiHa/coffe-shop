@@ -27,7 +27,7 @@ const CustomTooltip = ({ active, payload }) => {
       <div className="bg-white p-4 rounded-xl shadow-lg border border-gray-100">
         <p className="text-gray-700 mb-3 font-medium flex items-center gap-2">
           <FiUserCheck className="text-indigo-500" />
-          {data.payload.userName || "Chưa cập nhật"}
+          {data.payload.userName != "Chưa cập nhật" ? data.payload.userName : data.payload.email}
         </p>
         <div className="flex items-center space-x-2">
           <div
@@ -222,7 +222,7 @@ const UserChart = () => {
 
       // Add legend data with color indicators
       data.forEach((entry, index) => {
-        const row = worksheet.addRow(['', entry.userName || 'Chưa cập nhật', '', 'Tổng mua:', entry.totalSold]);
+        const row = worksheet.addRow(['', entry.userName != "Chưa cập nhật" ? entry.userName : entry.email , '', 'Tổng mua:', entry.totalSold]);
         
         // Style the cells
         const colorCell = row.getCell(1);
@@ -477,7 +477,7 @@ const UserChart = () => {
                       />
                       <div className="flex-1">
                         <p className="font-medium text-gray-800">
-                          {entry.userName || "Chưa cập nhật"}
+                          {entry.userName != "Chưa cập nhật" ? entry.userName : entry.email}
                         </p>
                         <div className="flex justify-between items-center mt-2">
                           <span className="text-sm text-gray-600">Tổng mua:</span>

@@ -43,7 +43,6 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     	       "ORDER BY totalQuantity DESC")
     	List<Object[]> findTop5BestSellingProducts(Pageable pageable);
 
-
 	@Query("SELECT p, COALESCE(SUM(oi.amount), 0) AS totalQuantity, " +
 		       "COALESCE(SUM(oi.amount * (oi.price - oi.discount)), 0) AS totalRevenue " +
 		       "FROM Product p " +
@@ -68,8 +67,6 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 		        @Param("startDate") Date startDate,
 		        @Param("endDate") Date endDate,
 		        Pageable pageable);
-
-
 
     @Query("SELECT oi.order.shippingAddress.user, SUM(oi.amount * (oi.price - oi.discount)) AS total " +
             "FROM OrderItem oi " +
