@@ -92,7 +92,7 @@ const OrderStatus = () => {
                     }),
                   }
                 );
-                const responseTran = await addTransactionResponse.json();
+                await addTransactionResponse.json();
 
                 // if (responseTran.respCode !== "000") {
                 //   throw new Error("Giao dịch không thành công");
@@ -117,7 +117,7 @@ const OrderStatus = () => {
     };
     handleOrderProcessing();
 
-  }, [amount, dispatch, payDate, status, transactionNo, txnRef]);
+  }, [amount, cartItems, dispatch, payDate, status, transactionNo, txnRef]);
 
 
   return (

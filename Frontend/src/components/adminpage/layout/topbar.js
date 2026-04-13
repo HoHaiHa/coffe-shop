@@ -1,7 +1,6 @@
 import React from "react";
-import { Badge, Avatar, Dropdown, Popconfirm, message } from "antd";
-import { MdNotificationsNone, MdLogout, MdPerson } from "react-icons/md";
-import { PiUserCircle } from "react-icons/pi";
+import { Avatar, Popconfirm, message } from "antd";
+import { MdLogout, MdPerson } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearUser } from "../../../store/userSlice";

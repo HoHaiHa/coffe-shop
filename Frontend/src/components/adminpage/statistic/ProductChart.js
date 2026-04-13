@@ -5,8 +5,6 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
 } from "recharts";
 import { Select, Table } from "antd";
 import moment from "moment";
@@ -24,26 +22,6 @@ const COLORS = [
   "#6A1B9A", // Tím đậm
 ];
 
-const CustomTooltip = ({ active, payload, label }) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-white p-4 rounded-lg shadow-lg border border-gray-200">
-        <p className="text-gray-600 mb-2">{label}</p>
-        {payload.map((entry, index) => (
-          <div key={index} className="flex items-center space-x-2">
-            <div
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: entry.fill }}
-            />
-            <span className="font-medium">{entry.name}:</span>
-            <span>{entry.value.toLocaleString()} sản phẩm</span>
-          </div>
-        ))}
-      </div>
-    );
-  }
-  return null;
-};
 
 const ProductChart = () => {
   const [view, setView] = useState("overview");

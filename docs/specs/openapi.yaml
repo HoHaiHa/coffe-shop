@@ -1,0 +1,1601 @@
+openapi: 3.0.0
+info:
+  title: Coffee Shop API
+  version: 0.0.0
+tags:
+  - name: Authentication
+  - name: Product
+  - name: Category
+  - name: Brand
+  - name: Order
+  - name: Payment
+  - name: User
+  - name: Shipping Address
+  - name: Favorite Product
+  - name: Cart
+  - name: Review
+  - name: Chat
+  - name: Statistic
+paths:
+  /api/v1/auth/login:
+    post:
+      operationId: AuthOperations_login
+      summary: Login and authenticate
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Access is unauthorized.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+  /api/v1/auth/register:
+    post:
+      operationId: AuthOperations_register
+      summary: Register a new user
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+  /api/v1/brands:
+    get:
+      operationId: BrandOperations_list
+      summary: List brands
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Brand'
+      tags:
+        - Brand
+    post:
+      operationId: BrandOperations_create
+      summary: Create a brand
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Brand'
+      tags:
+        - Brand
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Brand'
+  /api/v1/brands/{brandId}:
+    put:
+      operationId: BrandOperations_update
+      summary: Update a brand
+      parameters:
+        - name: brandId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Brand'
+      tags:
+        - Brand
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Brand'
+    delete:
+      operationId: BrandOperations_delete
+      summary: Delete a brand
+      parameters:
+        - name: brandId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+      tags:
+        - Brand
+  /api/v1/cart:
+    get:
+      operationId: CartOperations_getCart
+      summary: Get current user's cart
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CartItemResponse'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - Cart
+    delete:
+      operationId: CartOperations_clearCart
+      summary: Clear cart
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+      tags:
+        - Cart
+  /api/v1/cart/items:
+    post:
+      operationId: CartOperations_addItem
+      summary: Add item to cart
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CartItemResponse'
+      tags:
+        - Cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartItemRequest'
+  /api/v1/cart/items/{itemId}:
+    put:
+      operationId: CartOperations_updateItem
+      summary: Update item quantity in cart
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CartItemResponse'
+      tags:
+        - Cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Quantity:
+                  type: integer
+                  format: int32
+              required:
+                - Quantity
+    delete:
+      operationId: CartOperations_removeItem
+      summary: Remove item from cart
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CartItemResponse'
+      tags:
+        - Cart
+  /api/v1/categories:
+    get:
+      operationId: CategoryOperations_list
+      summary: List categories
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+      tags:
+        - Category
+    post:
+      operationId: CategoryOperations_create
+      summary: Create a category
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+      tags:
+        - Category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+  /api/v1/categories/{categoryId}:
+    put:
+      operationId: CategoryOperations_update
+      summary: Update a category
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+      tags:
+        - Category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Category'
+    delete:
+      operationId: CategoryOperations_delete
+      summary: Delete a category
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+      tags:
+        - Category
+  /api/v1/chat:
+    post:
+      operationId: ChatOperations_sendMessage
+      summary: Send a message
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessageResponse'
+      tags:
+        - Chat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatMessageRequest'
+  /api/v1/chat/history/{userId}:
+    get:
+      operationId: ChatOperations_getHistory
+      summary: Get conversation history
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChatMessageResponse'
+      tags:
+        - Chat
+  /api/v1/chat/read/{userId}:
+    put:
+      operationId: ChatOperations_markAsRead
+      summary: Mark messages as read
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The request has succeeded.
+      tags:
+        - Chat
+  /api/v1/favorites:
+    get:
+      operationId: FavoriteProductOperations_list
+      summary: List favorite products
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FavoriteProductResponse'
+      tags:
+        - Favorite Product
+    post:
+      operationId: FavoriteProductOperations_add
+      summary: Add to favorites
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FavoriteProductResponse'
+      tags:
+        - Favorite Product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                productId:
+                  type: integer
+                  format: int64
+              required:
+                - productId
+  /api/v1/favorites/{productId}:
+    delete:
+      operationId: FavoriteProductOperations_remove
+      summary: Remove from favorites
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+      tags:
+        - Favorite Product
+  /api/v1/orders:
+    get:
+      operationId: OrderOperations_listByUser
+      summary: Get user orders
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderResponse'
+      tags:
+        - Order
+    post:
+      operationId: OrderOperations_create
+      summary: Create a new order
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - Order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+  /api/v1/orders/{orderId}:
+    get:
+      operationId: OrderOperations_get
+      summary: Get order by ID
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - Order
+    delete:
+      operationId: OrderOperations_delete
+      summary: Cancel/Delete order by ID
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - Order
+  /api/v1/payments/callback:
+    get:
+      operationId: PaymentOperations_paymentCallback
+      summary: Handle payment callback
+      parameters:
+        - name: transactionId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+          explode: false
+        - name: status
+          in: query
+          required: true
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                required:
+                  - success
+                  - message
+      tags:
+        - Payment
+  /api/v1/payments/initiate:
+    post:
+      operationId: PaymentOperations_initiatePayment
+      summary: Initiate online payment (e.g. VNPay)
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  paymentUrl:
+                    type: string
+                  transactionId:
+                    type: integer
+                    format: int64
+                required:
+                  - paymentUrl
+                  - transactionId
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - Payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                orderId:
+                  type: integer
+                  format: int64
+                amount:
+                  type: number
+                  format: double
+                returnUrl:
+                  type: string
+              required:
+                - orderId
+                - amount
+                - returnUrl
+  /api/v1/products:
+    get:
+      operationId: ProductOperations_list
+      summary: Get a list of all products
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProductResponse'
+      tags:
+        - Product
+    post:
+      operationId: ProductOperations_create
+      summary: Create a new product (Admin)
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+      tags:
+        - Product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequest'
+  /api/v1/products/{productId}:
+    get:
+      operationId: ProductOperations_get
+      summary: Get product details by ID
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - Product
+    put:
+      operationId: ProductOperations_update
+      summary: Update a product by ID (Admin)
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductResponse'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - Product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRequest'
+    delete:
+      operationId: ProductOperations_delete
+      summary: Delete a product by ID (Admin)
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - Product
+  /api/v1/reviews:
+    get:
+      operationId: ReviewOperations_getByProduct
+      summary: Get reviews for a product
+      parameters:
+        - name: productId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReviewResponse'
+      tags:
+        - Review
+    post:
+      operationId: ReviewOperations_create
+      summary: Add a review
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewResponse'
+      tags:
+        - Review
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewRequest'
+  /api/v1/reviews/{reviewId}:
+    put:
+      operationId: ReviewOperations_update
+      summary: Update a review
+      parameters:
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewResponse'
+      tags:
+        - Review
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewRequest'
+    delete:
+      operationId: ReviewOperations_delete
+      summary: Delete a review
+      parameters:
+        - name: reviewId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+      tags:
+        - Review
+  /api/v1/shipping-addresses:
+    get:
+      operationId: ShippingAddressOperations_list
+      summary: Get user shipping addresses
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ShippingAddressResponse'
+      tags:
+        - Shipping Address
+    post:
+      operationId: ShippingAddressOperations_create
+      summary: Add a new shipping address
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShippingAddressResponse'
+      tags:
+        - Shipping Address
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShippingAddressRequest'
+  /api/v1/shipping-addresses/{id}:
+    put:
+      operationId: ShippingAddressOperations_update
+      summary: Update shipping address
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShippingAddressResponse'
+      tags:
+        - Shipping Address
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShippingAddressRequest'
+    delete:
+      operationId: ShippingAddressOperations_delete
+      summary: Delete shipping address
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+      tags:
+        - Shipping Address
+  /api/v1/statistics:
+    get:
+      operationId: StatisticOperations_getOverallStats
+      summary: Get overall statistics
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalRevenue:
+                    type: number
+                    format: double
+                  totalOrders:
+                    type: integer
+                    format: int32
+                  totalUsers:
+                    type: integer
+                    format: int32
+                  totalProducts:
+                    type: integer
+                    format: int32
+                required:
+                  - totalRevenue
+                  - totalOrders
+                  - totalUsers
+                  - totalProducts
+      tags:
+        - Statistic
+  /api/v1/statistics/revenue:
+    get:
+      operationId: StatisticOperations_getRevenueStats
+      summary: Get revenue over time
+      parameters:
+        - name: startDate
+          in: query
+          required: true
+          schema:
+            type: string
+          explode: false
+        - name: endDate
+          in: query
+          required: true
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    date:
+                      type: string
+                    revenue:
+                      type: number
+                      format: double
+                  required:
+                    - date
+                    - revenue
+      tags:
+        - Statistic
+  /api/v1/users:
+    get:
+      operationId: UserOperations_list
+      summary: List all users (Admin)
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProfileResponse'
+      tags:
+        - User
+  /api/v1/users/profile:
+    get:
+      operationId: UserOperations_getProfile
+      summary: Get current user profile
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+      tags:
+        - User
+    put:
+      operationId: UserOperations_updateProfile
+      summary: Update user profile
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileResponse'
+components:
+  schemas:
+    Brand:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    CartItemRequest:
+      type: object
+      required:
+        - Quantity
+        - ProductItemId
+        - UserId
+      properties:
+        Quantity:
+          type: integer
+          format: int32
+        ProductItemId:
+          type: integer
+          format: int64
+        UserId:
+          type: integer
+          format: int64
+      description: CartItemRequest — payload/request/CartItemRequest.java
+    CartItemResponse:
+      type: object
+      required:
+        - id
+        - product_item
+        - quantity
+        - user_id
+      properties:
+        id:
+          type: integer
+          format: int64
+        product_item:
+          $ref: '#/components/schemas/ProductItemResponse'
+        quantity:
+          type: integer
+          format: int32
+        user_id:
+          type: integer
+          format: int64
+      description: CartItemResponse — payload/response/CartItemResponse.java
+    Category:
+      type: object
+      required:
+        - id
+        - name
+        - status
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          $ref: '#/components/schemas/Status'
+    ChatMessageRequest:
+      type: object
+      required:
+        - senderId
+        - content
+        - conversationId
+      properties:
+        senderId:
+          type: integer
+          format: int64
+        content:
+          type: string
+        conversationId:
+          type: integer
+          format: int64
+      description: ChatMessageRequest — payload/request/ChatMessageRequest.java
+    ChatMessageResponse:
+      type: object
+      required:
+        - id
+        - senderId
+        - senderName
+        - content
+      properties:
+        id:
+          type: integer
+          format: int64
+        senderId:
+          type: integer
+          format: int64
+        senderName:
+          type: string
+        content:
+          type: string
+      description: ChatMessageResponse — payload/response/ChatMessageResponse.java
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    FavoriteProductResponse:
+      type: object
+      required:
+        - id
+        - product
+        - user_id
+      properties:
+        id:
+          type: integer
+          format: int64
+        product:
+          $ref: '#/components/schemas/ProductResponse'
+        user_id:
+          type: integer
+          format: int64
+      description: FavoriteProductResponse — payload/response/FavoriteProductResponse.java
+    Image:
+      type: object
+      required:
+        - id
+        - url
+      properties:
+        id:
+          type: integer
+          format: int64
+        url:
+          type: string
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      description: LoginRequest — payload/request/LoginRequest.java
+    LoginResponse:
+      type: object
+      required:
+        - accessToken
+        - expiresIn
+        - refreshToken
+        - refreshExpiresIn
+        - tokenType
+      properties:
+        accessToken:
+          type: string
+        expiresIn:
+          type: integer
+          format: int32
+        refreshToken:
+          type: string
+        refreshExpiresIn:
+          type: integer
+          format: int32
+        tokenType:
+          type: string
+      description: LoginResponse — payload/response/LoginResponse.java
+    OrderItemRequest:
+      type: object
+      required:
+        - ProductItemId
+        - Amount
+        - Price
+        - Discount
+      properties:
+        ProductItemId:
+          type: integer
+          format: int64
+        Amount:
+          type: integer
+          format: int32
+        Price:
+          type: number
+          format: double
+        Discount:
+          type: number
+          format: double
+      description: OrderItemRequest — payload/request/OrderItemRequest.java
+    OrderItemResponse:
+      type: object
+      required:
+        - orderItemId
+        - productItemId
+        - productId
+        - productName
+        - productType
+        - productImage
+        - amount
+        - price
+        - discount
+        - isReviewed
+      properties:
+        orderItemId:
+          type: integer
+          format: int64
+        productItemId:
+          type: integer
+          format: int64
+        productId:
+          type: integer
+          format: int64
+        productName:
+          type: string
+        productType:
+          type: string
+        productImage:
+          type: string
+        amount:
+          type: integer
+          format: int32
+        price:
+          type: number
+          format: double
+        discount:
+          type: number
+          format: double
+        isReviewed:
+          type: boolean
+      description: OrderItemResponse — payload/response/OrderItemResponse.java
+    OrderRequest:
+      type: object
+      required:
+        - OrderItems
+        - ShippingAddressId
+        - PaymentMethod
+      properties:
+        OrderItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemRequest'
+        ShippingAddressId:
+          type: integer
+          format: int64
+        PaymentMethod:
+          $ref: '#/components/schemas/PaymentMethod'
+      description: OrderRequest — payload/request/OrderRequest.java
+    OrderResponse:
+      type: object
+      required:
+        - orderId
+        - orderStatus
+        - orderDate
+        - orderItems
+        - total
+        - paymentMethod
+        - shippingAddress
+      properties:
+        orderId:
+          type: integer
+          format: int64
+        orderStatus:
+          type: string
+        orderDate:
+          type: string
+        orderItems:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemResponse'
+        total:
+          type: number
+          format: double
+        paymentMethod:
+          type: string
+        shippingAddress:
+          $ref: '#/components/schemas/ShippingAddressResponse'
+      description: OrderResponse — payload/response/OrderResponse.java
+    OrderStatus:
+      type: string
+      enum:
+        - PENDING
+        - PROCESSING
+        - SHIPPED
+        - DELIVERED
+        - CANCELLED
+    PaymentMethod:
+      type: string
+      enum:
+        - CASH
+        - VNPAY
+        - CREDIT_CARD
+    ProductItemResponse:
+      type: object
+      required:
+        - id
+        - price
+        - stock
+        - discount
+        - productResponse
+        - type
+        - status
+      properties:
+        id:
+          type: integer
+          format: int64
+        price:
+          type: number
+          format: double
+        stock:
+          type: integer
+          format: int32
+        discount:
+          type: number
+          format: double
+        productResponse:
+          $ref: '#/components/schemas/ProductResponse'
+        type:
+          $ref: '#/components/schemas/TypeProduct'
+        status:
+          $ref: '#/components/schemas/Status'
+      description: ProductItemResponse — payload/response/ProductItemResponse.java
+    ProductRequest:
+      type: object
+      required:
+        - Name
+        - CategoryId
+        - BrandId
+      properties:
+        Name:
+          type: string
+        Description:
+          type: string
+        CategoryId:
+          type: integer
+          format: int64
+        BrandId:
+          type: integer
+          format: int64
+        NetWeight:
+          type: string
+        BeanType:
+          type: string
+        Origin:
+          type: string
+        RoadLevel:
+          type: string
+        FlavoNotes:
+          type: string
+        CaffeineContents:
+          type: string
+        CafeForm:
+          type: string
+        ArticleTitle:
+          type: string
+        Article:
+          type: string
+      description: ProductRequest — payload/request/ProductRequest.java
+    ProductResponse:
+      type: object
+      required:
+        - id
+        - name
+        - category
+        - brand
+        - status
+        - createdAt
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          $ref: '#/components/schemas/Category'
+        brand:
+          $ref: '#/components/schemas/Brand'
+        status:
+          $ref: '#/components/schemas/Status'
+        price:
+          type: number
+          format: double
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/Image'
+        rating:
+          type: number
+          format: double
+        totalReview:
+          type: integer
+          format: int32
+        totalSold:
+          type: integer
+          format: int32
+        maxPrice:
+          type: number
+          format: double
+        minPrice:
+          type: number
+          format: double
+        netWeight:
+          type: string
+        beanType:
+          type: string
+        origin:
+          type: string
+        roadLevel:
+          type: string
+        flavoNotes:
+          type: string
+        caffeineContents:
+          type: string
+        cafeForm:
+          type: string
+        articleTitle:
+          type: string
+        article:
+          type: string
+        createdAt:
+          type: string
+      description: ProductResponse — payload/response/ProductResponse.java
+    ProfileResponse:
+      type: object
+      required:
+        - id
+        - email
+        - role
+        - created_at
+        - status
+      properties:
+        id:
+          type: integer
+          format: int64
+        email:
+          type: string
+        role:
+          type: string
+        phone:
+          type: string
+        name:
+          type: string
+        profile_img:
+          type: string
+        created_at:
+          type: string
+        status:
+          type: string
+      description: ProfileResponse — payload/response/ProfileResponse.java
+    RegisterRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      description: RegisterRequest — payload/request/RegisterRequest.java
+    RespMessage:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+    ReviewRequest:
+      type: object
+      required:
+        - Rating
+        - OrderItemId
+      properties:
+        Rating:
+          type: number
+          format: double
+        Comment:
+          type: string
+        OrderItemId:
+          type: integer
+          format: int64
+      description: ReviewRequest — payload/request/ReviewRequet.java
+    ReviewResponse:
+      type: object
+      required:
+        - id
+        - userEmail
+        - userId
+        - Name
+        - userAvatar
+        - rating
+        - createAt
+      properties:
+        id:
+          type: integer
+          format: int64
+        userEmail:
+          type: string
+        userId:
+          type: integer
+          format: int64
+        Name:
+          type: string
+        userAvatar:
+          type: string
+        rating:
+          type: number
+          format: double
+        comment:
+          type: string
+        createAt:
+          type: string
+      description: ReviewResponse — payload/response/ReviewResponse.java
+    ShippingAddressRequest:
+      type: object
+      required:
+        - id
+        - receiver_name
+        - receiver_phone
+        - location
+        - status
+        - user_id
+      properties:
+        id:
+          type: integer
+          format: int64
+        receiver_name:
+          type: string
+        receiver_phone:
+          type: string
+        location:
+          type: string
+        status:
+          $ref: '#/components/schemas/Status'
+        user_id:
+          type: integer
+          format: int64
+      description: ShippingAddressRequest — payload/request/ShippingAddressRequest.java
+    ShippingAddressResponse:
+      type: object
+      required:
+        - id
+        - receiverName
+        - receiverPhone
+        - location
+        - status
+        - userId
+      properties:
+        id:
+          type: integer
+          format: int64
+        receiverName:
+          type: string
+        receiverPhone:
+          type: string
+        location:
+          type: string
+        status:
+          $ref: '#/components/schemas/Status'
+        userId:
+          type: integer
+          format: int64
+      description: ShippingAddressResponse — payload/response/ShippingAddressResponse.java
+    Status:
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+        - SUSPENDED
+    TypeProduct:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+servers:
+  - url: http://localhost:8080
+    description: Local Server
+    variables: {}

@@ -10,10 +10,9 @@ import {
 } from "react-icons/fi";
 import { toast } from "react-toastify";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import fetchWithAuth from "../../../helps/fetchWithAuth";
 import summaryApi from "../../../common";
-import { setUser } from "../../../store/userSlice";
 import PasswordInput from "../../validateInputForm/PasswordInput";
 import ProfileSection from "../../profile/ProfileSection";
 import Info from "../../profile/InforProfile";

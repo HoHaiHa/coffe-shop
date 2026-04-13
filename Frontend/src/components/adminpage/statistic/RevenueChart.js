@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Select, Table } from "antd";
 import moment from "moment";
 import fetchWithAuth from "../../../helps/fetchWithAuth";
@@ -68,6 +68,7 @@ const RevenueChart = () => {
     };
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view, selectedMonth, selectedYear]);
 
   // ... Giữ nguyên các hàm xử lý dữ liệu ...
