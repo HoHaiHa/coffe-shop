@@ -776,7 +776,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ReviewRequest'
+              $ref: '#/components/schemas/ReviewRequet'
   /api/v1/reviews/{reviewId}:
     put:
       operationId: ReviewOperations_update
@@ -802,7 +802,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ReviewRequest'
+              $ref: '#/components/schemas/ReviewRequet'
     delete:
       operationId: ReviewOperations_delete
       summary: Delete a review
@@ -1025,6 +1025,44 @@ components:
           format: int64
         name:
           type: string
+    BrandRequest:
+      type: object
+      required:
+        - Name
+        - Status
+      properties:
+        Name:
+          type: string
+        Status:
+          $ref: '#/components/schemas/Status'
+        Description:
+          type: string
+        ArticleTitle:
+          type: string
+        Article:
+          type: string
+      description: BrandRequest — payload/request/BrandRequest.java
+    BrandResponse:
+      type: object
+      required:
+        - id
+        - name
+        - status
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        status:
+          $ref: '#/components/schemas/Status'
+        description:
+          type: string
+        articleTitle:
+          type: string
+        article:
+          type: string
+      description: BrandResponse — payload/response/BrandResponse.java
     CartItemRequest:
       type: object
       required:
@@ -1078,6 +1116,16 @@ components:
           type: string
         status:
           $ref: '#/components/schemas/Status'
+    ChangePasswordDTO:
+      type: object
+      properties:
+        old_password:
+          type: string
+        new_password:
+          type: string
+        confirm_password:
+          type: string
+      description: ChangePasswordDTO — payload/request/ChangePasswordDTO.java
     ChatMessageRequest:
       type: object
       required:
@@ -1113,6 +1161,29 @@ components:
         content:
           type: string
       description: ChatMessageResponse — payload/response/ChatMessageResponse.java
+    ConversationResponse:
+      type: object
+      required:
+        - id
+        - hostId
+        - hostName
+        - messageList
+      properties:
+        id:
+          type: integer
+          format: int64
+        hostId:
+          type: integer
+          format: int64
+        hostName:
+          type: string
+        hostAvatar:
+          type: string
+        messageList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatMessageResponse'
+      description: ConversationResponse — payload/response/ConversationResponse.java
     ErrorResponse:
       type: object
       required:
@@ -1123,6 +1194,19 @@ components:
           type: string
         message:
           type: string
+    FavoriteProductRequest:
+      type: object
+      required:
+        - ProductId
+        - UserId
+      properties:
+        ProductId:
+          type: integer
+          format: int64
+        UserId:
+          type: integer
+          format: int64
+      description: FavoriteProductRequest — payload/request/FavoriteProductRequest.java
     FavoriteProductResponse:
       type: object
       required:
@@ -1153,12 +1237,12 @@ components:
     LoginRequest:
       type: object
       required:
-        - email
-        - password
+        - Email
+        - Password
       properties:
-        email:
+        Email:
           type: string
-        password:
+        Password:
           type: string
       description: LoginRequest — payload/request/LoginRequest.java
     LoginResponse:
@@ -1306,6 +1390,44 @@ components:
         - CASH
         - VNPAY
         - CREDIT_CARD
+    PaymentResponse:
+      type: object
+      required:
+        - status
+        - message
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+        URL:
+          type: string
+      description: PaymentResponse — payload/response/PaymentResponse.java
+    ProductItemRequest:
+      type: object
+      required:
+        - Price
+        - Stock
+        - Discount
+        - ProductId
+        - TypeId
+      properties:
+        Price:
+          type: number
+          format: double
+        Stock:
+          type: integer
+          format: int32
+        Discount:
+          type: number
+          format: double
+        ProductId:
+          type: integer
+          format: int64
+        TypeId:
+          type: integer
+          format: int64
+      description: ProductItemRequest — payload/request/ProductItemRequest.java
     ProductItemResponse:
       type: object
       required:
@@ -1438,6 +1560,30 @@ components:
         createdAt:
           type: string
       description: ProductResponse — payload/response/ProductResponse.java
+    ProductStatisticResponse:
+      type: object
+      required:
+        - productId
+        - productName
+        - quantitySold
+        - totalRevenue
+      properties:
+        productId:
+          type: integer
+          format: int64
+        productName:
+          type: string
+        categoryName:
+          type: string
+        brandName:
+          type: string
+        quantitySold:
+          type: integer
+          format: int64
+        totalRevenue:
+          type: number
+          format: double
+      description: ProductStatisticResponse — payload/response/ProductStatisticResponse.java
     ProfileResponse:
       type: object
       required:
@@ -1468,21 +1614,27 @@ components:
     RegisterRequest:
       type: object
       required:
-        - email
+        - Email
       properties:
-        email:
+        Email:
           type: string
-        password:
+        Password:
+          type: string
+        ConfirmPassword:
           type: string
       description: RegisterRequest — payload/request/RegisterRequest.java
     RespMessage:
       type: object
       required:
-        - message
+        - respCode
+        - respDesc
       properties:
-        message:
+        respCode:
           type: string
-    ReviewRequest:
+        respDesc:
+          type: string
+        data: {}
+    ReviewRequet:
       type: object
       required:
         - Rating
@@ -1496,7 +1648,7 @@ components:
         OrderItemId:
           type: integer
           format: int64
-      description: ReviewRequest — payload/request/ReviewRequet.java
+      description: ReviewRequet — payload/request/ReviewRequet.java
     ReviewResponse:
       type: object
       required:
@@ -1584,6 +1736,50 @@ components:
         - ACTIVE
         - INACTIVE
         - SUSPENDED
+    TransactionRequest:
+      type: object
+      required:
+        - Amount
+        - OrderId
+      properties:
+        TransactionNo:
+          type: string
+        TxnRef:
+          type: string
+        PayDate:
+          type: string
+        Amount:
+          type: number
+          format: double
+        OrderId:
+          type: integer
+          format: int64
+      description: TransactionRequest — payload/request/TransactionRequest.java
+    TransactionResponse:
+      type: object
+      required:
+        - transactionId
+        - amount
+        - orderId
+      properties:
+        transactionId:
+          type: integer
+          format: int64
+        transactionNo:
+          type: string
+        txnRef:
+          type: string
+        payDate:
+          type: string
+        amount:
+          type: number
+          format: double
+        command:
+          type: string
+        orderId:
+          type: integer
+          format: int64
+      description: TransactionResponse — payload/response/TransactionResponse.java
     TypeProduct:
       type: object
       required:
@@ -1595,6 +1791,67 @@ components:
           format: int64
         name:
           type: string
+    UserDTO:
+      type: object
+      required:
+        - id
+        - email
+        - role
+        - status
+      properties:
+        id:
+          type: integer
+          format: int64
+        email:
+          type: string
+        role:
+          type: string
+        phone:
+          type: string
+        name:
+          type: string
+        profile_img:
+          type: string
+        status:
+          type: string
+      description: UserDTO — payload/response/UserDTO.java
+    UserRequest:
+      type: object
+      required:
+        - Name
+      properties:
+        Name:
+          type: string
+        Phone:
+          type: string
+        ProfileImg:
+          type: string
+        Password:
+          type: string
+        ConfirmPassword:
+          type: string
+      description: UserRequest — payload/request/UserRequest.java
+    UserStatisticResponse:
+      type: object
+      required:
+        - userId
+        - userName
+        - email
+        - totalSold
+      properties:
+        userId:
+          type: integer
+          format: int64
+        userName:
+          type: string
+        email:
+          type: string
+        creatAt:
+          type: string
+        totalSold:
+          type: number
+          format: double
+      description: UserStatisticResponse — payload/response/UserStatisticResponse.java
 servers:
   - url: http://localhost:8080
     description: Local Server

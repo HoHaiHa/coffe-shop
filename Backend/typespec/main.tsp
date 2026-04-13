@@ -51,7 +51,9 @@ model ErrorResponse {
 }
 
 model RespMessage {
-  message: string;
+  respCode: string;
+  respDesc: string;
+  data?: unknown;
 }
 
 model Brand {
@@ -79,6 +81,73 @@ model TypeProduct {
 // =============================================================
 // RESPONSE DTOs
 // =============================================================
+
+/** BrandResponse — payload/response/BrandResponse.java */
+model BrandResponse {
+  id: int64;
+  name: string;
+  status: Status;
+  description?: string;
+  articleTitle?: string;
+  article?: string;
+}
+
+/** ConversationResponse — payload/response/ConversationResponse.java */
+model ConversationResponse {
+  id: int64;
+  hostId: int64;
+  hostName: string;
+  hostAvatar?: string;
+  messageList: ChatMessageResponse[];
+}
+
+/** PaymentResponse — payload/response/PaymentResponse.java */
+model PaymentResponse {
+  status: string;
+  message: string;
+  URL?: string;
+}
+
+/** ProductStatisticResponse — payload/response/ProductStatisticResponse.java */
+model ProductStatisticResponse {
+  productId: int64;
+  productName: string;
+  categoryName?: string;
+  brandName?: string;
+  quantitySold: int64;
+  totalRevenue: float64;
+}
+
+/** TransactionResponse — payload/response/TransactionResponse.java */
+model TransactionResponse {
+  transactionId: int64;
+  transactionNo?: string;
+  txnRef?: string;
+  payDate?: Date;
+  amount: float64;
+  command?: string;
+  orderId: int64;
+}
+
+/** UserDTO — payload/response/UserDTO.java */
+model UserDTO {
+  id: int64;
+  email: string;
+  role: string;
+  phone?: string;
+  name?: string;
+  profile_img?: string;
+  status: string;
+}
+
+/** UserStatisticResponse — payload/response/UserStatisticResponse.java */
+model UserStatisticResponse {
+  userId: int64;
+  userName: string;
+  email: string;
+  creatAt?: Date;
+  totalSold: float64;
+}
 
 /** LoginResponse — payload/response/LoginResponse.java */
 model LoginResponse {
@@ -213,16 +282,66 @@ model ChatMessageResponse {
 // REQUEST DTOs
 // =============================================================
 
+/** BrandRequest — payload/request/BrandRequest.java */
+model BrandRequest {
+  Name: string;
+  Status: Status;
+  Description?: string;
+  ArticleTitle?: string;
+  Article?: string;
+}
+
+/** ChangePasswordDTO — payload/request/ChangePasswordDTO.java */
+model ChangePasswordDTO {
+  old_password?: string;
+  new_password?: string;
+  confirm_password?: string;
+}
+
+/** FavoriteProductRequest — payload/request/FavoriteProductRequest.java */
+model FavoriteProductRequest {
+  ProductId: int64;
+  UserId: int64;
+}
+
+/** ProductItemRequest — payload/request/ProductItemRequest.java */
+model ProductItemRequest {
+  Price: float64;
+  Stock: int32;
+  Discount: float64;
+  ProductId: int64;
+  TypeId: int64;
+}
+
+/** TransactionRequest — payload/request/TransactionRequest.java */
+model TransactionRequest {
+  TransactionNo?: string;
+  TxnRef?: string;
+  PayDate?: Date;
+  Amount: float64;
+  OrderId: int64;
+}
+
+/** UserRequest — payload/request/UserRequest.java */
+model UserRequest {
+  Name: string;
+  Phone?: string;
+  ProfileImg?: string;
+  Password?: string;
+  ConfirmPassword?: string;
+}
+
 /** LoginRequest — payload/request/LoginRequest.java */
 model LoginRequest {
-  email: string;
-  password: string;
+  Email: string;
+  Password: string;
 }
 
 /** RegisterRequest — payload/request/RegisterRequest.java */
 model RegisterRequest {
-  email: string;
-  password?: string;
+  Email: string;
+  Password?: string;
+  ConfirmPassword?: string;
 }
 
 /** ProductRequest — payload/request/ProductRequest.java */
@@ -274,8 +393,8 @@ model ShippingAddressRequest {
   user_id: int64;
 }
 
-/** ReviewRequest — payload/request/ReviewRequet.java */
-model ReviewRequest {
+/** ReviewRequet — payload/request/ReviewRequet.java */
+model ReviewRequet {
   Rating: float64;
   Comment?: string;
   OrderItemId: int64;
@@ -694,7 +813,7 @@ interface ReviewOperations {
 
   @summary("Add a review")
   @post
-  create(@body review: ReviewRequest): {
+  create(@body review: ReviewRequet): {
     @statusCode _: 201;
     @body createdReview: ReviewResponse;
   };
@@ -702,7 +821,7 @@ interface ReviewOperations {
   @summary("Update a review")
   @put
   @route("/{reviewId}")
-  update(@path reviewId: int64, @body review: ReviewRequest): {
+  update(@path reviewId: int64, @body review: ReviewRequet): {
     @statusCode _: 200;
     @body updatedReview: ReviewResponse;
   };
