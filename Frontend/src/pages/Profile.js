@@ -1,18 +1,16 @@
 import React, { useState } from "react";
-import { Typography, List, Spin, Form, Button, Modal, message } from "antd";
+import { Typography, List, Spin, Form, Button, Modal } from "antd";
 import { UserOutlined, LoadingOutlined, EditOutlined } from "@ant-design/icons";
 import {
   FiHome,
   FiMail,
   FiGift,
-  FiAlertCircle,
   FiPhone,
   FiKey,
   FiUser,
 } from "react-icons/fi";
 import { toast } from "react-toastify";
 import PasswordInput from "../components/validateInputForm/PasswordInput";
-import { TbInfoSquare } from "react-icons/tb";
 import fetchWithAuth from "../helps/fetchWithAuth";
 import summaryApi from "../common";
 import Wishlist from "../components/profile/wishlist";

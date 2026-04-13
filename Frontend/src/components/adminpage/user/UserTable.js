@@ -183,7 +183,7 @@ const UserTable = ({ userList, setUserList }) => {
     const handleChangeRole =(value, record) =>{
         confirm({
             title: 'Đổi vai trò!',
-            content: `Đổi vai trò thành ${value=='ROLE_USER' ? 'người dùng' : 'nhân viên'}?`,
+            content: `Đổi vai trò thành ${value === 'ROLE_USER' ? 'người dùng' : 'nhân viên'}?`,
             onOk() {
                 changeRole(record.id, value);
             },

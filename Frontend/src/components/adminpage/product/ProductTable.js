@@ -31,9 +31,8 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
     const [searchedColumn, setSearchedColumn] = useState('');
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isCategoryModalVisible, setIsCategoryModalVisible] = useState(false);
-    const [isBrandModalVisible, setIsBrandModalVisible] = useState(false);
     const [newCategoryName, setNewCategoryName] = useState('');
-    const [newBrandName, setNewBrandName] = useState('');
+
     const searchInput = useRef(null);
     const user = useSelector((state) => state.user.user, (prev, next) => prev === next);
 
@@ -275,26 +274,6 @@ const ProductTable = ({ products, setProducts, categories, brands, setCategories
     };
 
 
-    const handleAddBrand = () => {
-        const fetchAddBrand = async () => {
-            const response = await fetchWithAuth(summaryApi.addBrand.url, {
-                method: summaryApi.addBrand.method,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name: newBrandName }),
-            });
-            const data = await response.json();
-            if (data.respCode === '000' && data.data) {
-                setBrands([...brands, data.data]);
-                setNewBrandName('');
-                setIsBrandModalVisible(false);
-            } else {
-                console.log(data);
-            }
-        }
-        fetchAddBrand();
-    };
 
     const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
 

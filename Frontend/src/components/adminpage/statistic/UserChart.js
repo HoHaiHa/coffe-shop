@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { PieChart, Pie, Tooltip, Cell, Legend } from "recharts";
+import { PieChart, Pie, Tooltip, Cell } from "recharts";
 import { Table, Select } from "antd";
 import fetchWithAuth from "../../../helps/fetchWithAuth";
 import summaryApi from "../../../common";
@@ -258,7 +258,7 @@ const UserChart = () => {
                     />
                     <div className="flex flex-col flex-1 min-w-0">
                       <span className="font-medium text-gray-800 truncate">
-                        {entry.userName == 'Chưa cập nhật' ? entry.email : entry.userName}
+                        {entry.userName === 'Chưa cập nhật' ? entry.email : entry.userName}
                       </span>
                       <span className="text-sm font-medium text-blue-600">
                         {formatCurrency(entry.totalSold)}

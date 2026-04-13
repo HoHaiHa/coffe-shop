@@ -32,31 +32,22 @@ const CategoryPage = () => {
     switch (sortingCriteria) {
       case 'createdAtAsc':
         return [...list].sort((a, b) => (new Date(a.createdAt) - new Date(b.createdAt))*-1);
-        break;
       case 'createdAtDesc':
         return [...list].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-        break;
       case 'priceAsc':
         return [...list].sort((a, b) => new Date(a.minPrice) - new Date(b.minPrice));
-        break;
         case 'priceDesc':
         return [...list].sort((a, b) => (new Date(a.minPrice) - new Date(b.minPrice))*-1);
-        break;
       case 'soldAsc':
         return [...list].sort((a, b) => new Date(a.totalSold) - new Date(b.totalSold));
-        break;
         case 'soldDesc':
         return [...list].sort((a, b) => (new Date(a.totalSold) - new Date(b.totalSold))*-1);
-        break;
       case 'rateAsc':
         return [...list].sort((a, b) => new Date(a.rating) - new Date(b.rating));
-        break;
         case 'rateDesc':
         return [...list].sort((a, b) => (new Date(a.rating) - new Date(b.rating))*-1);
-        break;
       default:
         return [...list].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-        break;
     }
   }, [products, filteredProducts,sortingCriteria]);
 
@@ -108,6 +99,7 @@ const CategoryPage = () => {
       }
     };
     fetchBestSellingProduct();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

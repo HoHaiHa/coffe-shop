@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Form, Input, Upload, Image, Popconfirm, Spin } from 'antd';
-import { PlusOutlined, SearchOutlined, CloseOutlined } from '@ant-design/icons';
+import { Table, Button, Modal, Form, Input, Upload, Image, Popconfirm } from 'antd';
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import fetchWithAuth from '../../../helps/fetchWithAuth';
 import summaryApi from '../../../common';
 import { toast } from 'react-toastify';
@@ -11,8 +11,8 @@ const CategoryTable = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [form] = Form.useForm();
     const [currentCategory, setCurrentCategory] = useState(null);
-    const [searchText, setSearchText] = useState('');
-    const [searchedColumn, setSearchedColumn] = useState('');
+    const [, setSearchText] = useState('');
+    const [, setSearchedColumn] = useState('');
     const [loading, setLoading] = useState(false);
     const [nameError, setNameError] = useState('');
     const user = useSelector((state) => state.user.user, (prev, next) => prev === next);
